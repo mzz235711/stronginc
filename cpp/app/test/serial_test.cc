@@ -395,6 +395,15 @@ private:
     // std::string base_qfile = "../data/yago/query/q";
     // std::string base_add_file = "../data/yago/inc/add_e";
     // std::string base_remove_file="../data/yago/inc/rm_e";
+    int query_index;
+    std::string test_data_name;
+    std::string graph_vfile;
+    std::string graph_efile;
+    std::string view_file;
+    std::string r_file;
+    std::string base_qfile;
+    std::string base_add_file;
+    std::string base_remove_file;
 };
 
 int main(int argc, char *argv[]) {
