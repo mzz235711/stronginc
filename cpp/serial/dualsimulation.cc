@@ -5,7 +5,7 @@ DualSim::DualSim(){}
 DualSim::~DualSim(){}
 
 void DualSim::dual_sim_initialization(Graph &dgraph, Graph &qgraph,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
+                               std::vector<std::unordered_set<VertexID>> &sim,
                                bool &initialized_sim,
                                std::vector<std::unordered_set<VertexID>> &remove_pred,
                                std::vector<std::unordered_set<VertexID>> &remove_succ){
@@ -104,9 +104,9 @@ void DualSim::reunordered_map_data_id(std::unordered_map<VertexID, VertexID> &t_
     }
 
 void DualSim::dual_counter_initialization(Graph &dgraph, Graph &qgraph,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
+                                     std::vector<std::vector<int>> &sim_counter_post,
+                                     std::vector<std::vector<int>> &sim_counter_pre,
+                                     std::vector<std::unordered_set<VertexID>> &sim,
                                      std::unordered_map<VertexID, VertexID> &t_f){
         for (auto w : dgraph.GetAllVerticesID()){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -145,8 +145,8 @@ VertexID DualSim::find_nonempty_remove(Graph &qgraph,
     }
 
 void DualSim::update_sim_counter(Graph &dgraph,
-                            std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                            std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
+                            std::vector<std::vector<int>> &sim_counter_post,
+                            std::vector<std::vector<int>> &sim_counter_pre,
                             VertexID u,VertexID w,
                             std::unordered_map<VertexID, VertexID> &t_f){
     for (auto wp : dgraph.GetParentsID(w)){
@@ -162,7 +162,7 @@ void DualSim::update_sim_counter(Graph &dgraph,
     }
     }
 
-bool DualSim::match_check(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+bool DualSim::match_check(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim){
         for (auto u : qgraph.GetAllVerticesID()){
             if (sim[u].size() == 0){
                 return false;
@@ -171,7 +171,7 @@ bool DualSim::match_check(Graph &qgraph,std::unordered_map<VertexID, std::unorde
         return true;
     }
 
-bool DualSim::dual_sim_output(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+bool DualSim::dual_sim_output(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim){
         if (match_check(qgraph, sim) == false){
            for(auto u : qgraph.GetAllVerticesID()){
                 sim[u].clear();
@@ -182,11 +182,13 @@ bool DualSim::dual_sim_output(Graph &qgraph,std::unordered_map<VertexID, std::un
 
 
 void DualSim::dual_sim_refinement(Graph &dgraph, Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
+                           std::vector<std::unordered_set<VertexID>> &sim,
                            std::vector<std::unordered_set<VertexID>> &remove_pred,
                            std::vector<std::unordered_set<VertexID>> &remove_succ){
         //LOG(INFO)<<"dual_sim_refinement"<<std::endl;
-        std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
+        auto dvnum = dgraph.GetNumVertices();
+        std::vector<std::vector<int>> sim_counter_post(dvnum);
+        std::vector<std::vector<int>> sim_counter_pre(dvnum);
         std::unordered_map<VertexID, VertexID> t_f;
 //        reunordered_map_data_id(t_f, dgraph);
 

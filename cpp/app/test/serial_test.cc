@@ -163,12 +163,14 @@ public:
         Graph dgraph;
         GraphLoader dgraph_loader,qgraph_loader;
         dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
+        auto dvnum = dgraph.GetNumVertices();
         DualSim dualsim;
         int index = 1;
         while(index<2){
             Graph qgraph;
             qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-            std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
+            // std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
+            std::vector<std::unordered_set<VertexID>> sim(dvnum);
             bool initialized_sim = false;
             double starttime = get_current_time();
             dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
