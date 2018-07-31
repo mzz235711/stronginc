@@ -44,6 +44,12 @@ DECLARE_string(efile);
 DECLARE_string(query_dir);
 DECLARE_string(result_file);
 DECLARE_int32(file_location);
+DECLARE_int32(query_index);
+DECLARE_string(view_file);
+DECLARE_string(r_file);
+DECLARE_string(base_qfile);
+DECLARE_string(base_add_file);
+DECLARE_string(base_remove_file);
 
 
 

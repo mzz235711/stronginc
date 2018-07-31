@@ -26,15 +26,24 @@ public:
     Serial(){}
 
     Serial(std::string test_data_name,int query_index){
-        this->query_index = query_index;
-        this->test_data_name=test_data_name;
-        this->graph_vfile ="../data/"+test_data_name+"/"+test_data_name+".v";
-        this->graph_efile ="../data/"+test_data_name+"/"+test_data_name+".e";
-        this->view_file = "../data/"+test_data_name+"/views/view";
-        this->r_file = "../data/"+test_data_name+"/"+test_data_name+".r";
-        this->base_qfile = "../data/"+test_data_name+"/query/q";
-        this->base_add_file = "../data/"+test_data_name+"/inc/add_e";
-        this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
+        // this->query_index = query_index;
+        // this->test_data_name=test_data_name;
+        // this->graph_vfile ="../data/"+test_data_name+"/"+test_data_name+".v";
+        // this->graph_efile ="../data/"+test_data_name+"/"+test_data_name+".e";
+        // this->view_file = "../data/"+test_data_name+"/views/view";
+        // this->r_file = "../data/"+test_data_name+"/"+test_data_name+".r";
+        // this->base_qfile = "../data/"+test_data_name+"/query/q";
+        // this->base_add_file = "../data/"+test_data_name+"/inc/add_e";
+        // this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
+        this->query_index = FLAGS_query_index;
+        this->graph_vfile = FLAGS_vfile;
+        this->graph_efile = FALGS_efile;
+        this->view_file = FLAGS_view_file;
+        this->r_file = FLAGS_r_files;
+        this->base_qfile = FLAGS_base_qfile;
+        this->base_add_file = FLAGS_base_add_file;
+        this->base_remove_file = FLAGS_base_remove_file;
+
     }
 
     std::string get_query_vfile(int index){
@@ -377,15 +386,15 @@ public:
         }
     }
 private:
-    int query_index = 1;
-    std::string test_data_name ="yago";
-    std::string graph_vfile ="../data/yago/yago.v";
-    std::string graph_efile ="../data/yago/yago.e";
-    std::string view_file = "../data/yago/views/view";
-    std::string r_file = "../data/yago/yago.r";
-    std::string base_qfile = "../data/yago/query/q";
-    std::string base_add_file = "../data/yago/inc/add_e";
-    std::string base_remove_file="../data/yago/inc/rm_e";
+    // int query_index = 1;
+    // std::string test_data_name ="yago";
+    // std::string graph_vfile ="../data/yago/yago.v";
+    // std::string graph_efile ="../data/yago/yago.e";
+    // std::string view_file = "../data/yago/views/view";
+    // std::string r_file = "../data/yago/yago.r";
+    // std::string base_qfile = "../data/yago/query/q";
+    // std::string base_add_file = "../data/yago/inc/add_e";
+    // std::string base_remove_file="../data/yago/inc/rm_e";
 };
 
 int main(int argc, char *argv[]) {
