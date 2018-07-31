@@ -12,9 +12,9 @@ Fragment::Fragment(Graph &graph, const std::string v_file, const std::string e_f
   fragmentloader.LoadFragTable(fragTable,r_file);
   std::unordered_set<VertexID> idx;
   fragmentloader.LoadEdge(global_edges, fragTable,idx, FID, e_file);
-  //std::cout<<"edges "<<global_edges.size()<<' '<<fid<<std::endl;
+  //LOG(INFO)<<"edges "<<global_edges.size()<<' '<<fid<<std::endl;
   fragmentloader.LoadVertex(global_vertices, fragTable,idx, FID, v_file);
- // std::cout<<"vertex "<<global_vertices.size()<<" "<<fid<<std::endl;
+ // LOG(INFO)<<"vertex "<<global_vertices.size()<<" "<<fid<<std::endl;
 
   numVertices = global_vertices.size();
   numEdges = global_edges.size();

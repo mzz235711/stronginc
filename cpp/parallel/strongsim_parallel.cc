@@ -21,7 +21,7 @@ int Strong_Parallel::cal_diameter_qgraph(Graph &qgraph){
 
 void Strong_Parallel::rename_sim(GraphView &ball_view,Graph &qgraph,
                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-              //std::cout<<w<<std::endl;
+              //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
            for(auto v:ball_view.GetAllVerticesID()){
@@ -111,13 +111,13 @@ void Strong_Parallel::print_ball_info(Fragment &fragment, Graph &qgraph, std::un
                 }
             }
             worker_barrier();
-           // std::cout<<"index: "<<index<<' '<<dual_the_same(qgraph,sim,ballsim)<<std::endl;
+           // LOG(INFO)<<"index: "<<index<<' '<<dual_the_same(qgraph,sim,ballsim)<<std::endl;
            for(auto u :qgraph.GetAllVerticesID()){
-               std::cout<<u;
+               LOG(INFO)<<u;
                for(auto v : ballsim[u]){
-                   std::cout<<' '<<v;
+                   LOG(INFO)<<' '<<v;
                }
-               std::cout<<endl;
+               LOG(INFO)<<endl;
            }
 
       }else{

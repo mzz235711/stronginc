@@ -28,8 +28,8 @@ void test_query_info(){
       FLAGS_vfile =  "../data/query/q"+std::to_string(index)+".v";
       FLAGS_efile = "../data/query/q"+std::to_string(index)+".e";
       qgraph_loader.LoadGraph(qgraph,FLAGS_vfile,FLAGS_efile);
-      //std::cout<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
-      std::cout<<cal_diameter_qgraph(qgraph)<<" "<<query_labl_all_notsame(qgraph)<<std::endl;
+      //LOG(INFO)<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+      LOG(INFO)<<cal_diameter_qgraph(qgraph)<<" "<<query_labl_all_notsame(qgraph)<<std::endl;
       index +=1;
    }
 
@@ -123,10 +123,10 @@ void test_generate_query_graph(){
  Graph dgraph;
  generate.generate_random_dgraph(dgraph,10);
  for(auto v:dgraph.GetAllVerticesID()){
-     cout<<v<<' '<<dgraph.GetVertexLabel(v)<<endl;
+     LOG(INFO)<<v<<' '<<dgraph.GetVertexLabel(v)<<endl;
  }
  for(auto e:dgraph.GetAllEdges()){
-     cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<endl;
+     LOG(INFO)<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<endl;
  }
  }
 

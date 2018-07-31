@@ -27,8 +27,8 @@ class DualSim {
     void dual_sim_initialization(Graph &dgraph, Graph &qgraph,
                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
                                bool &initialized_sim,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ);
+                               std::vector<std::unordered_set<VertexID>> &remove_pred,
+                               std::vector< std::unordered_set<VertexID>> &remove_succ);
 
 
     void reunordered_map_data_id(std::unordered_map<VertexID, VertexID> &t_f,Graph &dgraph);
@@ -40,8 +40,8 @@ class DualSim {
                                      std::unordered_map<VertexID, VertexID> &t_f);
 
     VertexID find_nonempty_remove(Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ);
+                           std::vector<std::unordered_set<VertexID>> &remove_pred,
+                           std::vector<std::unordered_set<VertexID>> &remove_succ);
 
     void update_sim_counter(Graph &dgraph,
                             std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
@@ -57,8 +57,8 @@ class DualSim {
 
     void dual_sim_refinement(Graph &dgraph, Graph &qgraph,
                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ);
+                           std::vector<std::unordered_set<VertexID>> &remove_pred,
+                           std::vector<std::unordered_set<VertexID>> &remove_succ);
 
     void dual_simulation(Graph &dgraph, Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim, bool &initialized_sim);
  private:

@@ -98,7 +98,7 @@ void Generate::save_grape_file(Graph &qgraph, const std::string &v_file, const s
    std::fstream out_vfile(v_file,std::ios::out);
    if(!out_vfile)
 	{
-		std::cout<<"the outfile can  not construct";
+		LOG(INFO)<<"the outfile can  not construct";
 		exit(0);
 	}
 	for(auto u:qgraph.GetAllVerticesID()){
@@ -109,7 +109,7 @@ void Generate::save_grape_file(Graph &qgraph, const std::string &v_file, const s
    std::fstream out_efile(e_file,std::ios::out);
    if(!out_efile)
 	{
-		std::cout<<"the outfile can  not construct";
+		LOG(INFO)<<"the outfile can  not construct";
 		exit(0);
 	}
 	for(auto edge:qgraph.GetAllEdges()){

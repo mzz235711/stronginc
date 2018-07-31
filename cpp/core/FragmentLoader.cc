@@ -7,7 +7,7 @@ FragmentLoader::~FragmentLoader(){}
 void FragmentLoader::LoadFragTable(std::unordered_map<VertexID , int> &fragTable, const std::string fragTablePath){
       FILE *file = fopen(fragTablePath.c_str(),"r");
       if (file == NULL){
-          printf("Cannot open the file\n");
+          LOG(FATAL) << "Cannot open the file";
           exit(0);
       }
       VertexID vid;
@@ -25,7 +25,7 @@ bool FragmentLoader::LoadEdge(std::vector<Edge> &global_edges, const std::unorde
 	 try {
 		 FILE *file = fopen(e_file.c_str(), "r");
 		 if(file==NULL){
-		  std::cout<<"not found"<<std::endl;
+		  LOG(INFO)<<"not found"<<std::endl;
 		  exit(0);
 		  return false;
 		 }
@@ -50,7 +50,7 @@ bool FragmentLoader::LoadVertex(std::vector<Vertex> &global_vertices, const std:
      try {
          FILE *file = fopen(v_file.c_str(),"r");
        	 if(file==NULL){
-		  std::cout<<"not found"<<std::endl;
+		  LOG(INFO)<<"not found"<<std::endl;
 		  exit(0);
 		  return false;
 		 }

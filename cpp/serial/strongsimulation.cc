@@ -64,7 +64,7 @@ void StrongSim::find_node_connectivity_nodes(Ball_View &ball_view,std::unordered
 
 void StrongSim::rename_sim(Ball_View &ball_view,Graph &qgraph,
                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-              //std::cout<<w<<std::endl;
+              //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
            for(auto v:ball_view.GetAllVerticesID()){
@@ -245,11 +245,11 @@ void StrongSim::print_ball_info(Graph &qgraph,std::unordered_map<VertexID, std::
           }
       }
       for(auto u :qgraph.GetAllVerticesID()){
-          std::cout<<w<<' '<<u;
+          LOG(INFO)<<w<<' '<<u;
           for(auto v:printset[u]){
-             std::cout<<' '<<v;
+             LOG(INFO)<<' '<<v;
           }
-          std::cout<<std::endl;
+          LOG(INFO)<<std::endl;
       }
 }
 
@@ -266,7 +266,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
           DualSim dualsim;
           bool inital_sim =false;
           dualsim.dual_simulation(dgraph,qgraph,global_sim,inital_sim);
-//          std::cout<<"dual "<<(float)(end1-start1)/CLOCKS_PER_SEC<<std::endl;
+//          LOG(INFO)<<"dual "<<(float)(end1-start1)/CLOCKS_PER_SEC<<std::endl;
           int i=0;
           clock_t stime,etime;
           stime =clock();
@@ -325,10 +325,10 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
               max_result.emplace_back(w,S_w);
               //print_ball_info(qgraph,S_w,w);
             // break;
-             // std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+             // LOG(INFO)<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
               }
           }
           etime=clock();
-         // std::cout<<"all strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+         // LOG(INFO)<<"all strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
           return max_result;
       }

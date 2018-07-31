@@ -451,7 +451,7 @@ void Dual_parallelInc::print_global_info(Fragment &fragment, Graph &qgraph, std:
             }
             worker_barrier();
             for(auto u :qgraph.GetAllVerticesID()){
-                cout<<globalsim[u].size()<<endl;
+                LOG(INFO)<<globalsim[u].size()<<endl;
             }
       }else{
          slaveGather(sim);

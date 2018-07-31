@@ -226,7 +226,7 @@ std::vector<std::pair<VertexID,VertexID>> StrongparallelInc::assign_task(Fragmen
     for(auto item:pair_MessageBuffers.get_messages()){
         sim[item.first].insert(fragment.getLocalID(item.second));
     }
- //   cout<<result_nodes.size()<<endl;
+ //   LOG(INFO)<<result_nodes.size()<<endl;
     return result_nodes;
 }
 
@@ -290,7 +290,7 @@ void StrongparallelInc::find_node_connectivity_nodes(Ball_View &ball_view,std::u
 
 void StrongparallelInc::rename_sim(Ball_View &ball_view,Graph &qgraph,
                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-              //std::cout<<w<<std::endl;
+              //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
            for(auto v:ball_view.GetAllVerticesID()){
@@ -471,11 +471,11 @@ void StrongparallelInc::print_ball_info(Graph &qgraph,std::unordered_map<VertexI
 
               }
                          for(auto u :qgraph.GetAllVerticesID()){
-               std::cout<<u;
+               LOG(INFO)<<u;
                for(auto v:printset[u]){
-                   std::cout<<' '<<v;
+                   LOG(INFO)<<' '<<v;
                }
-              std::cout<<std::endl;
+              LOG(INFO)<<std::endl;
               }
 }
 
@@ -513,10 +513,10 @@ void  StrongparallelInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgrap
 std::vector<StrongR>  StrongparallelInc::strong_parallel(Fragment &fragment,Graph &dgraph, Graph &qgraph){
     std::vector<StrongR> max_result;
     int d_Q = cal_diameter_qgraph(qgraph);
-//    std::cout<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<endl;
+//    LOG(INFO)<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<endl;
     worker_barrier();
     update_fragment_parallel(fragment,dgraph,d_Q);
-//    std::cout<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<endl;
+//    LOG(INFO)<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<endl;
     std::unordered_map<VertexID, std::unordered_set<VertexID>> fragment_sim;
     /**
       *calculate dual simulation for dgraph
@@ -608,14 +608,14 @@ std::vector<StrongR>  StrongparallelInc::strong_parallel_inc(Fragment &fragment,
     for(int i=0;i<global_strong_r.size();++i){
         cache_center[global_strong_r[i].center()]=i;
     }
-//    cout<<"cache strong "<<global_strong_r.size()<<endl;
+//    LOG(INFO)<<"cache strong "<<global_strong_r.size()<<endl;
     for (auto pa : cal_center_nodes) {
     /**
       * calculate ball for center w if w if a valid center
       */
 // if (valid_sim_w(qgraph,fragment_sim,w)){
 //        if(fragment.getGlobalID(w)==136){
-//            cout<<get_worker_id()<<endl;
+//            LOG(INFO)<<get_worker_id()<<endl;
 //        }
         VertexID tai=pa.second;
         VertexID w=pa.first;
@@ -632,7 +632,7 @@ std::vector<StrongR>  StrongparallelInc::strong_parallel_inc(Fragment &fragment,
 //         if(fragment.getGlobalID(w)==136){
 //             for(auto u:qgraph.GetAllVerticesID()){
 //                 for(auto v:fragment_sim[u]){
-//                     cout<<u<<' '<<fragment.getGlobalID(v)<<endl;
+//                     LOG(INFO)<<u<<' '<<fragment.getGlobalID(v)<<endl;
 //                 }
 //             }
 //

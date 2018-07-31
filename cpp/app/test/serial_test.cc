@@ -7,6 +7,7 @@
 #include "cpp/serial/dual_incremental.h"
 #include "cpp/serial/strongsimulation.h"
 #include "cpp/serial/strong_incremental.h"
+#include "cpp/utils/time.h"
 #include "cpp/utils/util.h"
 #include "cpp/io/io_local.h"
 #include "cpp/core/global.h"
@@ -78,7 +79,7 @@ public:
       Generate generate;
       GraphLoader dgraph_loader;
       dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
-      std::cout<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<std::endl;
+      LOG(INFO)<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<std::endl;
       int i=1;
       while(i<=generate_query_nums){
           Graph qgraph;
@@ -93,7 +94,7 @@ public:
           e0 =clock();
           if(max_dual_set.size()<=max_calculate_center_nodes){
               generate.save_grape_file(qgraph,get_query_vfile(i),get_query_efile(i));
-              std::cout<<i<<' '<<"calculate dual time"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<' '<<max_dual_set.size()<<std::endl;
+              LOG(INFO)<<i<<' '<<"calculate dual time"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<' '<<max_dual_set.size()<<std::endl;
               i++;
           }
       }
@@ -107,7 +108,7 @@ public:
         Graph dgraph1;
         GraphLoader dgraph_loader;
         dgraph_loader.LoadGraph(dgraph1,graph_vfile,graph_efile);
-        cout<<dgraph1.GetNumVertices()<<' '<<dgraph1.GetNumEdges()<<endl;
+        LOG(INFO)<<dgraph1.GetNumVertices()<<' '<<dgraph1.GetNumEdges()<<endl;
     }
 
     void test_add_edges(){
@@ -115,46 +116,46 @@ public:
         GraphLoader dgraph_loader,qgraph_loader;
         Graph qgraph;
         qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-//        cout<<qgraph.GetNumEdges()<<endl;
+//        LOG(INFO)<<qgraph.GetNumEdges()<<endl;
 //        for(auto e:qgraph.GetAllEdges()){
-//            std::cout<<e.src()<<' '<<e.dst()<<endl;
+//            LOG(INFO)<<e.src()<<' '<<e.dst()<<endl;
 //        }
 //        qgraph.AddEdge(Edge(1,2,33));
-//        cout<<qgraph.GetNumEdges()<<endl;
+//        LOG(INFO)<<qgraph.GetNumEdges()<<endl;
 //        for(auto e:qgraph.GetAllEdges()){
-//            std::cout<<e.src()<<' '<<e.dst()<<endl;
+//            LOG(INFO)<<e.src()<<' '<<e.dst()<<endl;
 //        }
 //        qgraph.AddEdge(Edge(0,2,44));
-//        cout<<qgraph.GetNumEdges()<<endl;
+//        LOG(INFO)<<qgraph.GetNumEdges()<<endl;
 //        for(auto e:qgraph.GetAllEdges()){
-//            std::cout<<e.src()<<' '<<e.dst()<<endl;
+//            LOG(INFO)<<e.src()<<' '<<e.dst()<<endl;
 //        }
 //        qgraph.AddEdge(Edge(0,1,55));
-//        cout<<qgraph.GetNumEdges()<<endl;
+//        LOG(INFO)<<qgraph.GetNumEdges()<<endl;
 //        for(auto e:qgraph.GetAllEdges()){
-//            std::cout<<e.src()<<' '<<e.dst()<<endl;
+//            LOG(INFO)<<e.src()<<' '<<e.dst()<<endl;
 //        }
         std::unordered_set<Edge> edge_set;
         for(auto e:qgraph.GetAllEdges()){
             edge_set.insert(e);
         }
-        std::cout<<edge_set.size()<<endl;
+        LOG(INFO)<<edge_set.size()<<endl;
         edge_set.insert(Edge(0,1,44));
-        std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
+        LOG(INFO)<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
         for(auto e:edge_set){
-            std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
+            LOG(INFO)<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
         }
 
         edge_set.insert(Edge(0,2,55));
-        std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
+        LOG(INFO)<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
         for(auto e:edge_set){
-            std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
+            LOG(INFO)<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
         }
 
         edge_set.insert(Edge(1,2,88));
-        std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
+        LOG(INFO)<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
         for(auto e:edge_set){
-            std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
+            LOG(INFO)<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
         }
     }
 
@@ -169,11 +170,14 @@ public:
             qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
             std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
             bool initialized_sim = false;
+            double starttime = get_current_time();
             dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
+            double endtime = get_current_time();
             for(auto u :qgraph.GetAllVerticesID()){
-                cout<<sim[u].size()<<endl;
+                LOG(INFO)<<sim[u].size()<<endl;
             }
-            save_sim_result(qgraph,sim,"../data/dualresult"+std::to_string(index));
+            LOG(INFO) << "Total Time : " << endtime -starttime << "s";
+            save_sim_result(qgraph,sim,FLAGS_result_dir +"/dualresult"+std::to_string(index));
             index+=1;
         }
     }
@@ -211,14 +215,14 @@ public:
                dgraph.AddEdge(Edge(e.first,e.second,1));
             }
             dualinc.incremental_addedges(dgraph,qgraph,incdsim,add_edges);
-            std::cout<<index<<' '<<j<<' '<<dual_the_same(qgraph,direct_sim,incdsim)<<std::endl;
+            LOG(INFO)<<index<<' '<<j<<' '<<dual_the_same(qgraph,direct_sim,incdsim)<<std::endl;
             for(auto e :rm_edges){
                 dgraph.RemoveEdge(Edge(e.first,e.second,1));
             }
             direct_sim.clear();
             dualsim.dual_simulation(dgraph,qgraph,direct_sim,initialized_sim);
             dualinc.incremental_removeedgs(dgraph,qgraph,incdsim,rm_edges);
-            std::cout<<index<<' '<<j<<' '<<dual_the_same(qgraph,direct_sim,incdsim)<<std::endl;
+            LOG(INFO)<<index<<' '<<j<<' '<<dual_the_same(qgraph,direct_sim,incdsim)<<std::endl;
             for(auto e:rm_edges){
                 dgraph.AddEdge(Edge(e.first,e.second,1));
             }
@@ -245,7 +249,7 @@ public:
       start =clock();
       strongs.strong_simulation_sim(dgraph,qgraph);
       end = clock();
-//      std::cout<<"strong simulation time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+//      LOG(INFO)<<"strong simulation time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
       index +=1;
    }
  }
@@ -268,9 +272,9 @@ public:
             vie.containCheck(qgraph);
             std::vector<int> result=vie.minContain(qgraph);
             for(auto num:result){
-               std::cout<<num<<' ';
+               LOG(INFO)<<num<<' ';
             }
-            std::cout<<endl;
+            LOG(INFO)<<endl;
 //            vie.traverse_ViewGraph();
             index+=1;
         }
@@ -283,10 +287,10 @@ public:
             Graph qgraph;
             View vie;
             GraphLoader qgraph_loader;
-           // cout<<is_exist_file(view_file+std::to_string(index));
+           // LOG(INFO)<<is_exist_file(view_file+std::to_string(index));
             string tmp_path = view_file+std::to_string(index);
             if(!is_exist_file(tmp_path)){
-                 //cout<<"file does not exist,prepare to mkdir"<<endl;
+                 //LOG(INFO)<<"file does not exist,prepare to mkdir"<<endl;
                  make_dir(tmp_path);
             }
             qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
@@ -302,11 +306,11 @@ public:
                 if(result.size()==3){
                     continue;
                 }
-                cout<<index<<' '<<"minicontain nums ";
+                LOG(INFO)<<index<<' '<<"minicontain nums ";
                 for(auto num:result){
-                   std::cout<<num<<' ';
+                   LOG(INFO)<<num<<' ';
                 }
-                std::cout<<endl;
+                LOG(INFO)<<endl;
                 std::vector<Graph*> tmp_view_list= vie.get_ViewGraph_list();
                 for(int i=0;i<tmp_view_list.size();++i){
                     generate.save_grape_file(*tmp_view_list[i],get_view_vfile(index,i+1),get_view_efile(index,i+1));
@@ -319,12 +323,12 @@ public:
     vector<float> compare_direct_and_view_strongresult(Graph &qgraph, std::vector<StrongR> &direct_strong_result,std::vector<StrongR> &view_strong_result){
         vector<float> result;
         if(direct_strong_result.size()!=view_strong_result.size()){
-            cout<<"size not the same "<<direct_strong_result.size()<<' '<<view_strong_result.size()<<endl;
+            LOG(INFO)<<"size not the same "<<direct_strong_result.size()<<' '<<view_strong_result.size()<<endl;
             return result;
         }
         for(int i=0;i<direct_strong_result.size();++i){
             if(direct_strong_result[i].center() != view_strong_result[i].center()){
-                cout<<"have different center result"<<endl;
+                LOG(INFO)<<"have different center result"<<endl;
                 return result;
             }
         }
@@ -346,10 +350,10 @@ public:
                 }
             }
             if(diff(view_result_node,direct_result_node).size()>0){
-               cout<<"error : view result > direct result"<<endl;
+               LOG(INFO)<<"error : view result > direct result"<<endl;
                return result;
             }else{
-                //cout<<"view node is subset of direct node "<<direct_result_node.size()<<' '<<view_result_node.size()<<endl;
+                //LOG(INFO)<<"view node is subset of direct node "<<direct_result_node.size()<<' '<<view_result_node.size()<<endl;
                 result.push_back(float(view_result_node.size()*1.0/direct_result_node.size()));
             }
             }
@@ -362,7 +366,7 @@ public:
         Graph dgraph;
         GraphLoader dgraph_loader,qgraph_loader;
         dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
-       // cout<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<endl;
+       // LOG(INFO)<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<endl;
         while(index<200){
             Graph qgraph;
             qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
@@ -377,10 +381,10 @@ public:
             StrongSim strongs;
             vector<StrongR> direct_strong_result= strongs.strong_simulation_sim(dgraph,qgraph);
 
-           //cout<<view_strong_result.size()<<' '<<direct_strong_result.size()<<endl;
+           //LOG(INFO)<<view_strong_result.size()<<' '<<direct_strong_result.size()<<endl;
            vector<float> compare_rate = compare_direct_and_view_strongresult(qgraph,direct_strong_result,view_strong_result);
            for(auto f:compare_rate){
-               cout<<index<<' '<<f<<endl;
+               LOG(INFO)<<index<<' '<<f<<endl;
             }
             index+=1;
         }
@@ -416,12 +420,12 @@ int main(int argc, char *argv[]) {
   Serial serial("paint",1);
   //serial.generate_random_dgraph(100,1.20,5);
   //serial.generate_query(200,5,40);
-//  serial.test_dualsimulation();
+  serial.test_dualsimulation();
 //  serial.test_dual_incremental();
 //  serial.test_strongsimulation();
 //  serial.test_add_edges();
-    serial.generate_query_view(3);
-    serial.test_view_query();
+//    serial.generate_query_view(3);
+//    serial.test_view_query();
 //  worker_finalize();
   return 0;
 }

@@ -42,7 +42,7 @@ inline void worker_barrier() {
 DECLARE_string(vfile);
 DECLARE_string(efile);
 DECLARE_string(query_dir);
-DECLARE_string(result_file);
+DECLARE_string(result_dir);
 DECLARE_int32(file_location);
 DECLARE_int32(query_index);
 DECLARE_string(view_file);

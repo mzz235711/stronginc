@@ -16,11 +16,11 @@ int cal_diameter_qgraph(Graph &qgraph){
 
 void print_sim_vertex_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
         for(auto u:qgraph.GetAllVerticesID()){
-            std::cout<<u<<":";
+            LOG(INFO)<<u<<":";
             for(auto v:sim[u]){
-                std::cout<<' '<<v;
+                LOG(INFO)<<' '<<v;
             }
-            std::cout<<endl;
+            LOG(INFO)<<endl;
         }
 
 }
@@ -28,11 +28,11 @@ void print_sim_vertex_result(Graph &qgraph,std::unordered_map<VertexID, std::uno
 void print_sim_edge_result(std::unordered_map<Edge,std::unordered_set<Edge>> &part){
         std::unordered_map<Edge,std::unordered_set<Edge>>::iterator it;
         for(it=part.begin();it !=part.end(); ++it){
-             std::cout<<it->first.src()<<' '<<it->first.dst()<<":";
+             LOG(INFO)<<it->first.src()<<' '<<it->first.dst()<<":";
              for(auto e:it->second){
-                 std::cout<<' '<<e.src()<<' '<<e.dst();
+                 LOG(INFO)<<' '<<e.src()<<' '<<e.dst();
              }
-             std::cout<<endl;
+             LOG(INFO)<<endl;
          }
 }
 
@@ -119,7 +119,7 @@ void save_grape_file(Graph &qgraph, const std::string &v_file, const std::string
    std::fstream out_vfile(v_file,std::ios::out);
    if(!out_vfile)
 	{
-		std::cout<<"the outfile can  not construct";
+		LOG(INFO)<<"the outfile can  not construct";
 		exit(0);
 	}
 	for(auto u:qgraph.GetAllVerticesID()){
@@ -130,7 +130,7 @@ void save_grape_file(Graph &qgraph, const std::string &v_file, const std::string
    std::fstream out_efile(e_file,std::ios::out);
    if(!out_efile)
 	{
-		std::cout<<"the outfile can  not construct";
+		LOG(INFO)<<"the outfile can  not construct";
 		exit(0);
 	}
 	for(auto edge:qgraph.GetAllEdges()){
@@ -159,7 +159,7 @@ void save_sim_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_s
    std::fstream outfile(filename,std::ios::out);
    if(!outfile)
 	{
-		std::cout<<"the outfile can  not construct";
+		LOG(INFO)<<"the outfile can  not construct";
 		exit(0);
 	}
     for(auto u:qgraph.GetAllVerticesID()){
@@ -186,7 +186,7 @@ void load_sim_result(std::unordered_map<VertexID, std::unordered_set<VertexID>> 
             std::stringstream ss;
             ss<<vecstr[i];
             ss>>v;
-            //std::cout<<v<<std::endl;
+            //LOG(INFO)<<v<<std::endl;
             if (i ==0){
               key = v;
               sim[key] = std::unordered_set<VertexID>();
@@ -237,11 +237,11 @@ void Load_bunch_edges(std::set<std::pair<VertexID,VertexID>> &edges,const std::s
 }
 
 void save_edges(std::set<std::pair<VertexID,VertexID>> &edges, const std::string efile){
-  //std::cout<<efile<<std::endl;
+  //LOG(INFO)<<efile<<std::endl;
    std::fstream outfile(efile,std::ios::out);
    if(!outfile)
 	{
-		std::cout<<"the outfile can  not construct";
+		LOG(INFO)<<"the outfile can  not construct";
 		exit(0);
 	}
 	for(auto e:edges){

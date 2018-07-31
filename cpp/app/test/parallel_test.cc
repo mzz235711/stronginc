@@ -49,7 +49,7 @@ void test_fragment_loader(int fid){
 
   for(int i=0;i<10000;i++){
       if(fragment.has_vertex(i)){
-          std::cout<<i<<' '<<fragmentgraph.GetVertexLabel(fragment.getLocalID(i))<<' '<<dgraph.GetVertexLabel(i)<<std::endl;
+          LOG(INFO)<<i<<' '<<fragmentgraph.GetVertexLabel(fragment.getLocalID(i))<<' '<<dgraph.GetVertexLabel(i)<<std::endl;
       }
   }
  }
@@ -88,7 +88,7 @@ void test_dual_parallel(int fid){
             bool initialized_sim = false;
             dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
             worker_barrier();
-            std::cout<<"index: "<<index<<' '<<dual_the_same(qgraph,sim,globalsim)<<std::endl;
+            LOG(INFO)<<"index: "<<index<<' '<<dual_the_same(qgraph,sim,globalsim)<<std::endl;
       }else{
          slaveGather(psim);
          worker_barrier();
@@ -172,7 +172,7 @@ void test_dual_filterparallel(int fid){
             bool initialized_sim = false;
             dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
             worker_barrier();
-            std::cout<<"index: "<<index<<' '<<dual_the_same(qgraph,sim,globalsim)<<std::endl;
+            LOG(INFO)<<"index: "<<index<<' '<<dual_the_same(qgraph,sim,globalsim)<<std::endl;
 
       }else{
          slaveGather(psim);
@@ -198,10 +198,10 @@ void test_bfs(int fid){
      if (fid ==0){
          for(auto v : p){
             if (DistInf.find(v) == DistInf.end()){
-                std::cout<<INT_MAX<<' '<<dis[v]<<' '<<std::endl;
+                LOG(INFO)<<INT_MAX<<' '<<dis[v]<<' '<<std::endl;
             }
              if(DistInf[v] != dis[v] ){
-                std::cout<<"root: "<<i<<"target: "<<v<<' '<<DistInf[v]<<' '<<dis[v]<<std::endl;
+                LOG(INFO)<<"root: "<<i<<"target: "<<v<<' '<<DistInf[v]<<' '<<dis[v]<<std::endl;
              }
          }
      }
@@ -236,13 +236,13 @@ void test_bfs_khop(int fid){
         worker_barrier();
         std::unordered_set<VertexID> direct_result;
         dgraph.find_hop_nodes(root,bound, direct_result);
-//        std::cout<<"false "<<root<<' '<<bound<<' '<<global_node.size()<<' '<<direct_resutl.size()<<std::endl;
+//        LOG(INFO)<<"false "<<root<<' '<<bound<<' '<<global_node.size()<<' '<<direct_resutl.size()<<std::endl;
         if (global_node.size() != direct_result.size()){
-            std::cout<<"false "<<root<<' '<<bound<<' '<<global_node.size()<<' '<<direct_result.size()<<std::endl;
+            LOG(INFO)<<"false "<<root<<' '<<bound<<' '<<global_node.size()<<' '<<direct_result.size()<<std::endl;
         }else{
             for(auto v :global_node){
                 if(direct_result.find(v) == direct_result.end()){
-                    std::cout<<"flas "<<std::endl;
+                    LOG(INFO)<<"flas "<<std::endl;
                 }
             }
         }
@@ -322,13 +322,13 @@ void test_multikhop(int fid){
                     global_affected_nodes.insert(v);
                 }
             }
-            cout<<i<<' '<<global_affected_nodes.size()<<' '<<all_affected_nodes.size()<<endl;
+            LOG(INFO)<<i<<' '<<global_affected_nodes.size()<<' '<<all_affected_nodes.size()<<endl;
             if(global_affected_nodes.size()!=all_affected_nodes.size()){
-                cout<<"not same size"<<endl;
+                LOG(INFO)<<"not same size"<<endl;
             }else{
                 for(auto v :all_affected_nodes){
                     if(global_affected_nodes.find(v) == global_affected_nodes.end()){
-                        cout<<"not same"<<endl;
+                        LOG(INFO)<<"not same"<<endl;
                         break;
                     }
                 }
@@ -370,11 +370,11 @@ void test_bfs_connectivity(int fid){
         std::unordered_set<VertexID> direct_result;
         dgraph.find_connectivity_nodes(root,direct_result);
         if (global_node.size() != direct_result.size()){
-            std::cout<<"false "<<root<<' '<<global_node.size()<<' '<<direct_result.size()<<std::endl;
+            LOG(INFO)<<"false "<<root<<' '<<global_node.size()<<' '<<direct_result.size()<<std::endl;
         }else{
             for(auto v :global_node){
                 if(direct_result.find(v) == direct_result.end()){
-                    std::cout<<"flas "<<std::endl;
+                    LOG(INFO)<<"flas "<<std::endl;
                 }
             }
         }
@@ -388,7 +388,7 @@ void test_bfs_connectivity(int fid){
 
 bool strong_is_the_same(Graph &qgraph, std::vector<StrongR> &direct_result,std::vector<StrongR> &parallel_result){
 //    if(direct_result.size()!=parallel_result.size()){
-//        cout<<"size not the same"<<endl;
+//        LOG(INFO)<<"size not the same"<<endl;
 //        return false;
 //    }
     for(int i =0;i<direct_result.size();++i){
@@ -398,21 +398,21 @@ bool strong_is_the_same(Graph &qgraph, std::vector<StrongR> &direct_result,std::
                 std::unordered_map<VertexID, std::unordered_set<VertexID>> incsim=parallel_result[j].ballr();
                 if(!dual_the_same(qgraph,dirctsim,incsim)){
                     for(auto u :qgraph.GetAllVerticesID()){
-                        cout<<u;
+                        LOG(INFO)<<u;
                         for(auto v:dirctsim[u]){
-                            cout<<' '<<v;
+                            LOG(INFO)<<' '<<v;
                         }
-                        cout<<endl;
+                        LOG(INFO)<<endl;
                     }
                     for(auto u :qgraph.GetAllVerticesID()){
-                        cout<<u;
+                        LOG(INFO)<<u;
                         for(auto v:incsim[u]){
-                            cout<<' '<<v;
+                            LOG(INFO)<<' '<<v;
                         }
-                        cout<<endl;
+                        LOG(INFO)<<endl;
                     }
-                    cout<<direct_result[i].center()<<' '<<parallel_result[j].center()<<endl;
-                    cout<<"ball result not same"<<endl;
+                    LOG(INFO)<<direct_result[i].center()<<' '<<parallel_result[j].center()<<endl;
+                    LOG(INFO)<<"ball result not same"<<endl;
                     return false;
                 }
             }
@@ -425,21 +425,21 @@ bool strong_is_the_same(Graph &qgraph, std::vector<StrongR> &direct_result,std::
                 std::unordered_map<VertexID, std::unordered_set<VertexID>> incsim=direct_result[j].ballr();
                 if(!dual_the_same(qgraph,dirctsim,incsim)){
 //                    for(auto u :qgraph.GetAllVerticesID()){
-//                        cout<<u;
+//                        LOG(INFO)<<u;
 //                        for(auto v:dirctsim[u]){
-//                            cout<<' '<<v;
+//                            LOG(INFO)<<' '<<v;
 //                        }
-//                        cout<<endl;
+//                        LOG(INFO)<<endl;
 //                    }
 //                    for(auto u :qgraph.GetAllVerticesID()){
-//                        cout<<u;
+//                        LOG(INFO)<<u;
 //                        for(auto v:incsim[u]){
-//                            cout<<' '<<v;
+//                            LOG(INFO)<<' '<<v;
 //                        }
-//                        cout<<endl;
+//                        LOG(INFO)<<endl;
 //                    }
-//                    cout<<direct_result[i].center()<<' '<<parallel_result[j].center()<<endl;
-                    cout<<"ball result not same"<<endl;
+//                    LOG(INFO)<<direct_result[i].center()<<' '<<parallel_result[j].center()<<endl;
+                    LOG(INFO)<<"ball result not same"<<endl;
                     return false;
                 }
             }
@@ -483,7 +483,7 @@ void test_strong_parallel(int fid){
           StrongSim strongsim;
           std::vector<StrongR> direct_result = strongsim.strong_simulation_sim(dgraph,qgraph);
           worker_barrier();
-          std::cout<<"index: "<<index<<' '<<global_result.size()<<' '<<direct_result.size()<<' '<<strong_is_the_same(qgraph,direct_result,global_result)<<std::endl;
+          LOG(INFO)<<"index: "<<index<<' '<<global_result.size()<<' '<<direct_result.size()<<' '<<strong_is_the_same(qgraph,direct_result,global_result)<<std::endl;
       }else{
          slaveGather(partial_result);
          worker_barrier();
@@ -533,7 +533,7 @@ void test_strong_parallel_inc(int fid){
             Load_bunch_edges(add_edges,base_add_file,j);
            // int d_Q=cal_diameter_qgraph(qgraph);
             //std::unordered_set<VertexID> aa=find_affected_area(inc_dgraph,add_edges,rm_edges,2*d_Q);
-           // cout<<(aa.find(8762)!=aa.end())<<' '<<(aa.find(3585)!=aa.end())<<' '<<inc_dgraph.shortest_distance(3585,8762)<<endl;
+           // LOG(INFO)<<(aa.find(8762)!=aa.end())<<' '<<(aa.find(3585)!=aa.end())<<' '<<inc_dgraph.shortest_distance(3585,8762)<<endl;
 //            Load_bunch_edges(rm_edges,base_remove_file,j);
             std::unordered_map<VertexID, std::unordered_set<VertexID>> inc_parallel_dual;
             std::vector<StrongR> inc_parallel_strong;
@@ -567,7 +567,7 @@ void test_strong_parallel_inc(int fid){
               inc_center.insert(ball.center());
           }          
           worker_barrier();
-          std::cout<<index<<' '<<j<<' '<<global_center.size()<<' '<<inc_center.size()<<' '<<intersection(global_center,inc_center).size()<<"=="<<global_result.size()<<' '<<direct_strong.size()<<' '<<strong_is_the_same(qgraph,direct_strong,global_result)<<std::endl;
+          LOG(INFO)<<index<<' '<<j<<' '<<global_center.size()<<' '<<inc_center.size()<<' '<<intersection(global_center,inc_center).size()<<"=="<<global_result.size()<<' '<<direct_strong.size()<<' '<<strong_is_the_same(qgraph,direct_strong,global_result)<<std::endl;
       }else{
          slaveGather(partial_result);
          worker_barrier();
@@ -636,7 +636,7 @@ void test_dual_parallelinc(int fid){
                 sim.clear();
                 dualsim.dual_simulation(inc_graph,qgraph,sim,initialized_sim);
                 worker_barrier();
-                std::cout<<index<<' '<<j<<' '<<dual_the_same(qgraph,sim,globalsim)<<std::endl;
+                LOG(INFO)<<index<<' '<<j<<' '<<dual_the_same(qgraph,sim,globalsim)<<std::endl;
             }else{
                slaveGather(inc_parallel);
                worker_barrier();

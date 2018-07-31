@@ -83,7 +83,7 @@ void StrongInc::find_node_connectivity_nodes(Ball_View &ball_view,std::unordered
 
 void StrongInc::rename_sim(Ball_View &ball_view,Graph &qgraph,
                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-              //std::cout<<w<<std::endl;
+              //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
            for(auto v:ball_view.GetAllVerticesID()){
@@ -266,11 +266,11 @@ void StrongInc::print_ball_info(Graph &qgraph,std::unordered_map<VertexID, std::
 
               }
                          for(auto u :qgraph.GetAllVerticesID()){
-               std::cout<<u;
+               LOG(INFO)<<u;
                for(auto v:printset[u]){
-                   std::cout<<' '<<v;
+                   LOG(INFO)<<' '<<v;
                }
-              std::cout<<std::endl;
+              LOG(INFO)<<std::endl;
               }
 }
 
@@ -381,7 +381,7 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
               max_result.emplace_back(w,S_w);
 //              print_ball_info(qgraph,S_w,w);
 //              break;
-             // std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+             // LOG(INFO)<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
 //              }
           }
           etime=clock();
@@ -389,6 +389,6 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
           for(auto strong_ball :max_result){
               strong_r.push_back(strong_ball);
           }
-         // std::cout<<"inc strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+         // LOG(INFO)<<"inc strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
 //          return max_result;
       }

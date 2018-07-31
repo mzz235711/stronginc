@@ -144,9 +144,9 @@
             return ;
         }
         std::set<std::pair<VertexID,VertexID>> already_matched;
-       // std::cout<<"propagate_add_begin "<<candidate_node.size()<<std::endl;
+       // LOG(INFO)<<"propagate_add_begin "<<candidate_node.size()<<std::endl;
         propagate_add(dgraph,qgraph,candidate_node,aff_node,dsim,already_matched);
-       // std::cout<<"propagate_add finish"<<std::endl;
+       // LOG(INFO)<<"propagate_add finish"<<std::endl;
         std::unordered_set<VertexID> view_nodes;
         for(auto u : qgraph.GetAllVerticesID()){
             for(auto v :aff_node[u]){

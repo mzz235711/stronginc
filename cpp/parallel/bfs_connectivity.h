@@ -50,7 +50,7 @@ template<class T>
            }
            nodeset.insert(u);
            if (fragment.isBorderVertex(fragment.getGlobalID(u))){
-                // std::cout<<"num_fragments "<<NUM_FRAGMENTS<<std::endl;
+                // LOG(INFO)<<"num_fragments "<<NUM_FRAGMENTS<<std::endl;
                std::bitset<NUM_FRAGMENTS> dest= fragment.getMsgThroughDest(fragment.getGlobalID(u));
                 for (int fid = 0; fid < dest.size(); fid++){
                    if (dest.test(fid) && fid != get_worker_id()){
