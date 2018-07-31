@@ -37,9 +37,9 @@ public:
         // this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
         this->query_index = FLAGS_query_index;
         this->graph_vfile = FLAGS_vfile;
-        this->graph_efile = FALGS_efile;
+        this->graph_efile = FLAGS_efile;
         this->view_file = FLAGS_view_file;
-        this->r_file = FLAGS_r_files;
+        this->r_file = FLAGS_r_file;
         this->base_qfile = FLAGS_base_qfile;
         this->base_add_file = FLAGS_base_add_file;
         this->base_remove_file = FLAGS_base_remove_file;
