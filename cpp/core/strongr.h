@@ -7,7 +7,7 @@ public:
 
   ~StrongR(){}
 
-   StrongR(const VertexID &center_id,const std::vector<std::unordered_set<VertexID>> &sim):center_id_(center_id),sim_(sim){
+   StrongR(const VertexID &center_id,const std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim):center_id_(center_id),sim_(sim){
 
    }
 
