@@ -134,6 +134,6 @@ private :
        std::unordered_set<VertexID> innerVertices;
 	   std::unordered_set<VertexID> outerVertices;
 	   int FID;
-	   std::unordered_map<VertexID, std::bitset<NUM_FRAGMENTS>> msgThroughDest;//recored meassage should send to process's id
+	   std::vector<std::bitset<NUM_FRAGMENTS>> msgThroughDest;//recored meassage should send to process's id
 };
 #endif //CPP_FRAGMENT_H_

@@ -8,8 +8,8 @@ Dual_parallelInc::~Dual_parallelInc(){}
 
 void Dual_parallelInc::propagate_add_PEval(Fragment &fragment, Graph &dgraph,Graph &qgraph,
                        std::set<std::pair<VertexID,VertexID>> &candidate_node,
-                       std::unordered_map<VertexID, std::unordered_set<VertexID>> &aff_node,
-                       std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                       std::vector<std::unordered_set<VertexID>> &aff_node,
+                       std::vector<std::unordered_set<VertexID>> &dsim,
                        std::set<std::pair<VertexID,VertexID>> &already_matched){
         while (!candidate_node.empty()){
             std::pair<VertexID,VertexID> pmatch = *candidate_node.begin();
@@ -96,8 +96,8 @@ bool Dual_parallelInc::is_continue(){
 
 void Dual_parallelInc::propagate_add_IncEval(Fragment &fragment, Graph &dgraph,Graph &qgraph,
                        std::set<std::pair<VertexID,VertexID>> &candidate_node,
-                       std::unordered_map<VertexID, std::unordered_set<VertexID>> &aff_node,
-                       std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                       std::vector<std::unordered_set<VertexID>> &aff_node,
+                       std::vector<std::unordered_set<VertexID>> &dsim,
                        std::set<std::pair<VertexID,VertexID>> &already_matched){
     for (auto item :messageBuffers.get_messages()){
         VertexID u = item.second;
@@ -126,11 +126,11 @@ void Dual_parallelInc::propagate_add_IncEval(Fragment &fragment, Graph &dgraph,G
  }
 
 void Dual_parallelInc::incremental_add_edges(Fragment &fragment, Graph &dgraph, Graph &qgraph,
-                                                    std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                                                    std::vector<std::unordered_set<VertexID>> &dsim,
                                                     std::set<std::pair<VertexID,VertexID>> &add_edges){
         const std::unordered_set<VertexID> *OuterVertices = fragment.getOuterVertices();
         std::set<std::pair<VertexID,VertexID>> candidate_node;
-        std::unordered_map<VertexID, std::unordered_set<VertexID>> aff_node;
+        std::vector<std::unordered_set<VertexID>> aff_node;
         for(auto u : qgraph.GetAllVerticesID()){
             aff_node[u] = std::unordered_set<VertexID>();
         }
@@ -162,7 +162,7 @@ void Dual_parallelInc::incremental_add_edges(Fragment &fragment, Graph &dgraph, 
         }
 
         GraphView graph_view(dgraph,&view_nodes);
-        std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
+        std::vector<std::vector<int>> sim_counter_post,sim_counter_pre;
         for (auto w : view_nodes){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -216,7 +216,7 @@ void Dual_parallelInc::incremental_add_edges(Fragment &fragment, Graph &dgraph, 
    }
 
 void Dual_parallelInc::incremental_remove_edgs(Fragment &fragment, Graph &dgraph,Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                           std::vector<std::unordered_set<VertexID>> &dsim,
                            std::set<std::pair<VertexID,VertexID>> &rm_edges){
         const std::unordered_set<VertexID> *OuterVertices = fragment.getOuterVertices();
         std::unordered_set<VertexID> view_nodes;
@@ -226,7 +226,7 @@ void Dual_parallelInc::incremental_remove_edgs(Fragment &fragment, Graph &dgraph
             }
         }
         GraphView graph_view(dgraph,&view_nodes);
-        std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
+        std::vector<std::vector<int>> sim_counter_post,sim_counter_pre;
         for (auto w : view_nodes){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -284,10 +284,10 @@ void Dual_parallelInc::incremental_remove_edgs(Fragment &fragment, Graph &dgraph
  }
 
 void Dual_parallelInc::propagate_remove_PEval(Fragment &fragment,GraphView &graph_view,Graph &qgraph,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &aff_node,
+                          std::vector<std::unordered_set<VertexID>> &aff_node,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post,
                           std::set<std::pair<VertexID,VertexID>> &already_matched){
         const std::unordered_set<VertexID> *OuterVertices = fragment.getOuterVertices();
         while(!filter_set.empty()){
@@ -331,10 +331,10 @@ void Dual_parallelInc::propagate_remove_PEval(Fragment &fragment,GraphView &grap
 }
 
 void Dual_parallelInc::propagate_remove_IncEval(Fragment &fragment,GraphView &graph_view,Graph &qgraph,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &aff_node,
+                          std::vector<std::unordered_set<VertexID>> &aff_node,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post,
                           std::set<std::pair<VertexID,VertexID>> &already_matched){
     const std::unordered_set<VertexID> *OuterVertices = fragment.getOuterVertices();
     for (auto item :messageBuffers.get_messages()){
@@ -368,7 +368,7 @@ void Dual_parallelInc::propagate_remove_IncEval(Fragment &fragment,GraphView &gr
  }
 
 void Dual_parallelInc::dual_parallel_incremental(Fragment &fragment, Graph &dgraph, Graph &qgraph,
-                                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                                           std::vector<std::unordered_set<VertexID>> &dsim,
                                            std::set<std::pair<VertexID,VertexID>> &add_edges,
                                            std::set<std::pair<VertexID,VertexID>> &rm_edges){
 
@@ -408,8 +408,8 @@ void Dual_parallelInc::update_by_remove_edges(Fragment &fragment,Graph &dgraph,s
         fragment.update_fragment_remove_edges(dgraph,rm_edges_,communication_next);
     }
 
- void Dual_parallelInc::out_global_result(Fragment &fragment,  Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
+ void Dual_parallelInc::out_global_result(Fragment &fragment,  Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim){
+    std::vector<std::unordered_set<VertexID>> tmp_sim;
     for(auto u :qgraph.GetAllVerticesID()){
         tmp_sim[u] = std::unordered_set<VertexID>();
         for(auto v :sim[u]){
@@ -425,8 +425,8 @@ void Dual_parallelInc::update_by_remove_edges(Fragment &fragment,Graph &dgraph,s
  }
 
 
-void Dual_parallelInc::print_global_info(Fragment &fragment, Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim){
-       std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
+void Dual_parallelInc::print_global_info(Fragment &fragment, Graph &qgraph, std::vector<std::unordered_set<VertexID>> &dsim){
+       std::vector<std::unordered_set<VertexID>>  sim;
       for(auto u:qgraph.GetAllVerticesID()){
           sim[u] = std::unordered_set<VertexID>();
           for(auto v :dsim[u]){
@@ -436,10 +436,10 @@ void Dual_parallelInc::print_global_info(Fragment &fragment, Graph &qgraph, std:
       out_global_result(fragment,qgraph,sim);
       int fid =get_worker_id();
       if (fid==0){
-            std::vector<std::unordered_map<VertexID, std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
+            std::vector<std::vector<std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
             tmp_vec[fid] = sim;
             masterGather(tmp_vec);
-            std::unordered_map<VertexID, std::unordered_set<VertexID>>  globalsim;
+            std::vector<std::unordered_set<VertexID>>  globalsim;
             for(auto u :qgraph.GetAllVerticesID()){
                  globalsim[u] = std::unordered_set<VertexID>();
              }

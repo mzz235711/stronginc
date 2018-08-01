@@ -5,9 +5,9 @@
 
 
     void Dual_Incfilter::dual_counter_initialization(GraphView &graph_view, Graph &qgraph,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim){
+                                     std::vector<std::vector<int>> &sim_counter_post,
+                                     std::vector<std::vector<int>> &sim_counter_pre,
+                                     std::vector<std::unordered_set<VertexID>> &dsim){
         for (auto w : graph_view.GetAllVerticesID()){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -30,8 +30,8 @@
     }
 
     void Dual_Incfilter::update_counter(GraphView &graph_view,Graph &qgraph,VertexID u,VertexID v,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         for(auto vp : graph_view.GetParentsID(v)){
             if (sim_counter_post.find(vp)!=sim_counter_post.end()){
                 if(sim_counter_post[vp][u]>0){
@@ -50,9 +50,9 @@
 
     void Dual_Incfilter::decremental_rmove(Fragment &fragment, GraphView &graph_view,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         while(!filter_set.empty()){
             std::pair<VertexID,VertexID> pmatch = *filter_set.begin();
             VertexID u = pmatch.first;
@@ -90,11 +90,11 @@
       }
 
     void Dual_Incfilter::dual_incfilter(Fragment &fragment, GraphView &graph_view, Graph &qgraph,
-                                             std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim){
+                                             std::vector<std::unordered_set<VertexID>> &dsim){
         OuterVertices = const_cast<std::unordered_set<VertexID> *>(fragment.getOuterVertices());
         innerVertices = const_cast<std::unordered_set<VertexID> *>(fragment.getInnerVertices());
         std::set<std::pair<VertexID,VertexID>>  filter_set;
-        std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
+        std::vector<std::vector<int>> sim_counter_post,sim_counter_pre;
         worker_barrier();
         pEval(fragment, graph_view, qgraph,filter_set,dsim,sim_counter_pre, sim_counter_post);
         worker_barrier();
@@ -108,9 +108,9 @@
 
     void Dual_Incfilter::pEval(Fragment &fragment, GraphView &graph_view, Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         dual_counter_initialization(graph_view, qgraph, sim_counter_post, sim_counter_pre, dsim);
         for (auto u :qgraph.GetAllVerticesID()){
             for (auto v : dsim[u]){
@@ -136,9 +136,9 @@
 
     void Dual_Incfilter::incEval(Fragment &fragment, GraphView &graph_view, Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
       for (auto item : messageBuffers.get_messages()){
           VertexID u = item.first;
           VertexID v = fragment.getLocalID(item.second);
@@ -183,8 +183,8 @@
     }
    }
 
-    void Dual_Incfilter::out_global_result(Fragment &fragment,  Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
+    void Dual_Incfilter::out_global_result(Fragment &fragment,  Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim){
+    std::vector<std::unordered_set<VertexID>> tmp_sim;
     for(auto u :qgraph.GetAllVerticesID()){
         tmp_sim[u] = std::unordered_set<VertexID>();
         for(auto v :sim[u]){

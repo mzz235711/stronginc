@@ -7,7 +7,7 @@ public:
 
   ~StrongR(){}
 
-   StrongR(const VertexID &center_id,const std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim):center_id_(center_id),sim_(sim){
+   StrongR(const VertexID &center_id,const std::vector<std::unordered_set<VertexID>> &sim):center_id_(center_id),sim_(sim){
 
    }
 
@@ -15,7 +15,7 @@ public:
     return center_id_;
   }
 
-  inline const std::unordered_map<VertexID, std::unordered_set<VertexID>> & ballr() const {
+  inline const std::vector<std::unordered_set<VertexID>> & ballr() const {
     return sim_;
   }
 
@@ -24,7 +24,7 @@ public:
   }
 public:
    VertexID center_id_;
-   std::unordered_map<VertexID, std::unordered_set<VertexID>> sim_;
+   std::vector<std::unordered_set<VertexID>> sim_;
 };
 namespace std
 {

@@ -21,7 +21,7 @@ int StrongSim::cal_diameter_qgraph(Graph &qgraph){
       }
 
 
-bool StrongSim::valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w){
+bool StrongSim::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w){
           for(auto u : qgraph.GetAllVerticesID()){
               if(sim[u].size()==0){
                   return false;
@@ -82,7 +82,7 @@ void StrongSim::find_node_connectivity_nodes(Ball_View &ball_view,std::unordered
 }
 
 void StrongSim::rename_sim(Ball_View &ball_view,Graph &qgraph,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+                               std::vector<std::unordered_set<VertexID>> &sim){
               //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
@@ -97,9 +97,9 @@ void StrongSim::rename_sim(Ball_View &ball_view,Graph &qgraph,
      }
 
 void StrongSim::ss_counter_initialization(Ball_View &ball_view,Graph &qgraph,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                                     std::vector<std::vector<int>> &sim_counter_pre,
+                                     std::vector<std::vector<int>> &sim_counter_post,
+                                     std::vector<std::unordered_set<VertexID>> &S_w){
         for (auto w : ball_view.GetAllVerticesID()){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -122,9 +122,9 @@ void StrongSim::ss_counter_initialization(Ball_View &ball_view,Graph &qgraph,
  }
 
  void StrongSim::dual_filter_match(Ball_View &refined_ball, Graph &qgraph,
-                      std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w,VertexID w,int d_Q){
+                      std::vector<std::unordered_set<VertexID>> &S_w,VertexID w,int d_Q){
         std::set<std::pair<VertexID,VertexID> > filter_set;
-        std::unordered_map<VertexID, std::vector<int> > sim_counter_pre,sim_counter_post;
+        std::vector<std::vector<int> > sim_counter_pre,sim_counter_post;
         ss_counter_initialization(refined_ball,qgraph, sim_counter_pre,sim_counter_post,S_w);
         push_phase(refined_ball,qgraph,w,d_Q, filter_set, sim_counter_pre, sim_counter_post,S_w);
         decremental_refine(refined_ball,qgraph, filter_set,sim_counter_pre,sim_counter_post,S_w);
@@ -132,9 +132,9 @@ void StrongSim::ss_counter_initialization(Ball_View &ball_view,Graph &qgraph,
 
 void StrongSim::push_phase(Ball_View &ball,Graph &qgraph,VertexID w,int d_Q,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post,
+                          std::vector<std::unordered_set<VertexID>> &S_w){
 
          for (auto u :qgraph.GetAllVerticesID()){
             for (auto v : S_w[u]){
@@ -156,8 +156,8 @@ void StrongSim::push_phase(Ball_View &ball,Graph &qgraph,VertexID w,int d_Q,
 
 
  void StrongSim::update_counter(Ball_View &ball,Graph &qgraph,VertexID u,VertexID v,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         for(auto vp : ball.GetParentsID(v)){
             if (sim_counter_post.find(vp)!=sim_counter_post.end()){
                 if(sim_counter_post[vp][u]>0){
@@ -176,9 +176,9 @@ void StrongSim::push_phase(Ball_View &ball,Graph &qgraph,VertexID w,int d_Q,
 
 void StrongSim::decremental_refine(Ball_View &ball_view,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post,
+                          std::vector<std::unordered_set<VertexID>> &S_w){
         while(!filter_set.empty()){
             std::pair<VertexID,VertexID> pmatch = *filter_set.begin();
             VertexID u = pmatch.first;
@@ -209,7 +209,7 @@ void StrongSim::decremental_refine(Ball_View &ball_view,Graph &qgraph,
     }
 
 void StrongSim::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph &qgraph,VertexID w,
-                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                                std::vector<std::unordered_set<VertexID>> &S_w){
     if(!valid_sim_w(qgraph,S_w,w)){
         for (auto u : qgraph.GetAllVerticesID()){
             S_w[u].clear();
@@ -255,7 +255,7 @@ void StrongSim::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph &qgraph,
 
 
 
-void StrongSim::print_ball_info(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w,VertexID w){
+void StrongSim::print_ball_info(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &S_w,VertexID w){
       std::unordered_map<VertexID,std::set<VertexID>> printset;
       for(auto u :qgraph.GetAllVerticesID()){
           printset[u]=std::set<VertexID>();
@@ -305,7 +305,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
 
               std::unordered_set<VertexID> ball_filter_node;
               std::unordered_set<Edge> ball_filter_edge;
-              std::unordered_map<VertexID, std::unordered_set<VertexID>> S_w;
+              std::vector<std::unordered_set<VertexID>> S_w;
               for(auto u : qgraph.GetAllVerticesID()){
                   for (auto v : global_sim[u]){
                       if(ball_node.find(v) != ball_node.end()){

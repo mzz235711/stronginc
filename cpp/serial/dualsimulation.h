@@ -31,13 +31,13 @@ class DualSim {
                                std::vector<std::unordered_set<VertexID>> &remove_succ);
 
 
-    void reunordered_map_data_id(std::unordered_map<VertexID, VertexID> &t_f,Graph &dgraph);
+    void reunordered_map_data_id(std::vector<VertexID> &t_f,Graph &dgraph);
 
     void dual_counter_initialization(Graph &dgraph, Graph &qgraph,
                                      std::vector<std::vector<int>> &sim_counter_post,
                                      std::vector<std::vector<int>> &sim_counter_pre,
                                      std::vector<std::unordered_set<VertexID>> &sim,
-                                     std::unordered_map<VertexID, VertexID> &t_f);
+                                     std::vector<VertexID> &t_f);
 
     VertexID find_nonempty_remove(Graph &qgraph,
                            std::vector<std::unordered_set<VertexID>> &remove_pred,
@@ -47,7 +47,7 @@ class DualSim {
                             std::vector<std::vector<int>> &sim_counter_post,
                             std::vector<std::vector<int>> &sim_counter_pre,
                             VertexID u,VertexID w,
-                            std::unordered_map<VertexID, VertexID> &t_f);
+                            std::vector<VertexID> &t_f);
 
     bool match_check(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim);
 	

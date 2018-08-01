@@ -48,7 +48,7 @@ public:
       for(auto e : add_edges){
           dgraph.AddEdge(Edge(e.first,e.second,1));
       }
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+    std::vector<std::unordered_set<VertexID>> sim;
     DualSim dualsim;
     bool initialized_sim=false;
     dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
@@ -78,7 +78,7 @@ public:
       for(auto e : remove_edges){
           dgraph.RemoveEdge(Edge(e.first,e.second,1));
       }
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+    std::vector<std::unordered_set<VertexID>> sim;
     DualSim dualsim;
     bool initialized_sim=false;
     dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
@@ -191,7 +191,7 @@ public:
         Graph qgraph;
         qgraph_loader.LoadGraph(qgraph,get_query_vfile(query_index),get_query_efile(query_index));
         int d_Q = cal_diameter_qgraph(qgraph);
-        std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+        std::vector<std::unordered_set<VertexID>> sim;
         DualInc dualinc;
         DualSim dualsim;
         bool initialized_sim=false;
@@ -206,7 +206,7 @@ public:
         int j=1;
         while(j<circle_num){
             std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
-            std::unordered_map<VertexID, std::unordered_set<VertexID>> incdsim;
+            std::vector<std::unordered_set<VertexID>> incdsim;
             for(auto u :qgraph.GetAllVerticesID()){
                 incdsim[u]=std::unordered_set<VertexID>();
                 for(auto v:sim[u]){
@@ -467,7 +467,7 @@ std::vector<StrongR> calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
   Generate generate;
       Graph qgraph;
       qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+      std::vector<std::unordered_set<VertexID>> sim;
       clock_t s0,e0;
       s0 =clock();
       std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim(dgraph,qgraph);
@@ -503,7 +503,7 @@ std::vector<StrongR> calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
               }
           }
           std::vector<StrongR> tmp_r;
-          std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
+          std::vector<std::unordered_set<VertexID>> tmp_sim;
           for(auto ball:strongsimr){
               tmp_r.push_back(ball);
           }
@@ -640,7 +640,7 @@ void print_affected_center_info(int circle_num){
   Generate generate;
       Graph qgraph;
       qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+      std::vector<std::unordered_set<VertexID>> sim;
       clock_t s0,e0;
       s0 =clock();
       std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim(dgraph,qgraph);
@@ -670,7 +670,7 @@ void print_affected_center_info(int circle_num){
          //     }
          // }
           std::vector<StrongR> tmp_r;
-          std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
+          std::vector<std::unordered_set<VertexID>> tmp_sim;
           for(auto ball:strongsimr){
               tmp_r.push_back(ball);
           }

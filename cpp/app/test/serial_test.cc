@@ -169,7 +169,7 @@ public:
         while(index<2){
             Graph qgraph;
             qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-            // std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
+            // std::vector<std::unordered_set<VertexID>>  sim;
             std::vector<std::unordered_set<VertexID>> sim(dvnum);
             bool initialized_sim = false;
             double starttime = get_current_time();
@@ -339,8 +339,8 @@ public:
         }
 
         for(int i=0;i<direct_strong_result.size();++i){
-            std::unordered_map<VertexID, std::unordered_set<VertexID>> dirctsim=direct_strong_result[i].ballr();
-            std::unordered_map<VertexID, std::unordered_set<VertexID>> viewsim=view_strong_result[i].ballr();
+            std::vector<std::unordered_set<VertexID>> dirctsim=direct_strong_result[i].ballr();
+            std::vector<std::unordered_set<VertexID>> viewsim=view_strong_result[i].ballr();
             if(dual_the_same(qgraph,dirctsim,viewsim)){
                 result.push_back(1.0);
             }else{

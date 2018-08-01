@@ -21,7 +21,7 @@ int Strong_Parallel::cal_diameter_qgraph(Graph &qgraph){
       }
 
 void Strong_Parallel::rename_sim(GraphView &ball_view,Graph &qgraph,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+                               std::vector<std::unordered_set<VertexID>> &sim){
               //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
@@ -36,7 +36,7 @@ void Strong_Parallel::rename_sim(GraphView &ball_view,Graph &qgraph,
      }
 
 void Strong_Parallel::broad_all_dual_node(Fragment &fragment,Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
+                           std::vector<std::unordered_set<VertexID>> &sim,
                            std::unordered_set<VertexID> &center_node){
    //std::unordered_set<VertexID> local_sim_node;
    for(auto u:qgraph.GetAllVerticesID()){
@@ -61,8 +61,8 @@ void Strong_Parallel::get_ball_nodes(Fragment &fragment, Graph &dgraph, std::uno
 }
 
 
-void Strong_Parallel::connectivity_prune(Fragment fragment,Graph &dgraph,Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,int w,
-                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w,
+void Strong_Parallel::connectivity_prune(Fragment fragment,Graph &dgraph,Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,int w,
+                            std::vector<std::unordered_set<VertexID>> &S_w,
                             std::unordered_set<VertexID> &ball_node,
                             std::unordered_set<VertexID> &prune_node){
         std::unordered_set<VertexID> vertexset;
@@ -93,14 +93,14 @@ void Strong_Parallel::connectivity_prune(Fragment fragment,Graph &dgraph,Graph &
         bfs_connectivity.bfs_parallel(fragment,ball_view,prune_node,w);
   }
 
-void Strong_Parallel::print_ball_info(Fragment &fragment, Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+void Strong_Parallel::print_ball_info(Fragment &fragment, Graph &qgraph, std::vector<std::unordered_set<VertexID>> &S_w){
       int fid = get_worker_id();
-      std::unordered_map<VertexID, std::unordered_set<VertexID>>  ballsim;
+      std::vector<std::unordered_set<VertexID>>  ballsim;
       for(auto u :qgraph.GetAllVerticesID()){
           ballsim[u] = std::unordered_set<VertexID>();
       }
       if (fid==0){
-            std::vector<std::unordered_map<VertexID, std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
+            std::vector<std::vector<std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
             tmp_vec[fid] = S_w;
             masterGather(tmp_vec);
             for(int i=0;i<get_num_workers();i++){
@@ -129,8 +129,8 @@ void Strong_Parallel::print_ball_info(Fragment &fragment, Graph &qgraph, std::un
 }
 
 
-void Strong_Parallel::out_global_result(Fragment &fragment, Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
+void Strong_Parallel::out_global_result(Fragment &fragment, Graph &qgraph, std::vector<std::unordered_set<VertexID>> &S_w){
+    std::vector<std::unordered_set<VertexID>> tmp_sim;
     for(auto u :qgraph.GetAllVerticesID()){
         tmp_sim[u] = std::unordered_set<VertexID>();
         for(auto v :S_w[u]){
@@ -149,7 +149,7 @@ void Strong_Parallel::out_global_result(Fragment &fragment, Graph &qgraph, std::
 void Strong_Parallel::strongsim_parallel(Fragment &fragment, Graph &dgraph,Graph &qgraph){
     int d_Q = cal_diameter_qgraph(qgraph);
     Dual_Parallel dualparallel;
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+    std::vector<std::unordered_set<VertexID>> sim;
     dualparallel.dual_paraller(fragment,dgraph,qgraph,sim);
     worker_barrier();
     std::unordered_set<VertexID> center_node;
@@ -158,7 +158,7 @@ void Strong_Parallel::strongsim_parallel(Fragment &fragment, Graph &dgraph,Graph
         worker_barrier();
         std::unordered_set<VertexID> ball_node,prune_node;
         get_ball_nodes(fragment,dgraph,ball_node,w,d_Q);
-        std::unordered_map<VertexID, std::unordered_set<VertexID>> S_w;
+        std::vector<std::unordered_set<VertexID>> S_w;
         connectivity_prune(fragment,dgraph,qgraph,sim, w,S_w,ball_node,prune_node);
         GraphView refined_ball_view(dgraph,&prune_node);
 

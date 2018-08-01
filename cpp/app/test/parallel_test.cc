@@ -67,14 +67,14 @@ void test_dual_parallel(int fid){
   while (index <200){
       Graph qgraph;
       qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> sim,psim;
+      std::vector<std::unordered_set<VertexID>> sim,psim;
       Dual_Parallel dualparallel;
       dualparallel.dual_paraller(fragment,fragmentgraph,qgraph,psim);
       if (fid==0){
-            std::vector<std::unordered_map<VertexID, std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
+            std::vector<std::vector<std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
             tmp_vec[fid] = psim;
             masterGather(tmp_vec);
-            std::unordered_map<VertexID, std::unordered_set<VertexID>>  globalsim;
+            std::vector<std::unordered_set<VertexID>>  globalsim;
             for(auto u :qgraph.GetAllVerticesID()){
                  globalsim[u] = std::unordered_set<VertexID>();
              }
@@ -109,12 +109,12 @@ void test_dual_filterparallel(int fid){
   while (index <200){
       Graph qgraph;
       qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> sim,psim;
+      std::vector<std::unordered_set<VertexID>> sim,psim;
 
       Dual_Parallel dualparallel(fragment);
       bool initialized_sim = false;
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> remove_pred;
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> remove_succ;
+      std::vector<std::unordered_set<VertexID>> remove_pred;
+      std::vector<std::unordered_set<VertexID>> remove_succ;
 
       dualparallel.dual_sim_initialization(fragment, fragmentgraph, qgraph,psim, initialized_sim,remove_pred,remove_succ);
       MessageBuffer<std::pair < VertexID, int>> messageBuffers;
@@ -154,10 +154,10 @@ void test_dual_filterparallel(int fid){
       dual_incfilter.dual_incfilter(fragment,graph_view,qgraph,psim);
 
       if (fid==0){
-            std::vector<std::unordered_map<VertexID, std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
+            std::vector<std::vector<std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
             tmp_vec[fid] = psim;
             masterGather(tmp_vec);
-            std::unordered_map<VertexID, std::unordered_set<VertexID>>  globalsim;
+            std::vector<std::unordered_set<VertexID>>  globalsim;
             for(auto u :qgraph.GetAllVerticesID()){
                  globalsim[u] = std::unordered_set<VertexID>();
              }
@@ -395,8 +395,8 @@ bool strong_is_the_same(Graph &qgraph, std::vector<StrongR> &direct_result,std::
     for(int i =0;i<direct_result.size();++i){
         for(int j=0;j<parallel_result.size();++j){
             if(direct_result[i].center() == parallel_result[j].center()){
-                std::unordered_map<VertexID, std::unordered_set<VertexID>> dirctsim=direct_result[i].ballr();
-                std::unordered_map<VertexID, std::unordered_set<VertexID>> incsim=parallel_result[j].ballr();
+                std::vector<std::unordered_set<VertexID>> dirctsim=direct_result[i].ballr();
+                std::vector<std::unordered_set<VertexID>> incsim=parallel_result[j].ballr();
                 if(!dual_the_same(qgraph,dirctsim,incsim)){
                     for(auto u :qgraph.GetAllVerticesID()){
                         LOG(INFO)<<u;
@@ -422,8 +422,8 @@ bool strong_is_the_same(Graph &qgraph, std::vector<StrongR> &direct_result,std::
     for(int i =0;i<parallel_result.size();++i){
         for(int j=0;j<direct_result.size();++j){
             if(parallel_result[i].center() == direct_result[j].center()){
-                std::unordered_map<VertexID, std::unordered_set<VertexID>> dirctsim=parallel_result[i].ballr();
-                std::unordered_map<VertexID, std::unordered_set<VertexID>> incsim=direct_result[j].ballr();
+                std::vector<std::unordered_set<VertexID>> dirctsim=parallel_result[i].ballr();
+                std::vector<std::unordered_set<VertexID>> incsim=direct_result[j].ballr();
                 if(!dual_the_same(qgraph,dirctsim,incsim)){
 //                    for(auto u :qgraph.GetAllVerticesID()){
 //                        LOG(INFO)<<u;
@@ -519,7 +519,7 @@ void test_strong_parallel_inc(int fid){
       Graph qgraph;
       qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
 //      Fragment fragment(fragmentgraph,graph_vfile,graph_efile,r_file);
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> partial_sim;
+      std::vector<std::unordered_set<VertexID>> partial_sim;
       Dual_Parallel dualparallel;
       dualparallel.dual_paraller(fragment,fragmentgraph,qgraph,partial_sim);
       StrongSim strongsim;
@@ -536,7 +536,7 @@ void test_strong_parallel_inc(int fid){
             //std::unordered_set<VertexID> aa=find_affected_area(inc_dgraph,add_edges,rm_edges,2*d_Q);
            // LOG(INFO)<<(aa.find(8762)!=aa.end())<<' '<<(aa.find(3585)!=aa.end())<<' '<<inc_dgraph.shortest_distance(3585,8762)<<endl;
 //            Load_bunch_edges(rm_edges,base_remove_file,j);
-            std::unordered_map<VertexID, std::unordered_set<VertexID>> inc_parallel_dual;
+            std::vector<std::unordered_set<VertexID>> inc_parallel_dual;
             std::vector<StrongR> inc_parallel_strong;
             for(auto u :qgraph.GetAllVerticesID()){
                 inc_parallel_dual[u] = std::unordered_set<VertexID>();
@@ -593,7 +593,7 @@ void test_dual_parallelinc(int fid){
       dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
       Fragment fragment(fragmentgraph,graph_vfile,graph_efile,r_file);
       qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-      std::unordered_map<VertexID, std::unordered_set<VertexID>> sim,psim;
+      std::vector<std::unordered_set<VertexID>> sim,psim;
       Dual_Parallel dualparallel;
       dualparallel.dual_paraller(fragment,fragmentgraph,qgraph,psim);
       int j=1;
@@ -604,7 +604,7 @@ void test_dual_parallelinc(int fid){
             std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
             Load_bunch_edges(add_edges,base_add_file,j);
 //            Load_bunch_edges(rm_edges,base_remove_file,j);
-            std::unordered_map<VertexID, std::unordered_set<VertexID>> inc_serial,inc_parallel;
+            std::vector<std::unordered_set<VertexID>> inc_serial,inc_parallel;
             for(auto u :qgraph.GetAllVerticesID()){
                 inc_parallel[u] = std::unordered_set<VertexID>();
                 for(auto v : psim[u]){
@@ -619,10 +619,10 @@ void test_dual_parallelinc(int fid){
             dual_parallel_inc.update_by_add_edges(fragment1,inc_fragmentgraph,add_edges,true);
             dual_parallel_inc.incremental_add_edges(fragment1, inc_fragmentgraph, qgraph,inc_parallel,add_edges);
             if (fid==0){
-                std::vector<std::unordered_map<VertexID, std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
+                std::vector<std::vector<std::unordered_set<VertexID>>>  tmp_vec(get_num_workers());
                 tmp_vec[fid] = inc_parallel;
                 masterGather(tmp_vec);
-                std::unordered_map<VertexID, std::unordered_set<VertexID>>  globalsim;
+                std::vector<std::unordered_set<VertexID>>  globalsim;
                 for(auto u :qgraph.GetAllVerticesID()){
                     globalsim[u] = std::unordered_set<VertexID>();
                 }

@@ -193,7 +193,7 @@ void StrongparallelInc::update_fragment_parallel(Fragment &fragment,Graph& dgrap
 }
 
 std::vector<std::pair<VertexID,VertexID>> StrongparallelInc::assign_task(Fragment &fragment,Graph &qgraph,
-                                                                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
+                                                                            std::vector<std::unordered_set<VertexID>> &sim,
                                                                             std::unordered_set<VertexID> &affected_center,
                                                                             std::unordered_set<VertexID> &affected_nodes){
     std::vector<std::pair<VertexID,VertexID>> result_nodes;
@@ -266,7 +266,7 @@ bool StrongparallelInc::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set
            }
       }
 
-bool StrongparallelInc::valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w){
+bool StrongparallelInc::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w){
           for(auto u : qgraph.GetAllVerticesID()){
               if(sim[u].size()==0){
                   return false;
@@ -308,7 +308,7 @@ void StrongparallelInc::find_node_connectivity_nodes(Ball_View &ball_view,std::u
 }
 
 void StrongparallelInc::rename_sim(Ball_View &ball_view,Graph &qgraph,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+                               std::vector<std::unordered_set<VertexID>> &sim){
               //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
@@ -323,9 +323,9 @@ void StrongparallelInc::rename_sim(Ball_View &ball_view,Graph &qgraph,
      }
 
 void StrongparallelInc::ss_counter_initialization(Ball_View &ball_view,Graph &qgraph,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                                     std::vector<std::vector<int>> &sim_counter_pre,
+                                     std::vector<std::vector<int>> &sim_counter_post,
+                                     std::vector<std::unordered_set<VertexID>> &S_w){
         for (auto w : ball_view.GetAllVerticesID()){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -348,9 +348,9 @@ void StrongparallelInc::ss_counter_initialization(Ball_View &ball_view,Graph &qg
  }
 
 void StrongparallelInc::dual_filter_match(Ball_View &refined_ball, Graph &qgraph,
-                      std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w,VertexID w,int d_Q){
+                      std::vector<std::unordered_set<VertexID>> &S_w,VertexID w,int d_Q){
         std::set<std::pair<VertexID,VertexID> > filter_set;
-        std::unordered_map<VertexID, std::vector<int> > sim_counter_pre,sim_counter_post;
+        std::vector<std::vector<int> > sim_counter_pre,sim_counter_post;
         ss_counter_initialization(refined_ball,qgraph, sim_counter_pre,sim_counter_post,S_w);
         push_phase(refined_ball,qgraph,w,d_Q, filter_set, sim_counter_pre, sim_counter_post,S_w);
         decremental_refine(refined_ball,qgraph, filter_set,sim_counter_pre,sim_counter_post,S_w);
@@ -358,9 +358,9 @@ void StrongparallelInc::dual_filter_match(Ball_View &refined_ball, Graph &qgraph
 
 void StrongparallelInc::push_phase(Ball_View &ball,Graph &qgraph,VertexID w,int d_Q,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post,
+                          std::vector<std::unordered_set<VertexID>> &S_w){
 
          for (auto u :qgraph.GetAllVerticesID()){
             for (auto v : S_w[u]){
@@ -382,8 +382,8 @@ void StrongparallelInc::push_phase(Ball_View &ball,Graph &qgraph,VertexID w,int 
 
 
 void StrongparallelInc::update_counter(Ball_View &ball,Graph &qgraph,VertexID u,VertexID v,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         for(auto vp : ball.GetParentsID(v)){
             if (sim_counter_post.find(vp)!=sim_counter_post.end()){
                 if(sim_counter_post[vp][u]>0){
@@ -402,9 +402,9 @@ void StrongparallelInc::update_counter(Ball_View &ball,Graph &qgraph,VertexID u,
 
 void StrongparallelInc::decremental_refine(Ball_View &ball_view,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post,
+                          std::vector<std::unordered_set<VertexID>> &S_w){
         while(!filter_set.empty()){
             std::pair<VertexID,VertexID> pmatch = *filter_set.begin();
             VertexID u = pmatch.first;
@@ -435,7 +435,7 @@ void StrongparallelInc::decremental_refine(Ball_View &ball_view,Graph &qgraph,
     }
 
 void StrongparallelInc::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph &qgraph,VertexID w,
-                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                                std::vector<std::unordered_set<VertexID>> &S_w){
     if(!valid_sim_w(qgraph,S_w,w)){
         for (auto u : qgraph.GetAllVerticesID()){
             S_w[u].clear();
@@ -479,7 +479,7 @@ void StrongparallelInc::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph 
        }
    }
 
-void StrongparallelInc::print_ball_info(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w,VertexID w){
+void StrongparallelInc::print_ball_info(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &S_w,VertexID w){
 
               std::unordered_map<VertexID,std::set<VertexID>> printset;
               for(auto u :qgraph.GetAllVerticesID()){
@@ -498,8 +498,8 @@ void StrongparallelInc::print_ball_info(Graph &qgraph,std::unordered_map<VertexI
               }
 }
 
-void StrongparallelInc::out_global_result(Fragment &fragment,  Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
+void StrongparallelInc::out_global_result(Fragment &fragment,  Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim){
+    std::vector<std::unordered_set<VertexID>> tmp_sim;
     for(auto u :qgraph.GetAllVerticesID()){
         tmp_sim[u] = std::unordered_set<VertexID>();
         for(auto v :sim[u]){
@@ -561,7 +561,7 @@ std::vector<StrongR>  StrongparallelInc::strong_parallel(Fragment &fragment,Grap
 
         std::unordered_set<VertexID> ball_filter_node;
         std::unordered_set<Edge> ball_filter_edge;
-        std::unordered_map<VertexID, std::unordered_set<VertexID>> S_w;
+        std::vector<std::unordered_set<VertexID>> S_w;
         for(auto u : qgraph.GetAllVerticesID()){
             for (auto v : fragment_sim[u]){
                 if(ball_node.find(v) != ball_node.end()){
@@ -610,7 +610,7 @@ std::vector<StrongR>  StrongparallelInc::strong_parallel_inc(Fragment &fragment,
                                                       std::set<std::pair<VertexID,VertexID>> &rm_edges){
     std::vector<StrongR> max_result;
     int d_Q = cal_diameter_qgraph(qgraph);
-//    std::unordered_map<VertexID, std::unordered_set<VertexID>> fragment_sim;
+//    std::vector<std::unordered_set<VertexID>> fragment_sim;
     /**
       *load local fragment sim
       */
@@ -662,7 +662,7 @@ std::vector<StrongR>  StrongparallelInc::strong_parallel_inc(Fragment &fragment,
 
         std::unordered_set<VertexID> ball_filter_node;
         std::unordered_set<Edge> ball_filter_edge;
-        std::unordered_map<VertexID, std::unordered_set<VertexID>> S_w;
+        std::vector<std::unordered_set<VertexID>> S_w;
         for(auto u : qgraph.GetAllVerticesID()){
             for (auto v : fragment_sim[u]){
                 if(ball_node.find(v) != ball_node.end()){

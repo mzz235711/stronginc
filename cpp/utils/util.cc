@@ -15,7 +15,7 @@ int cal_diameter_qgraph(Graph &qgraph){
           return temp_dia;
 }
 
-void print_sim_vertex_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+void print_sim_vertex_result(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim){
         for(auto u:qgraph.GetAllVerticesID()){
             LOG(INFO)<<u<<":";
             for(auto v:sim[u]){
@@ -140,7 +140,7 @@ void save_grape_file(Graph &qgraph, const std::string &v_file, const std::string
 	out_efile.close();
 }
 
-bool dual_the_same(Graph &qgraph,   std::unordered_map<VertexID, std::unordered_set<VertexID>> &direct_sim,   std::unordered_map<VertexID, std::unordered_set<VertexID>> &incdsim){
+bool dual_the_same(Graph &qgraph,   std::vector<std::unordered_set<VertexID>> &direct_sim,   std::vector<std::unordered_set<VertexID>> &incdsim){
    for (auto u:qgraph.GetAllVerticesID()){
     if(direct_sim[u].size()!=incdsim[u].size()){
     return false;
@@ -156,7 +156,7 @@ bool dual_the_same(Graph &qgraph,   std::unordered_map<VertexID, std::unordered_
 
  }
 
-void save_sim_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,std::string filename){
+void save_sim_result(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,std::string filename){
    std::fstream outfile(filename,std::ios::out);
    if(!outfile)
 	{
@@ -174,7 +174,7 @@ void save_sim_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_s
     outfile.close();
 }
 
-void load_sim_result(std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,std::string filename){
+void load_sim_result(std::vector<std::unordered_set<VertexID>> &sim,std::string filename){
     std::ifstream infile(filename,std::ios::in);
     std::string s;
     while(getline(infile,s))

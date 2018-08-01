@@ -52,7 +52,7 @@ template<class T>
 
 int cal_diameter_qgraph(Graph &qgraph);
 
-void print_sim_vertex_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim);
+void print_sim_vertex_result(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim);
 
 void print_sim_edge_result(std::unordered_map<Edge,std::unordered_set<Edge>> &part);
 
@@ -62,11 +62,11 @@ void generate_connect_graphs_by_Dgraph(Graph &dgraph, Graph &qgraph, const int n
 
 void save_grape_file(Graph &qgraph, const std::string &v_file, const std::string &e_file);
 
-bool dual_the_same(Graph &qgraph,  std::unordered_map<VertexID, std::unordered_set<VertexID>> &direct_sim,  std::unordered_map<VertexID, std::unordered_set<VertexID>> &incdsim);
+bool dual_the_same(Graph &qgraph,  std::vector<std::unordered_set<VertexID>> &direct_sim,  std::vector<std::unordered_set<VertexID>> &incdsim);
 
-void save_sim_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,std::string filename);
+void save_sim_result(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,std::string filename);
 
-void load_sim_result(std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,std::string filename);
+void load_sim_result(std::vector<std::unordered_set<VertexID>> &sim,std::string filename);
 
 void LoadEdges(std::vector<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 

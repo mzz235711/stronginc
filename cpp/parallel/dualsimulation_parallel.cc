@@ -13,10 +13,10 @@ Dual_Parallel::~Dual_Parallel(){}
 
 
 void Dual_Parallel::dual_sim_initialization(Fragment &fragment, Graph &dgraph, Graph &qgraph,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
+                               std::vector<std::unordered_set<VertexID>> &sim,
                                bool &initialized_sim,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ){
+                               std::vector<std::unordered_set<VertexID>> &remove_pred,
+                               std::vector<std::unordered_set<VertexID>> &remove_succ){
         std::unordered_set<VertexID> pred_dgraph_vertices,succ_dgraph_vertices;
         for (auto v : dgraph.GetAllVerticesID()) {
             if (dgraph.GetOutDegree(v)!=0){
@@ -88,7 +88,7 @@ void Dual_Parallel::dual_sim_initialization(Fragment &fragment, Graph &dgraph, G
     }
 
 
-void Dual_Parallel::reunordered_map_data_id(std::unordered_map<VertexID, VertexID> &t_f,Graph &dgraph){
+void Dual_Parallel::reunordered_map_data_id(std::vector<VertexID> &t_f,Graph &dgraph){
         VertexID fid = 0;
         for (auto v : dgraph.GetAllVerticesID()){
             t_f[v] = fid;
@@ -97,9 +97,9 @@ void Dual_Parallel::reunordered_map_data_id(std::unordered_map<VertexID, VertexI
     }
 
 void Dual_Parallel::dual_counter_initialization(Graph &dgraph, Graph &qgraph,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+                                     std::vector<std::vector<int>> &sim_counter_post,
+                                     std::vector<std::vector<int>> &sim_counter_pre,
+                                     std::vector<std::unordered_set<VertexID>> &sim){
         for (auto w : dgraph.GetAllVerticesID()){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -122,8 +122,8 @@ void Dual_Parallel::dual_counter_initialization(Graph &dgraph, Graph &qgraph,
     }
 
 VertexID Dual_Parallel::find_nonempty_remove(Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ){
+                           std::vector<std::unordered_set<VertexID>> &remove_pred,
+                           std::vector<std::unordered_set<VertexID>> &remove_succ){
         for (auto u : qgraph.GetAllVerticesID())
         {
             if(remove_pred[u].size() !=0){
@@ -137,8 +137,8 @@ VertexID Dual_Parallel::find_nonempty_remove(Graph &qgraph,
     }
 
 void Dual_Parallel::update_sim_counter(Graph &dgraph,
-                            std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                            std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
+                            std::vector<std::vector<int>> &sim_counter_post,
+                            std::vector<std::vector<int>> &sim_counter_pre,
                             VertexID u,VertexID w){
     for (auto wp : dgraph.GetParentsID(w)){
         if (sim_counter_post[wp][u] > 0){
@@ -153,7 +153,7 @@ void Dual_Parallel::update_sim_counter(Graph &dgraph,
     }
     }
 
-bool Dual_Parallel::match_check(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+bool Dual_Parallel::match_check(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim){
         for (auto u : qgraph.GetAllVerticesID()){
             if (sim[u].size() == 0){
                 return false;
@@ -162,7 +162,7 @@ bool Dual_Parallel::match_check(Graph &qgraph,std::unordered_map<VertexID, std::
         return true;
     }
 
-bool Dual_Parallel::dual_sim_output(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+bool Dual_Parallel::dual_sim_output(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim){
         if (match_check(qgraph, sim) == false){
            for(auto u : qgraph.GetAllVerticesID()){
                 sim[u].clear();
@@ -173,11 +173,11 @@ bool Dual_Parallel::dual_sim_output(Graph &qgraph,std::unordered_map<VertexID, s
 
 
 void Dual_Parallel::dual_sim_refinement(Fragment &fragment, Graph &dgraph, Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ,
-                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre){
+                           std::vector<std::unordered_set<VertexID>> &sim,
+                           std::vector<std::unordered_set<VertexID>> &remove_pred,
+                           std::vector<std::unordered_set<VertexID>> &remove_succ,
+                           std::vector<std::vector<int>> &sim_counter_post,
+                           std::vector<std::vector<int>> &sim_counter_pre){
 
         VertexID u= find_nonempty_remove(qgraph, remove_pred, remove_succ);
         while(u!=-1){
@@ -260,12 +260,12 @@ bool Dual_Parallel::is_continue(){
     }
 }
 
-void Dual_Parallel::dual_paraller(Fragment &fragment, Graph &dgraph, Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+void Dual_Parallel::dual_paraller(Fragment &fragment, Graph &dgraph, Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim){
     OuterVertices = const_cast<std::unordered_set<VertexID> *>(fragment.getOuterVertices());
     innerVertices = const_cast<std::unordered_set<VertexID> *>(fragment.getInnerVertices());
     worker_barrier();
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> remove_pred,remove_succ;
-    std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
+    std::vector<std::unordered_set<VertexID>> remove_pred,remove_succ;
+    std::vector<std::vector<int>> sim_counter_post,sim_counter_pre;
     pEval(fragment, dgraph, qgraph, sim, remove_pred, remove_succ, sim_counter_post, sim_counter_pre);
     worker_barrier();
     while(is_continue()){
@@ -277,11 +277,11 @@ void Dual_Parallel::dual_paraller(Fragment &fragment, Graph &dgraph, Graph &qgra
 }
 
 void Dual_Parallel::pEval(Fragment &fragment, Graph &dgraph, Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ,
-                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre){
+                           std::vector<std::unordered_set<VertexID>> &sim,
+                           std::vector<std::unordered_set<VertexID>> &remove_pred,
+                           std::vector<std::unordered_set<VertexID>> &remove_succ,
+                           std::vector<std::vector<int>> &sim_counter_post,
+                           std::vector<std::vector<int>> &sim_counter_pre){
 
     bool initialized_sim = false;
     dual_sim_initialization(fragment, dgraph, qgraph, sim, initialized_sim, remove_pred, remove_succ);
@@ -307,11 +307,11 @@ void Dual_Parallel::pEval(Fragment &fragment, Graph &dgraph, Graph &qgraph,
 }
 
 void Dual_Parallel::incEval(Fragment &fragment, Graph &dgraph, Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_pred,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &remove_succ,
-                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre){
+                           std::vector<std::unordered_set<VertexID>> &sim,
+                           std::vector<std::unordered_set<VertexID>> &remove_pred,
+                           std::vector<std::unordered_set<VertexID>> &remove_succ,
+                           std::vector<std::vector<int>> &sim_counter_post,
+                           std::vector<std::vector<int>> &sim_counter_pre){
     for (auto item :messageBuffers.get_messages()){
         VertexID u = item.second;
         VertexID w = fragment.getLocalID(item.first);
@@ -336,8 +336,8 @@ void Dual_Parallel::incEval(Fragment &fragment, Graph &dgraph, Graph &qgraph,
  }
 
 
- void Dual_Parallel::out_global_result(Fragment &fragment,  Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
+ void Dual_Parallel::out_global_result(Fragment &fragment,  Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim){
+    std::vector<std::unordered_set<VertexID>> tmp_sim;
     for(auto u :qgraph.GetAllVerticesID()){
         tmp_sim[u] = std::unordered_set<VertexID>();
         for(auto v :sim[u]){

@@ -21,42 +21,42 @@ public:
   * inital dual simulation result
   */
     void dual_counter_initialization(GraphView &graph_view, Graph &qgraph,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
-                                     std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim);
+                                     std::vector<std::vector<int>> &sim_counter_post,
+                                     std::vector<std::vector<int>> &sim_counter_pre,
+                                     std::vector<std::unordered_set<VertexID>> &dsim);
  /**
   * if one node is remove from dual result,update other result parents and child info
   */
     void update_counter(GraphView &graph_view,Graph &qgraph,VertexID u,VertexID v,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post);
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post);
  /**
   * iteratal remove invalid result from inital results
   */
     void decremental_rmove(Fragment &fragment, GraphView &graph_view,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post);
+                          std::vector<std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post);
 
     void dual_incfilter(Fragment &fragment, GraphView &graph_view, Graph &qgraph,
-                                             std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim);
+                                             std::vector<std::unordered_set<VertexID>> &dsim);
 
     void pEval(Fragment &fragment, GraphView &graph_view, Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post);
+                          std::vector<std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post);
 
     void incEval(Fragment &fragment, GraphView &graph_view, Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post);
+                          std::vector<std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post);
 
     bool is_continue();
 
-    void out_global_result(Fragment &fragment,  Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim);
+    void out_global_result(Fragment &fragment,  Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim);
 private:
     int continue_run = 0;
 

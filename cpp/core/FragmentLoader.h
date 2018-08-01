@@ -33,7 +33,7 @@ class FragmentLoader {
 //       std::unordered_set<VertexID> innerVertices;
 //	   std::unordered_set<VertexID> outerVertices;
 //	   int FID;
-//	   std::unordered_map<VertexID, std::bitset<NUM_FRAGMENTS>> msgThroughDest;
+//	   std::vector<std::bitset<NUM_FRAGMENTS>> msgThroughDest;
 };
 #endif //CPP_FRAGMENTLOADER_H_
 using namespace std;
