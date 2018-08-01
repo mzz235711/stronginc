@@ -15,7 +15,7 @@ public:
     return center_id_;
   }
 
-  inline const std::vector<std::unordered_set<VertexID>> & ballr() const {
+  inline const std::unordered_map<VertexID, std::unordered_set<VertexID>> & ballr() const {
     return sim_;
   }
 

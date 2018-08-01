@@ -277,7 +277,7 @@ Graph::ParentsIDIterator &Graph::ParentsIDIterator::operator++() {
   return *this;
 }
 
-void Graph::shortest_distance(VertexID vid,std::unordered_map<VertexID,int> &dis){
+void Graph::shortest_distance(VertexID vid,std::vector<int> &dis){
     VertexDescriptor u = vertex(vid, *graph_);
     std::vector<int> color(num_vertices_,0);
     //std::unordered_map<VertexID,int> dis;
