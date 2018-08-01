@@ -248,7 +248,7 @@ int StrongparallelInc::cal_diameter_qgraph(Graph &qgraph){
           return temp_dia;
       }
 
-bool StrongparallelInc::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w){
+bool StrongparallelInc::valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w){
           for(auto u : qgraph.GetAllVerticesID()){
               if(sim[u].size()==0){
                   return false;
