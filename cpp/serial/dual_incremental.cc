@@ -66,8 +66,8 @@
 
 
   void DualInc::update_pre_dec_counter(GraphView &graph_view,Graph &qgraph,VertexID u,VertexID v,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         for(auto vp : graph_view.GetParentsID(v)){
             if (sim_counter_post.find(vp)!=sim_counter_post.end()){
                 if(sim_counter_post[vp][u]>0){
@@ -87,8 +87,8 @@
   void DualInc::propagate_remove(GraphView &graph_view,Graph &qgraph,
                           std::vector<std::unordered_set<VertexID>> &aff_node,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post,
                           std::set<std::pair<VertexID,VertexID>> &already_matched){
         while(!filter_set.empty()){
             std::pair<VertexID,VertexID> pmatch = *filter_set.begin();
@@ -155,7 +155,7 @@
             }
         }
         GraphView graph_view(dgraph,&view_nodes);
-        std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
+        std::vector<std::vector<int>> sim_counter_post,sim_counter_pre;
         for (auto w : view_nodes){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
@@ -211,8 +211,8 @@
     }
 
  void DualInc::update_counter(Graph &dgraph,Graph &qgraph,VertexID u,VertexID v,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         for(auto vp : dgraph.GetParentsID(v)){
             if (sim_counter_post.find(vp)!=sim_counter_post.end()){
                 if(sim_counter_post[vp][u]>0){
@@ -233,8 +233,8 @@
   void DualInc::decremental_rmove(Graph &dgraph,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
                           std::vector<std::unordered_set<VertexID>> &dsim,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
-                          std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
+                          std::vector<std::vector<int>> &sim_counter_pre,
+                          std::vector<std::vector<int>> &sim_counter_post){
         while(!filter_set.empty()){
             std::pair<VertexID,VertexID> pmatch = *filter_set.begin();
             VertexID u = pmatch.first;
@@ -274,7 +274,7 @@
             }
         }
         GraphView graph_view(dgraph,&view_nodes);
-        std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
+        std::vector<std::vector<int>> sim_counter_post,sim_counter_pre;
         for (auto w : view_nodes){
             sim_counter_post[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
             sim_counter_pre[w] = std::vector<int>(qgraph.GetNumVertices(), 0);
