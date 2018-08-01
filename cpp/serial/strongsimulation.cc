@@ -39,6 +39,24 @@ bool StrongSim::valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unor
            }
       }
 
+bool StrongSim::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w){
+          for(auto u : qgraph.GetAllVerticesID()){
+              if(sim[u].size()==0){
+                  return false;
+              }
+           }
+           int uid = -1;
+           for(auto u : qgraph.GetAllVerticesID()){
+               if (sim[u].find(w) != sim[u].end()){
+                   uid = u;
+                   return true;
+               }
+           }
+           if (uid == -1){
+           return false;
+           }
+      }
+
 
 void StrongSim::find_node_connectivity_nodes(Ball_View &ball_view,std::unordered_set<VertexID> &v_set,VertexID w){
     std::queue<VertexID> q;
@@ -260,7 +278,8 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
           */
           std::vector<StrongR> max_result;
           int d_Q = cal_diameter_qgraph(qgraph);
-          std::unordered_map<VertexID, std::unordered_set<VertexID>> global_sim;
+          auto dvnum = dgraph.GetNumVertices();
+          std::vector<std::unordered_set<VertexID>> global_sim(dvnum);
           /**
            *calculate dual simulation for dgraph
            */

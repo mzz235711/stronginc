@@ -27,6 +27,8 @@ class StrongSim{
        */
       bool valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w);
 
+      bool valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w);
+
       void find_node_connectivity_nodes(Ball_View &ball_view,std::unordered_set<VertexID> &v_set, VertexID w);
 
       void rename_sim(Ball_View &ball_view,Graph &qgraph,
