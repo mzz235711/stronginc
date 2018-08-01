@@ -232,7 +232,7 @@
 
   void DualInc::decremental_rmove(Graph &dgraph,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::unordered_set<VertexID>> &dsim,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post){
         while(!filter_set.empty()){
