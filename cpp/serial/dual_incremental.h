@@ -29,8 +29,8 @@ class DualInc {
 
   void propagate_add(Graph &dgraph,Graph &qgraph,
                        std::set<std::pair<VertexID,VertexID>> &candidate_node,
-                       std::unordered_map<VertexID, std::unordered_set<VertexID>> &aff_node,
-                       std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                       std::vector<std::unordered_set<VertexID>> &aff_node,
+                       std::vector<std::unordered_set<VertexID>> &dsim,
                        std::set<std::pair<VertexID,VertexID>> &already_matched);
 
   void update_pre_dec_counter(GraphView &graph_view,Graph &qgraph,VertexID u,VertexID v,
@@ -38,14 +38,14 @@ class DualInc {
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post);
 
   void propagate_remove(GraphView &graph_view,Graph &qgraph,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &aff_node,
+                          std::vector<std::unordered_set<VertexID>> &aff_node,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post,
                           std::set<std::pair<VertexID,VertexID>> &already_matched);
 
   void incremental_addedges(Graph &dgraph,Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                           std::vector<std::unordered_set<VertexID>> &dsim,
                            std::set<std::pair<VertexID,VertexID>> &add_edges);
 
   void update_counter(Graph &dgraph,Graph &qgraph,VertexID u,VertexID v,
@@ -54,16 +54,16 @@ class DualInc {
 
   void decremental_rmove(Graph &dgraph,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                          std::vector<Vstd::unordered_set<VertexID>> &dsim,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post);
 
   void incremental_removeedgs(Graph &dgraph,Graph &qgraph,
-                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                           std::vector<std::unordered_set<VertexID>> &dsim,
                            std::set<std::pair<VertexID,VertexID>> &rm_edges);
 
   void dual_incremental(Graph &dgraph,Graph &qgraph,
-                          std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
+                          std::vector<std::unordered_set<VertexID>> &dsim,
                           std::set<std::pair<VertexID,VertexID>> &add_edges,std::set<std::pair<VertexID,VertexID>> &rm_edges);
  private:
    int n;

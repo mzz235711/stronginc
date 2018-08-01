@@ -194,7 +194,8 @@ public:
         while(index <200){
             Graph qgraph;
             qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
-            std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+            auto dvnum = dgraph.GetNumVertices();
+            std::vector<std::unordered_set<VertexID>> sim(dvnum);
             bool initialized_sim=false;
             dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
             int j=1;
@@ -205,7 +206,9 @@ public:
             for (auto e:add_edges){
                dgraph.AddEdge(Edge(e.first,e.second,1));
             }
-            std::unordered_map<VertexID, std::unordered_set<VertexID>> incdsim,direct_sim;
+            dvnum = dgraph.GetNumVertices();
+            std::vector<std::unordered_set<VertexID>> incdsim(dvnum);
+            std::vector<std::unordered_set<VertexID>> direct_sim(dvnum);
             for(auto u :qgraph.GetAllVerticesID()){
                 incdsim[u]=std::unordered_set<VertexID>();
                 for(auto v:sim[u]){
