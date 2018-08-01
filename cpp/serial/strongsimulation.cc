@@ -7,8 +7,9 @@ StrongSim::~StrongSim(){}
 int StrongSim::cal_diameter_qgraph(Graph &qgraph){
           int temp_dia = 0;
           int max_dia = qgraph.GetNumVertices()-1;
+          auto qvnum = qgraph.GetNumVertices();
           for(auto u : qgraph.GetAllVerticesID()){
-              std::unordered_map<VertexID,int> dis;
+              std::vector<int> dis(qvnum, INT_MAX);
               qgraph.shortest_distance(u,dis);
               for (int i=0; i<qgraph.GetNumVertices(); i++){
                 if (dis[i] <= max_dia && temp_dia < dis[i]){

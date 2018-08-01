@@ -24,7 +24,7 @@ public:
   }
 public:
    VertexID center_id_;
-   std::vector<std::unordered_set<VertexID>> sim_;
+   std::unordered_map<VertexID, std::unordered_set<VertexID>> sim_;
 };
 namespace std
 {

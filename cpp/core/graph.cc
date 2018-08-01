@@ -314,11 +314,11 @@ void Graph::shortest_distance(VertexID vid,std::vector<int> &dis){
             }
         }
     }
-    for (VertexID i = 0;i < num_vertices_; ++i){
-        if (dis.find(i) == dis.end()){
-            dis[i] = INT_MAX;
-        }
-    }
+    // for (VertexID i = 0;i < num_vertices_; ++i){
+    //     if (dis.find(i) == dis.end()){
+    //         dis[i] = INT_MAX;
+    //     }
+    // }
 
    // return dis;
 }

@@ -295,7 +295,7 @@ void View::rename_sim(Ball_View &ball_view,Graph &qgraph,
        }
      }
 
-bool View::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w){
+bool View::valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w){
           for(auto u : qgraph.GetAllVerticesID()){
               if(sim[u].size()==0){
                   return false;

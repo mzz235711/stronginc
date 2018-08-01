@@ -192,7 +192,8 @@ void test_bfs(int fid){
      Bfs_Parallel bfs_parallel;
      std::unordered_map<VertexID,int> DistInf;
      bfs_parallel.bfs_parallel(fragment,fragmentgraph,DistInf,i);
-     std::unordered_map<VertexID,int> dis;
+     auto dvnum = dgraph.GetNumVertices();
+     std::vector<int> dis(dvnum, INT_MAX);
      dgraph.shortest_distance(i,dis);
      const std::unordered_set<VertexID> p = *fragment.getInnerVertices();
      if (fid ==0){
