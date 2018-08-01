@@ -168,7 +168,8 @@ std::vector<StrongR>  View::queryByViews(Graph &dgraph,Graph &qgraph){
     for(auto num:min_contain_vec){
         vector<StrongR> res= strongs.strong_simulation_sim(dgraph,*ViewGraph_list[num]);
         DualSim dualsim;
-        std::vector<std::unordered_set<VertexID>>  sim;
+        auto qsize = qgraph.GetNumVertices();
+        std::vector<std::unordered_set<VertexID>>  sim(qsize);
         bool initialized_sim = false;
         dualsim.dual_simulation(qgraph,*ViewGraph_list[num],sim,initialized_sim);
         //print_sim_vertex_result(*ViewGraph_list[num],sim);
@@ -266,8 +267,9 @@ std::vector<StrongR>  View::queryByViews(Graph &dgraph,Graph &qgraph){
 int View::cal_diameter_qgraph(Graph &qgraph){
           int temp_dia = 0;
           int max_dia = qgraph.GetNumVertices()-1;
+          auto qvnum = qgraph.GetNumVerticese();
           for(auto u : qgraph.GetAllVerticesID()){
-              std::unordered_map<VertexID,int> dis;
+              std::vector<int> dis(qvnum);
               qgraph.shortest_distance(u,dis);
               for (int i=0; i<qgraph.GetNumVertices(); i++){
                 if (dis[i] <= max_dia && temp_dia < dis[i]){

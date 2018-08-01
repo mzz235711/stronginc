@@ -280,7 +280,7 @@ class Graph {
   *get distance from vid to all nodes in undirected  graph
   un_reached return INT_MAX
   */
-  void shortest_distance(VertexID vid,std::unordered_map<VertexID,int> &dis);
+  void shortest_distance(VertexID vid,std::vector<int> &dis);
 
   /**
    * get distance from u to v in undirected graph

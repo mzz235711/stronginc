@@ -36,7 +36,7 @@ bool Ball_View::ExistEdge(const VertexID src, const VertexID dst){
     return edges_.find(Edge(src,dst,1)) !=edges_.end();
 }
 
-void Ball_View::shortest_distance(VertexID vid,std::unordered_map<VertexID,int> &dis){
+void Ball_View::shortest_distance(VertexID vid,std::unordered_map<VertexID, int> &dis){
     //VertexID root =vid;
     if(vertices_.find(vid) == vertices_.end()){
         return ;
@@ -76,7 +76,7 @@ int Ball_View::shortest_distance(VertexID source_id,VertexID target_id){
         return -1;
     }
     std::unordered_set<VertexID> color;
-    std::unordered_map<VertexID,int> dis;
+    std::unordered_map<VertexID, int> dis;
     std::queue<VertexID> q;
     q.push(source_id);
     color.insert(source_id);
@@ -113,7 +113,7 @@ void Ball_View::find_hop_nodes(VertexID vid, int d_hop,std::unordered_set<Vertex
         return ;
     }
     std::unordered_set<VertexID> color;
-    std::unordered_map<VertexID,int> dis;
+    std::unordered_map<VertexID, int> dis;
     std::queue<VertexID> q;
     q.push(vid);
     color.insert(vid);
@@ -180,7 +180,7 @@ void  Ball_View::find_connectivity_nodes(VertexID vid, std::unordered_set<Vertex
 
 void Ball_View::find_hop_nodes(std::unordered_set<VertexID> &node_set,int d_hop,std::unordered_set<VertexID> &result){
     std::unordered_set<VertexID> color;
-    std::unordered_map<VertexID,int> dis;
+    std::unordered_map<VertexID, int> dis;
     std::queue<VertexID> q;
     for(auto vid :node_set){
         if(vertices_.find(vid) == vertices_.end()){

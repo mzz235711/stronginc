@@ -61,9 +61,9 @@ bool FragmentLoader::LoadVertex(std::vector<Vertex> &global_vertices, const std:
                 global_vertices.emplace_back(v, attr);
              }
              char *line = NULL;
-             size_t len = 0;
-             getline(&line, &len, file);
-             free(line);
+            //  size_t len = 0;
+            //  getline(&line, &len, file);
+            //  free(line);
          }
          fclose(file);
        } catch (...) {
