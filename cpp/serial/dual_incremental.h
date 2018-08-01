@@ -54,7 +54,7 @@ class DualInc {
 
   void decremental_rmove(Graph &dgraph,Graph &qgraph,
                           std::set<std::pair<VertexID,VertexID>> &filter_set,
-                          std::vector<Vstd::unordered_set<VertexID>> &dsim,
+                          std::vector<std::unordered_set<VertexID>> &dsim,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_post);
 
