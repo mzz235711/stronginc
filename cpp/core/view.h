@@ -30,7 +30,7 @@ public:
 
     bool vector_find(std::vector<int> &nums,int target);
 
-    std::unordered_map<Edge,std::unordered_set<Edge>> simTran(Graph &dgraph,Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim);
+    std::unordered_map<Edge,std::unordered_set<Edge>> simTran(Graph &dgraph,Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim);
 
     bool containCheck(Graph &qgraph);
 
@@ -40,7 +40,7 @@ public:
 
     int cal_diameter_qgraph(Graph &qgraph);
 
-    bool valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w);
+    bool valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w);
 
     void rename_sim(Ball_View &ball_view,Graph &qgraph,
                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim);

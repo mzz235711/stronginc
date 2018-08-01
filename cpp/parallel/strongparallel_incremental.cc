@@ -247,7 +247,7 @@ int StrongparallelInc::cal_diameter_qgraph(Graph &qgraph){
           return temp_dia;
       }
 
-bool StrongparallelInc::valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w){
+bool StrongparallelInc::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w){
           for(auto u : qgraph.GetAllVerticesID()){
               if(sim[u].size()==0){
                   return false;
@@ -517,7 +517,8 @@ std::vector<StrongR>  StrongparallelInc::strong_parallel(Fragment &fragment,Grap
     worker_barrier();
     update_fragment_parallel(fragment,dgraph,d_Q);
 //    LOG(INFO)<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<endl;
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> fragment_sim;
+    auto dvnum = dgraph.GetNumVertices();
+    std::vector<std::unordered_set<VertexID>> fragment_sim(dvnum);
     /**
       *calculate dual simulation for dgraph
       */

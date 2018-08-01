@@ -34,7 +34,7 @@ bool View::vector_find(std::vector<int> &nums,int target){
     return false;
 }
 
-std::unordered_map<Edge,std::unordered_set<Edge>> View::simTran(Graph &dgraph,Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+std::unordered_map<Edge,std::unordered_set<Edge>> View::simTran(Graph &dgraph,Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim){
     std::unordered_map<Edge,std::unordered_set<Edge>> edge2edge;
     for(auto e:qgraph.GetAllEdges()){
         std::unordered_set<Edge> eSet;
@@ -63,8 +63,9 @@ bool View::containCheck(Graph &qgraph){
     bool ans = false;
     std::unordered_set<Edge> eSet;
     int counter = ViewGraph_list.size();
+    auto qvnum = qgraph.GetNumVertices();
     for(int i=0;i<counter;++i){
-        std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
+        std::vector<std::unordered_set<VertexID>> sim(qvnum);
         bool initialized_sim = false;
         dualsim.dual_simulation(qgraph,*ViewGraph_list[i],sim,initialized_sim);
         std::unordered_map<Edge,std::unordered_set<Edge>> part = simTran(qgraph,*ViewGraph_list[i],sim);
@@ -156,17 +157,18 @@ std::vector<StrongR>  View::queryByViews(Graph &dgraph,Graph &qgraph){
    // for(auto n:min_contain_vec){
   //      LOG(INFO)<<n<<endl;
   //  }
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> max_query_sim;
+    auto qvnum = qgraph.GetNumVertices();
+    std::vector<std::unordered_set<VertexID>> max_query_sim(qvnum);
     std::unordered_set<VertexID> view_nodes;
     std::unordered_set<Edge> view_edges;
-    for(auto u :qgraph.GetAllVerticesID()){
-        max_query_sim[u] = std::unordered_set<VertexID>();
-    }
+//    for(auto u :qgraph.GetAllVerticesID()){
+//        max_query_sim[u] = std::unordered_set<VertexID>();
+//    }
     StrongSim strongs;
     for(auto num:min_contain_vec){
         vector<StrongR> res= strongs.strong_simulation_sim(dgraph,*ViewGraph_list[num]);
         DualSim dualsim;
-        std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
+        std::vector<std::unordered_set<VertexID>>  sim;
         bool initialized_sim = false;
         dualsim.dual_simulation(qgraph,*ViewGraph_list[num],sim,initialized_sim);
         //print_sim_vertex_result(*ViewGraph_list[num],sim);
@@ -218,7 +220,7 @@ std::vector<StrongR>  View::queryByViews(Graph &dgraph,Graph &qgraph){
 
        std::unordered_set<VertexID> ball_filter_node;
        std::unordered_set<Edge> ball_filter_edge;
-       std::unordered_map<VertexID, std::unordered_set<VertexID>> S_w;
+       std::vector<std::unordered_set<VertexID>> S_w;
        for(auto u : qgraph.GetAllVerticesID()){
           for (auto v : max_query_sim[u]){
              if(ball_node.find(v) != ball_node.end()){
@@ -277,7 +279,7 @@ int View::cal_diameter_qgraph(Graph &qgraph){
       }
 
 void View::rename_sim(Ball_View &ball_view,Graph &qgraph,
-                               std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim){
+                               std::vector<std::unordered_set<VertexID>> &sim){
               //LOG(INFO)<<w<<std::endl;
        for(auto u : qgraph.GetAllVerticesID()){
            std::unordered_set<VertexID> tmp_set;
@@ -291,7 +293,7 @@ void View::rename_sim(Ball_View &ball_view,Graph &qgraph,
        }
      }
 
-bool View::valid_sim_w(Graph &qgraph,std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,VertexID w){
+bool View::valid_sim_w(Graph &qgraph,std::vector<std::unordered_set<VertexID>> &sim,VertexID w){
           for(auto u : qgraph.GetAllVerticesID()){
               if(sim[u].size()==0){
                   return false;
@@ -335,7 +337,7 @@ void View::ss_counter_initialization(Ball_View &ball_view,Graph &qgraph,
  }
 
 void View::dual_filter_match(Ball_View &refined_ball, Graph &qgraph,
-                      std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                      std::vector<std::unordered_set<VertexID>> &S_w){
         std::set<std::pair<VertexID,VertexID> > filter_set;
         std::unordered_map<VertexID, std::vector<int> > sim_counter_pre,sim_counter_post;
         ss_counter_initialization(refined_ball,qgraph, sim_counter_pre,sim_counter_post,S_w);
@@ -422,7 +424,7 @@ void View::decremental_refine(Ball_View &ball_view,Graph &qgraph,
     }
 
 void View::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph &qgraph,VertexID w,
-                                std::unordered_map<VertexID, std::unordered_set<VertexID>> &S_w){
+                                std::vector<std::unordered_set<VertexID>> &S_w){
     if(!valid_sim_w(qgraph,S_w,w)){
         for (auto u : qgraph.GetAllVerticesID()){
             S_w[u].clear();

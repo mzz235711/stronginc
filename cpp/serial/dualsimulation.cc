@@ -249,7 +249,7 @@ void DualSim::dual_sim_refinement(Graph &dgraph, Graph &qgraph,
         }
     }
 
-void DualSim::dual_simulation(Graph &dgraph, Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim, bool &initialized_sim){
+void DualSim::dual_simulation(Graph &dgraph, Graph &qgraph, std::vector<std::unordered_set<VertexID>> &sim, bool &initialized_sim){
         //LOG(INFO)<<"begin dual"<<std::endl;
 //        std::unordered_map<VertexID, std::unordered_set<VertexID>> remove_pred,remove_succ;
         auto dvnum = dgraph.GetNumVertices();
