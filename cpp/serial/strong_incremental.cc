@@ -276,7 +276,7 @@ void StrongInc::print_ball_info(Graph &qgraph,std::unordered_map<VertexID, std::
 }
 
 void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
-                                      std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
+                                      std::vector<std::unordered_set<VertexID>> &dsim,
                                       std::set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges){
           DualInc dualinc;
@@ -292,7 +292,7 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
 
 //std::vector<StrongR>
   void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
-                                      std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
+                                      std::vector<std::unordered_set<VertexID>> &dsim,
                                       std::vector<StrongR> &strong_r,
                                       std::set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges){
