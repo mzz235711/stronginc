@@ -25,15 +25,15 @@ public:
     StrongExr(){}
 
     StrongExr(std::string test_data_name,int query_index){
-        this->test_data_name=test_data_name;
-        this->graph_vfile ="../data/"+test_data_name+"/"+test_data_name+".v";
-        this->graph_efile ="../data/"+test_data_name+"/"+test_data_name+".e";
+        this->test_data_name = test_data_name;
+        this->graph_vfile = "../data/"+test_data_name+"/"+test_data_name+".v";
+        this->graph_efile = "../data/"+test_data_name+"/"+test_data_name+".e";
         this->r_file = "../data/"+test_data_name+"/"+test_data_name+".r";
-        this->base_qfile = "../data/"+test_data_name+"/query/q";
+        this->base_qfile = "../data/"+test_data_name+"/query3_/q";
         this->base_add_file = "../data/"+test_data_name+"/inc/add_e";
-        this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
-        this->base_add_affected_center_file ="../data/"+test_data_name+"/inc/affectedcenter_adde.txt";
-        this->base_remove_affected_center_file ="../data/"+test_data_name+"/inc/affectedcenter_rme.txt";
+        this->base_remove_file = "../data/"+test_data_name+"/inc/rm_e";
+        this->base_add_affected_center_file = "../data/"+test_data_name+"/inc/affectedcenter_adde_0.05.txt";
+        this->base_remove_affected_center_file = "../data/"+test_data_name+"/inc/affectedcenter_rme_0.05.txt";
         this->query_index = query_index;
     }
     std::string get_query_vfile(int index){
@@ -125,6 +125,59 @@ public:
     }
     dgraph_loader.LoadGraph(dgraph,vertices,graph_edges);
  }
+ 
+void print_affected_center_info_one_by_one(int circle_num){
+    Generate generate;
+     Graph dgraph,qgraph;
+     GraphLoader dgraph_loader,qgraph_loader;
+     dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
+     qgraph_loader.LoadGraph(qgraph,get_query_vfile(query_index),get_query_efile(query_index));
+     std::unordered_set<VertexID> max_dual_set =generate.get_dual_node_result(dgraph,qgraph);
+     int d_Q = cal_diameter_qgraph(qgraph);
+	 std::fstream out_file("../data/dbpedia/inc/affected_center_info_one_by_one.txt",std::ios::out|std::ios::app);
+	 out_file<<"Base Graph vertices: "<<dgraph.GetNumVertices()<<"  Base Graph edges: "<<dgraph.GetNumEdges()<<endl;
+	 out_file.close();
+     cout<<"Base Graph vertices: "<<dgraph.GetNumVertices()<<"  Base Graph edges: "<<dgraph.GetNumEdges()<<endl;
+
+     std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
+     Load_bunch_edges(add_edges,base_add_file,circle_num);
+     //Load_bunch_edges(rm_edges,base_remove_file,circle_num);
+     std::unordered_set<VertexID> edge_affected_nodes;
+     int j=1;
+     int i=1;
+     for(auto add_e:add_edges){
+         std::set<pair<VertexID,VertexID>> tmp_set;
+         tmp_set.insert(add_e);
+         std::unordered_set<VertexID> e_affected_nodes = find_affected_area(dgraph,tmp_set,d_Q);
+         e_affected_nodes = intersection(e_affected_nodes,max_dual_set);
+         e_affected_nodes = diff(e_affected_nodes,edge_affected_nodes);
+         edge_affected_nodes = unions(e_affected_nodes,edge_affected_nodes);
+	 std::fstream out_file("../data/dbpedia/inc/affected_center_info_one_by_one.txt",std::ios::app);
+	 out_file<<"add "<<j<<' '<<e_affected_nodes.size()<<' '<<edge_affected_nodes.size()<<std::endl;
+	 out_file.close();
+         std::cout<<"add "<<j<<' '<<e_affected_nodes.size()<<' '<<edge_affected_nodes.size()<<std::endl;
+	 if(edge_affected_nodes.size() == max_dual_set.size()){
+ 	     break;
+	 }
+         j++;
+     }
+     for(auto rm_e:rm_edges){
+         std::set<pair<VertexID,VertexID>> tmp_set;
+         tmp_set.insert(rm_e);
+         std::unordered_set<VertexID> e_affected_nodes = find_affected_area(dgraph,tmp_set,d_Q);
+         e_affected_nodes = intersection(e_affected_nodes,max_dual_set);
+         e_affected_nodes = diff(e_affected_nodes,edge_affected_nodes);
+         edge_affected_nodes = unions(e_affected_nodes,edge_affected_nodes);
+	 std::fstream out_file("../data/dbpedia/inc/affected_center_info_one_by_one.txt",std::ios::app);
+	 out_file<<"rm "<<i<<' '<<e_affected_nodes.size()<<' '<<edge_affected_nodes.size()<<std::endl;
+	 out_file.close();
+         std::cout<<"rm "<<i<<' '<<e_affected_nodes.size()<<' '<<edge_affected_nodes.size()<<std::endl;
+	 if(edge_affected_nodes.size() == max_dual_set.size()){
+	     break;
+	 }
+         i++;
+     }
+}
 
   void generate_query(int generate_query_nums,int generate_query_nodes, int max_calculate_center_nodes){
       Graph dgraph;
@@ -133,11 +186,14 @@ public:
       dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
       std::cout<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<std::endl;
       int i=1;
+      std::fstream outfile("../data/dbpedia/query6_/query_info.txt",std::ios::out);
+      outfile.close();
       while(i<=generate_query_nums){
           Graph qgraph;
           generate.generate_connect_graphs_by_Dgraph(dgraph,qgraph,generate_query_nodes);
           int d_Q=cal_diameter_qgraph(qgraph);
-          if(d_Q>2 || !query_labl_all_notsame(qgraph)){
+//          if((d_Q!=2) || (qgraph.GetNumEdges()!=6) || !query_labl_all_notsame(qgraph)){
+          if(!query_labl_all_notsame(qgraph)){
               continue;
           }
           clock_t s0,e0;
@@ -147,6 +203,9 @@ public:
           if(max_dual_set.size()<=max_calculate_center_nodes){
               generate.save_grape_file(qgraph,get_query_vfile(i),get_query_efile(i));
               std::cout<<i<<' '<<"calculate dual time"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<' '<<max_dual_set.size()<<std::endl;
+              std::fstream outfile("../data/dbpedia/query6_/query_info.txt",std::ios::app);
+              outfile<<i<<' '<<"calculate dual time="<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<' '<<max_dual_set.size()<<std::endl;
+              outfile.close();
               i++;
           }
       }
@@ -202,6 +261,25 @@ public:
                max_dual_set.insert(v);
             }
         }
+	int flag = 0;
+	if(flag == 1){
+ 	    std::fstream outfile_("../data/dbpedia/inc/evaluate_incremental_information_add.txt",std::ios::out);
+	    outfile_.close();
+	}
+	else{
+	    std::fstream outfile_("../data/dbpedia/inc/evaluate_incremental_information_rm.txt",std::ios::out);
+	    outfile_.close();
+	}
+	if(flag == 1){
+	    std::fstream outfile_("../data/dbpedia/inc/evaluate_incremental_information_add.txt",std::ios::app);
+	    outfile_<<"original need calculate center node "<<max_dual_set.size()<<endl;
+            outfile_.close();
+	}
+	else{
+	    std::fstream outfile_("../data/dbpedia/inc/evaluate_incremental_information_rm.txt",std::ios::app);
+            outfile_<<"original need calculate center node "<<max_dual_set.size()<<endl;
+            outfile_.close();
+	}
         std::cout<<"original need calculate center node "<<max_dual_set.size()<<endl;
         int j=1;
         while(j<circle_num){
@@ -213,8 +291,10 @@ public:
                 incdsim[u].insert(v);
                 }
             }
-            Load_bunch_edges(add_edges,base_add_file,j);
-            Load_bunch_edges(rm_edges,base_remove_file,j);
+	    if(flag == 1)
+                Load_bunch_edges(add_edges,base_add_file,j);
+ 	    else
+                Load_bunch_edges(rm_edges,base_remove_file,j);
             std::set<pair<VertexID,VertexID>> tmp_set;
             for(auto e:add_edges){
                 tmp_set.insert(e);
@@ -224,8 +304,8 @@ public:
             }
             std::unordered_set<VertexID> e_affected_nodes = find_affected_area(dgraph,tmp_set,d_Q);
             e_affected_nodes = intersection(e_affected_nodes,max_dual_set);
-          //  LoadEdges(edges,base_add_file+std::to_string(j));
-        //    LoadEdges(edges,base_remove_file+std::to_string(j));
+//            LoadEdges(edges,base_add_file+std::to_string(j));
+//            LoadEdges(edges,base_remove_file+std::to_string(j));
             for (auto e:add_edges){
                dgraph.AddEdge(Edge(e.first,e.second,1));
             }
@@ -246,6 +326,17 @@ public:
             for(auto e:add_edges){
                 dgraph.RemoveEdge(Edge(e.first,e.second,1));
             }
+	    if(flag == 1){
+                 std::fstream outfile_("../data/dbpedia/inc/evaluate_incremental_information_add.txt",std::ios::app);
+                 outfile_<<j<<" after incremental edgs all need calculate center nodes: "<<inc_max_dual_set.size()<<"      incremental edges affected center node nums: "<<e_affected_nodes.size()<<endl;
+		 outfile_.close();
+	    }
+	    else{
+             	 std::fstream outfile_("../data/dbpedia/inc/evaluate_incremental_information_rm.txt",std::ios::app);
+    		 outfile_<<j<<" after incremental edgs all need calculate center nodes: "<<inc_max_dual_set.size()<<"      incremental edges affected center node nums: "<<e_affected_nodes.size()<<endl;	
+		 outfile_.close();
+	    }
+
             std::cout<<j<<' '<<"after incremental edgs all need calculate center nodes: "<<inc_max_dual_set.size()<<' '<<"      incremental edges affected center node nums: "<<e_affected_nodes.size()<<endl;
             j+=1;
         }
@@ -468,6 +559,10 @@ std::vector<StrongR> calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
       Graph qgraph;
       qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
       std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+      
+      std::fstream tmp_outfile("/home/grape/hanzy/strong_simulation/build/time_info.txt",std::ios::out); // written in strongsim.cc and strong_inc.cc
+      tmp_outfile.close();      
+
       clock_t s0,e0;
       s0 =clock();
       std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim(dgraph,qgraph);
@@ -723,18 +818,26 @@ int main(int argc, char *argv[]) {
 //  StrongExr strongexr("yago",1);
 //  strongexr.generate_affected_center(200,0.06,"../data/affected_center.txt");
 //  strongexr.generate_outside_center(50000,30);
-  string base_name="yago";
-  StrongExr strongexr(base_name,3);
+  string base_name="dbpedia";
+  StrongExr strongexr(base_name,21);
  //strongexr.print_dual_and_strong_information();
 //  strongexr.generate_query();
-  //strongexr.generate_affected_center(200,0.04);
-  //strongexr.generate_outside_center(50000,10);
-  strongexr.test_strongsimulation_inc(20);
-//strongexr.first_strong_strongInc(30);
- // strongexr.print_affected_center_info(10);
- //strongexr.generate_query(200,5,1000);
- //strongexr.generate_all_random_edges(100000,20);
-  //strongexr.print_evaluate_incremental_information(10);
+ 
+//  strongexr.generate_query(300,6,7000); //生成query查询图，输出的query_info信息中，第二列数字越大代表该q越好。
+
+//  strongexr.generate_affected_center(200,0.05);
+//  strongexr.generate_outside_center(50000,10);
+//  strongexr.test_strongsimulation_inc(10);
+
+//  strongexr.generate_all_random_edges(100000,20);
+//  strongexr.first_strong_strongInc(30);
+
+//  strongexr.generate_query(200,5,1000); //生成query查询图，输出的query_info信息中，第二列数字越大代表该q越好。
+  strongexr.print_evaluate_incremental_information(19); //判断当前的inc，每次迭代会影响多少个ball。
+//  strongexr.print_affected_center_info(10);
+
+//  strongexr.print_affected_center_info_one_by_one(19); //打印每次迭代的边对ball的数量影响
+ 
   worker_finalize();
   return 0;
 }

@@ -279,15 +279,36 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
                                       std::set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges){
           DualInc dualinc;
+          clock_t start1,end1,start2,end2;
+          start1 = clock();
           for (auto e:add_edges){
              dgraph.AddEdge(Edge(e.first,e.second,1));
           }
+          end1 = clock();
+
+	  clock_t s1 = clock();
           dualinc.incremental_addedges(dgraph,qgraph,dsim,add_edges);
+          clock_t e1 = clock();
+          
+          start2 = clock();
           for(auto e :rm_edges){
               dgraph.RemoveEdge(Edge(e.first,e.second,1));
-          }
+          } 
+          end2 = clock();
+
+          clock_t s2 = clock();
           dualinc.incremental_removeedgs(dgraph,qgraph,dsim,rm_edges);
-    }
+          clock_t e2 = clock();
+
+          std::fstream outfile("time_info_add|rm.txt",std::ios::app);
+          outfile<<(float)(end2-start2+end1-start1)/CLOCKS_PER_SEC<<std::endl;
+          outfile.close();          
+  
+          std::fstream outfile2("whole_time_info_add_rm.txt",std::ios::app);
+          outfile2<<"inc strong sim.......dualinc.incremental_addedges and incremental_removeedgs....time = "<<(float)(e2-s2+e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+          outfile2.close();
+
+   }
 
 //std::vector<StrongR>
   void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
@@ -299,12 +320,25 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
            *calculate qgaraph diameter
           */
           std::vector<StrongR> max_result;
+          clock_t s1,e1;
+          s1 = clock();
           int d_Q = cal_diameter_qgraph(qgraph);
+          e1 = clock();
+          std::fstream out1("whole_time_info_add_rm.txt",std::ios::app);
+ 	  out1<<"inc strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+          out1.close();
           std::unordered_map<VertexID, std::unordered_set<VertexID>> global_sim;
+     
           recalculate_incrementl_dual(dgraph,qgraph,dsim,add_edges,rm_edges);
 
           std::unordered_set<VertexID> affected_center_nodes;
+          clock_t s2,e2;
+ 	  s2 = clock();
           find_affected_center_area(dgraph,add_edges,rm_edges,d_Q,affected_center_nodes);
+          e2 = clock();
+	  std::fstream out2("whole_time_info_add_rm.txt",std::ios::app);
+          out2<<"inc strong sim...find_affected_center_area = "<<(float)(e2-s2)/CLOCKS_PER_SEC<<"s"<<std::endl;
+          out2.close();
 
           std::unordered_set<VertexID> max_dual_set;
           for(auto u:qgraph.GetAllVerticesID()){
@@ -312,8 +346,13 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
                   max_dual_set.insert(v);
               }
           }
+          clock_t s3,e3;
+          s3 = clock();
           affected_center_nodes = intersection(affected_center_nodes,max_dual_set);
-
+          e3 = clock();
+          std::fstream out3("whole_time_info_add_rm.txt",std::ios::app);
+          out3<<"inc strong sim...find affected_center_nodes by intersection = "<<(float)(e3-s3)/CLOCKS_PER_SEC<<"s"<<std::endl;
+          out3.close();
           int i=0;
            clock_t stime,etime;
              stime =clock();
@@ -381,7 +420,11 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
               max_result.emplace_back(w,S_w);
 //              print_ball_info(qgraph,S_w,w);
 //              break;
-             // std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+	      end = clock();
+              std::fstream out_("calculate_ball_info_inc.txt",std::ios::app);
+              out_<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+              out_.close();
+//              std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
 //              }
           }
           etime=clock();
@@ -389,6 +432,12 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
           for(auto strong_ball :max_result){
               strong_r.push_back(strong_ball);
           }
+
+          std::fstream tmp_outfile("whole_time_info_add_rm.txt",std::ios::app);
+          tmp_outfile<<"inc strong sim...calculate all ball =  "<<(float)(etime-stime)/CLOCKS_PER_SEC<<", ";
+          tmp_outfile<<"strongr.size = "<<strong_r.size()<<std::endl;
+          tmp_outfile<<"------------------------------------------------------------------------------------------"<<std::endl;
+          tmp_outfile.close();
          // std::cout<<"inc strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
 //          return max_result;
       }

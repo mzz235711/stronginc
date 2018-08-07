@@ -258,14 +258,26 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
            *calculate qgaraph diameter
           */
           std::vector<StrongR> max_result;
+          clock_t s1,e1;
+          s1 = clock();
           int d_Q = cal_diameter_qgraph(qgraph);
+          e1 = clock();
+          std::fstream out1("whole_time_info_add_rm.txt",std::ios::app);
+	  out1<<"strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+          out1.close();
           std::unordered_map<VertexID, std::unordered_set<VertexID>> global_sim;
           /**
            *calculate dual simulation for dgraph
            */
           DualSim dualsim;
           bool inital_sim =false;
+          clock_t tmps,tmpe;
+          tmps = clock();
           dualsim.dual_simulation(dgraph,qgraph,global_sim,inital_sim);
+          tmpe = clock();
+          std::fstream tmp_outfile("whole_time_info_add_rm.txt",std::ios::app);
+          tmp_outfile<<"strong sim........dual_simulation time = "<<(float)(tmpe-tmps)/CLOCKS_PER_SEC<<"s"<<std::endl;
+          tmp_outfile.close();
 //          std::cout<<"dual "<<(float)(end1-start1)/CLOCKS_PER_SEC<<std::endl;
           int i=0;
           clock_t stime,etime;
@@ -325,10 +337,17 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
               max_result.emplace_back(w,S_w);
               //print_ball_info(qgraph,S_w,w);
             // break;
-             // std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+              end = clock();
+              std::fstream out3("calculate_ball_info.txt",std::ios::app);
+	      out3<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+              out3.close();
+//              std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
               }
           }
           etime=clock();
+          std::fstream tmpt_outfile("whole_time_info_add_rm.txt",std::ios::app);
+          tmpt_outfile<<"strong sim...calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl<<"strongr.size = "<<max_result.size()<<std::endl;
+          tmpt_outfile.close();
          // std::cout<<"all strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
           return max_result;
       }
