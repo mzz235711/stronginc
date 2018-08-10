@@ -65,7 +65,9 @@ class StrongSim{
         calculate strong simulation result
         */
 
-     std::vector<StrongR> strong_simulation_sim(Graph &dgraph, Graph &qgraph);
+	 std::vector<StrongR> strong_simulation_sim(Graph &dgraph, Graph &qgraph);
+	 
+     std::vector<StrongR> strong_simulation_sim(Graph &dgraph, Graph &qgraph, int flag);
 
 };
 #endif //CPP_STRONGSIMULATION_H_

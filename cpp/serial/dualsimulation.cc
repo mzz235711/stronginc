@@ -32,6 +32,7 @@ void DualSim::dual_sim_initialization(Graph &dgraph, Graph &qgraph,
                             sim[u].insert(v);
                         }
                     }
+					
                 }
                 else if (qgraph.GetOutDegree(u) != 0 && qgraph.GetInDegree(u) ==0){
                     for (auto v : dgraph.GetAllVerticesID()){
@@ -55,7 +56,6 @@ void DualSim::dual_sim_initialization(Graph &dgraph, Graph &qgraph,
                       }
                  }
              }
-
         //inital remove_pred,remove_succ
             std::unordered_set<VertexID> pt1,pt2;
             for (auto w : sim[u]){
@@ -70,7 +70,7 @@ void DualSim::dual_sim_initialization(Graph &dgraph, Graph &qgraph,
             remove_pred[u] = diff(pred_dgraph_vertices,pt1);
             remove_succ[u] = diff(succ_dgraph_vertices,pt2);
        }
-    }
+}
 
 
 void DualSim::reunordered_map_data_id(std::unordered_map<VertexID, VertexID> &t_f,Graph &dgraph){

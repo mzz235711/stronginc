@@ -40,7 +40,8 @@ public:
     void find_affected_center_area(Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,
                                                  std::set<std::pair<VertexID,VertexID>> &rm_edges,
                                                  int d_hop,
-                                                 std::unordered_set<VertexID> &result);
+                                                 std::unordered_set<VertexID> &result,
+												 int flag);
 
       /**
        calculate diameter for qgraph

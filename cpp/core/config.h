@@ -16,6 +16,11 @@ typedef int EdgeLabel;
 #define NUM_FRAGMENTS 5
 #endif
 
+#ifndef MAX_LABEL
+#define MAX_LABEL 3
+#endif
+
+#define random(a,b) (rand()%(b-a+1)+a)
 
 #define MUTABLE_GRAPH
 

@@ -39,6 +39,7 @@ Graph::~Graph() {}
 
 VertexLabel &Graph::GetVertexLabel(const VertexID vid) {
   assert(vid < num_vertices_);
+  // std::cout<<"vertices_label_.size()"<<vertices_label_.size()<<std::endl;
   return vertices_label_.at(vid);
 }
 
@@ -510,7 +511,9 @@ void Graph::find_hop_nodes(std::unordered_set<VertexID> &node_set,int d_hop,std:
 #ifdef MUTABLE_GRAPH
 // Mutable graph: adding vertices and edges
 int Graph::AddVertex(const Vertex &v) {
+  // std::cout<<"v:"<<v.id()<<", v.label=" << v.label()<<", vertices_label_.size = "<<vertices_label_.size()<<std::endl;
   vertices_label_.push_back(v.label());
+  // std::cout<<"after v:"<<v.id()<<", v.label=" << v.label()<<", vertices_label_.size = "<<vertices_label_.size()<<std::endl;
   return add_vertex(*graph_);
 }
 
@@ -520,6 +523,18 @@ void Graph::AddEdge(const Edge &e) {
   if (!edge(u, v, *graph_).second) {
     add_edge(u, v, attr, *graph_);
   }
+}
+
+void Graph::printGraphInfo(){
+	std::cout << "------------------------------------------"<<std::endl;
+	std::cout << "vertices num = "<<GetNumVertices()<<" , edges num = "<<GetNumEdges()<<std::endl;
+	for(auto v : GetAllVerticesID()){
+		std::cout<<v<<std::endl;
+		for(auto e : GetOutgoingEdges(v)){
+			std::cout <<v<<" "<<e.dst()<<" "<<e.attr()<<std::endl;
+		}
+	}
+	std::cout << "------------------------------------------"<<std::endl;
 }
 
 void Graph::RemoveEdge(const Edge &e) {

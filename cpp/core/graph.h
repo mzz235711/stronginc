@@ -282,6 +282,8 @@ class Graph {
   */
   void shortest_distance(VertexID vid,std::unordered_map<VertexID,int> &dis);
 
+  void printGraphInfo();
+  
   /**
    * get distance from u to v in undirected graph
    un_reached return INT_MAX
@@ -326,6 +328,7 @@ class Graph {
    * refresh the graph property after adding all vertices and edges
    */
   void RebuildGraphProperties();
+    
 #endif
 
  private:

@@ -6,20 +6,25 @@ StrongInc::~StrongInc(){}
 void StrongInc::find_affected_center_area(Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,
                                                  std::set<std::pair<VertexID,VertexID>> &rm_edges,
                                                  int d_hop,
-                                                 std::unordered_set<VertexID> &result){
-    std::unordered_set<VertexID> incedges_node;
-    for(auto e:add_edges){
-        if(rm_edges.find(e) == rm_edges.end()){
-        incedges_node.insert(e.first);
-        incedges_node.insert(e.second);
+                                                 std::unordered_set<VertexID> &result,
+												 int flag){
+	std::unordered_set<VertexID> incedges_node;
+	if(flag == 0){
+		for(auto e:rm_edges){
+            if(add_edges.find(e) == add_edges.end()){
+                incedges_node.insert(e.first);
+                incedges_node.insert(e.second);
+            }
+        }		
+	}
+	else if (flag == 2){
+		for(auto e:add_edges){
+			if(rm_edges.find(e) == rm_edges.end()){
+				incedges_node.insert(e.first);
+				incedges_node.insert(e.second);
+			}
         }
-    }
-    for(auto e:rm_edges){
-        if(add_edges.find(e) == add_edges.end()){
-         incedges_node.insert(e.first);
-        incedges_node.insert(e.second);
-        }
-    }
+	}	
     dgraph.find_hop_nodes(incedges_node,d_hop,result);
 }
 
@@ -265,7 +270,7 @@ void StrongInc::print_ball_info(Graph &qgraph,std::unordered_map<VertexID, std::
                   }
 
               }
-                         for(auto u :qgraph.GetAllVerticesID()){
+              for(auto u :qgraph.GetAllVerticesID()){
                std::cout<<u;
                for(auto v:printset[u]){
                    std::cout<<' '<<v;
@@ -279,28 +284,29 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
                                       std::set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges){
           DualInc dualinc;
-          clock_t start1,end1,start2,end2;
-          start1 = clock();
+          clock_t start1 = clock();
           for (auto e:add_edges){
              dgraph.AddEdge(Edge(e.first,e.second,1));
           }
-          end1 = clock();
-
-	  clock_t s1 = clock();
+          clock_t end1 = clock();
+		  
+	      clock_t s1 = clock();
           dualinc.incremental_addedges(dgraph,qgraph,dsim,add_edges);
           clock_t e1 = clock();
           
-          start2 = clock();
+          clock_t start2 = clock();
           for(auto e :rm_edges){
               dgraph.RemoveEdge(Edge(e.first,e.second,1));
           } 
-          end2 = clock();
+		  std::cout<<"Inc.........After add edges : "<<std::endl;
+          clock_t end2 = clock();
+//		  dgraph.printGraphInfo();
 
           clock_t s2 = clock();
           dualinc.incremental_removeedgs(dgraph,qgraph,dsim,rm_edges);
           clock_t e2 = clock();
 
-          std::fstream outfile("time_info_add|rm.txt",std::ios::app);
+          std::fstream outfile("time_info_add_rm.txt",std::ios::app);
           outfile<<(float)(end2-start2+end1-start1)/CLOCKS_PER_SEC<<std::endl;
           outfile.close();          
   
@@ -310,134 +316,175 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
 
    }
 
-//std::vector<StrongR>
-  void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
+void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
                                       std::vector<StrongR> &strong_r,
                                       std::set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges){
-          /**
-           *calculate qgaraph diameter
-          */
-          std::vector<StrongR> max_result;
-          clock_t s1,e1;
-          s1 = clock();
-          int d_Q = cal_diameter_qgraph(qgraph);
-          e1 = clock();
-          std::fstream out1("whole_time_info_add_rm.txt",std::ios::app);
- 	  out1<<"inc strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
-          out1.close();
-          std::unordered_map<VertexID, std::unordered_set<VertexID>> global_sim;
-     
-          recalculate_incrementl_dual(dgraph,qgraph,dsim,add_edges,rm_edges);
+    /**
+	*calculate qgaraph diameter
+	*/
+	std::vector<StrongR> max_result;
+	clock_t s1 = clock();
+	int d_Q = cal_diameter_qgraph(qgraph);
+	clock_t e1 = clock();
+		
+	std::unordered_map<VertexID, std::unordered_set<VertexID>> global_sim;
 
-          std::unordered_set<VertexID> affected_center_nodes;
-          clock_t s2,e2;
- 	  s2 = clock();
-          find_affected_center_area(dgraph,add_edges,rm_edges,d_Q,affected_center_nodes);
-          e2 = clock();
-	  std::fstream out2("whole_time_info_add_rm.txt",std::ios::app);
-          out2<<"inc strong sim...find_affected_center_area = "<<(float)(e2-s2)/CLOCKS_PER_SEC<<"s"<<std::endl;
-          out2.close();
+//     recalculate_incrementl_dual(dgraph,qgraph,dsim,add_edges,rm_edges);
+	
+	std::unordered_set<VertexID> affected_center_nodes_rm;
+	std::unordered_set<VertexID> affected_center_nodes_add;
+	DualInc dualinc;
+	
+	// first remove edges
+	clock_t s2 = clock();
+    find_affected_center_area(dgraph,add_edges,rm_edges,d_Q,affected_center_nodes_rm,0); //在原图上，找减边的影响区域
+	clock_t e2 = clock();
+	
+	clock_t start1 = clock();
+	for(auto e : rm_edges){
+		dgraph.RemoveEdge(Edge(e.first,e.second,1));
+	}
+	dgraph.RebuildGraphProperties();
+	// dgraph.printGraphInfo();
+	clock_t end1 = clock();
+	
+	clock_t s3 = clock();
+	dualinc.incremental_removeedgs(dgraph,qgraph,dsim,rm_edges);
+	clock_t e3 = clock();
+	
+	// then add edges
+	clock_t start2 = clock();
+	int max = dgraph.GetNumVertices() - 1;
+	for(auto e : add_edges){
+		if(e.first > max){
+			max = e.first;
+		}
+		if(e.second > max){
+			max = e.second;
+		}
+	}
+	int tmp = dgraph.GetNumVertices();
+	for(int i=0; i<=(max-tmp); i++){
+		dgraph.AddVertex(Vertex(i, random(0,MAX_LABEL-1))); // save it.
+	}
+	for(auto e : add_edges){
+		dgraph.AddEdge(Edge(e.first,e.second,1));
+	}
+	dgraph.RebuildGraphProperties();
+	// dgraph.printGraphInfo();
+	clock_t end2 = clock();
+	std::fstream outfile3("time_info_rm_and_add.txt",std::ios::app);
+    outfile3<<(float)(end2-start2+end1-start1)/CLOCKS_PER_SEC<<std::endl;
+    outfile3.close();
+	
+	clock_t s4 = clock();
+	dualinc.incremental_addedges(dgraph,qgraph,dsim,add_edges);
+	clock_t e4 = clock();
+	clock_t s5 = clock();
+    find_affected_center_area(dgraph,add_edges,rm_edges,d_Q,affected_center_nodes_add,2); //在更新之后的图上，找增边的影响区域
+    clock_t e5 = clock();
 
-          std::unordered_set<VertexID> max_dual_set;
-          for(auto u:qgraph.GetAllVerticesID()){
-              for(auto v :dsim[u]){
-                  max_dual_set.insert(v);
-              }
-          }
-          clock_t s3,e3;
-          s3 = clock();
-          affected_center_nodes = intersection(affected_center_nodes,max_dual_set);
-          e3 = clock();
-          std::fstream out3("whole_time_info_add_rm.txt",std::ios::app);
-          out3<<"inc strong sim...find affected_center_nodes by intersection = "<<(float)(e3-s3)/CLOCKS_PER_SEC<<"s"<<std::endl;
-          out3.close();
-          int i=0;
-           clock_t stime,etime;
-             stime =clock();
-          for (auto w : max_dual_set) {
-              /**
-               * calculate ball for center w if w if a valid center
-               */
-//              if (valid_sim_w(qgraph,dsim,w)){
-              if (affected_center_nodes.find(w) == affected_center_nodes.end()){
-                 for(auto strong_ball:strong_r){
-                     if(strong_ball.center()==w){
-                          max_result.push_back(strong_ball);
-                     }
-                 }
+	// union
+	clock_t s6 = clock();
+	std::unordered_set<VertexID> affected_center_nodes = unions(affected_center_nodes_rm,affected_center_nodes_add);
+	clock_t e6 = clock();
+	
+    std::unordered_set<VertexID> max_dual_set;
+    for(auto u : qgraph.GetAllVerticesID()){
+		for(auto v : dsim[u]){
+			max_dual_set.insert(v);
+        }
+    }
+    clock_t s7 = clock();
+    affected_center_nodes = intersection(affected_center_nodes,max_dual_set);
+    clock_t e7 = clock();
 
-                  continue;
-              }
-               clock_t start,end;
-               start =clock();
-              /**
-               *find d_hop_nodes for w in dgraph
-               */
-              std::unordered_set<VertexID> ball_node;
-              dgraph.find_hop_nodes(w,d_Q,ball_node);
+    int i = 0;
+    clock_t stime = clock();
+    for (auto w : max_dual_set) {
+		/**
+		* calculate ball for center w if w if a valid center
+		*/
+		// if (valid_sim_w(qgraph,dsim,w)){
+		if (affected_center_nodes.find(w) == affected_center_nodes.end()){
+			for(auto strong_ball:strong_r){
+				if(strong_ball.center()==w){
+					max_result.push_back(strong_ball);
+				}
+            }
+			continue;
+        }
+		clock_t start =clock();
+		/**
+		*find d_hop_nodes for w in dgraph
+		*/
+		std::unordered_set<VertexID> ball_node;
+		dgraph.find_hop_nodes(w,d_Q,ball_node);
+		
+		std::unordered_set<VertexID> ball_filter_node;
+        std::unordered_set<Edge> ball_filter_edge;
+        std::unordered_map<VertexID, std::unordered_set<VertexID>> S_w;
+        for(auto u : qgraph.GetAllVerticesID()){
+            for (auto v : dsim[u]){
+                if(ball_node.find(v) != ball_node.end()){
+                    S_w[u].insert(v);
+                    ball_filter_node.insert(v);
+                }
+            }
+        }
+        for(auto e: qgraph.GetAllEdges()){
+            VertexID sourceid=e.src();
+            VertexID targetid=e.dst();
+            for (auto sim_v1 : S_w[sourceid]){
+                for(auto sim_v2 : S_w[targetid]){
+                    if (dgraph.ExistEdge(sim_v1,sim_v2)){
+                        ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                    }
+                }
+            }
+        }
 
-              std::unordered_set<VertexID> ball_filter_node;
-              std::unordered_set<Edge> ball_filter_edge;
-              std::unordered_map<VertexID, std::unordered_set<VertexID>> S_w;
-              for(auto u : qgraph.GetAllVerticesID()){
-                  for (auto v : dsim[u]){
-                      if(ball_node.find(v) != ball_node.end()){
-                          S_w[u].insert(v);
-                          ball_filter_node.insert(v);
-                      }
-                  }
-              }
-              for(auto e: qgraph.GetAllEdges()){
-                  VertexID sourceid=e.src();
-                  VertexID targetid=e.dst();
-                  for (auto sim_v1 : S_w[sourceid]){
-                      for(auto sim_v2 : S_w[targetid]){
-                          if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                              ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
-                          }
-                      }
-                  }
-              }
+        Ball_View ball_view(ball_filter_node,ball_filter_edge);
 
-              Ball_View ball_view(ball_filter_node,ball_filter_edge);
+        std::unordered_set<VertexID> refined_ball_vertex;
+        std::unordered_set<Edge> refinded_ball_edge;
+        find_node_connectivity_nodes(ball_view,refined_ball_vertex,w);
+        for(auto e :ball_filter_edge){
+            if(refined_ball_vertex.find(e.src()) != refined_ball_vertex.end() && refined_ball_vertex.find(e.dst())!=refined_ball_vertex.end()){
+                refinded_ball_edge.insert(e);
+            }
+        }
+        Ball_View refined_ball_view(refined_ball_vertex,refinded_ball_edge);
+        rename_sim(refined_ball_view,qgraph,S_w);
+        dual_filter_match(refined_ball_view, qgraph,S_w,w,d_Q);
 
-              std::unordered_set<VertexID> refined_ball_vertex;
-              std::unordered_set<Edge> refinded_ball_edge;
-              find_node_connectivity_nodes(ball_view,refined_ball_vertex,w);
-              for(auto e :ball_filter_edge){
-                   if(refined_ball_vertex.find(e.src()) != refined_ball_vertex.end() && refined_ball_vertex.find(e.dst())!=refined_ball_vertex.end()){
-                       refinded_ball_edge.insert(e);
-                   }
-              }
-              Ball_View refined_ball_view(refined_ball_vertex,refinded_ball_edge);
-              rename_sim(refined_ball_view,qgraph,S_w);
-              dual_filter_match(refined_ball_view, qgraph,S_w,w,d_Q);
+        extract_max_pg(refined_ball_view,dgraph,qgraph, w,S_w);
 
-              extract_max_pg(refined_ball_view,dgraph,qgraph, w,S_w);
+        max_result.emplace_back(w,S_w);
+        // print_ball_info(qgraph,S_w,w);
+        // break;
+	    clock_t end = clock();
+        std::fstream out_("calculate_ball_info_inc.txt",std::ios::app);
+        out_<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+        out_.close();
+        // std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+    }
+    clock_t etime = clock();
+    strong_r.clear();
+    for(auto strong_ball :max_result){
+        strong_r.push_back(strong_ball);
+    }
 
-              max_result.emplace_back(w,S_w);
-//              print_ball_info(qgraph,S_w,w);
-//              break;
-	      end = clock();
-              std::fstream out_("calculate_ball_info_inc.txt",std::ios::app);
-              out_<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
-              out_.close();
-//              std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
-//              }
-          }
-          etime=clock();
-          strong_r.clear();
-          for(auto strong_ball :max_result){
-              strong_r.push_back(strong_ball);
-          }
-
-          std::fstream tmp_outfile("whole_time_info_add_rm.txt",std::ios::app);
-          tmp_outfile<<"inc strong sim...calculate all ball =  "<<(float)(etime-stime)/CLOCKS_PER_SEC<<", ";
-          tmp_outfile<<"strongr.size = "<<strong_r.size()<<std::endl;
-          tmp_outfile<<"------------------------------------------------------------------------------------------"<<std::endl;
-          tmp_outfile.close();
-         // std::cout<<"inc strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
-//          return max_result;
-      }
+    std::fstream tmp_outfile("whole_time_info_add_rm.txt",std::ios::app);
+	tmp_outfile<<"inc strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+	tmp_outfile<<"inc strong sim....dualinc = "<<(float)(e4-s4+e3-s3)/CLOCKS_PER_SEC<<"s"<<std::endl;
+	tmp_outfile<<"inc strong sim......find_affected_center_area = "<<(float)(e5-s5+e2-s2)/CLOCKS_PER_SEC<<"s"<<std::endl;
+    tmp_outfile<<"inc strong sim........find affected_center_nodes by unions and intersection = "<<(float)(e7-s7+e6-s6)/CLOCKS_PER_SEC<<"s"<<std::endl;
+    tmp_outfile<<"inc strong sim..........calculate all ball =  "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+    tmp_outfile<<"strongr.size = "<<strong_r.size()<<std::endl;
+    tmp_outfile<<"------------------------------------------------------------------------------------------"<<std::endl;
+    tmp_outfile.close();
+    // std::cout<<"inc strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+}
