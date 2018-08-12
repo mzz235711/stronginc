@@ -266,6 +266,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
 	*/
 	DualSim dualsim;
 	bool inital_sim = false;
+	
 	clock_t tmps = clock();
 	dualsim.dual_simulation(dgraph,qgraph,global_sim,inital_sim);
 	clock_t tmpe = clock();
@@ -327,21 +328,21 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
             //print_ball_info(qgraph,S_w,w);
             clock_t end = clock();
 			
-			std::fstream out3("calculate_ball_info.txt",std::ios::app);
-	        out3<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
-            out3.close();
+			// std::fstream out3("calculate_ball_info.txt",std::ios::app);
+	        // out3<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+            // out3.close();
             // std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
         }
     }
 	clock_t etime = clock();
     // std::cout<<"all strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
 
-	std::fstream tmp_outfile("whole_time_info_rm_and_and.txt",std::ios::app);
-	tmp_outfile<<"strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
-	tmp_outfile<<"strong sim......dual_simulation time = "<<(float)(tmpe-tmps)/CLOCKS_PER_SEC<<"s"<<std::endl;
-	tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
-	tmp_outfile<<"strongr.size = "<<max_result.size()<<std::endl;
-	tmp_outfile.close();
+	// std::fstream tmp_outfile("whole_time_info_rm_and_and.txt",std::ios::app);
+	// tmp_outfile<<"strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+	// tmp_outfile<<"strong sim......dual_simulation time = "<<(float)(tmpe-tmps)/CLOCKS_PER_SEC<<"s"<<std::endl;
+	// tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+	// tmp_outfile<<"strongr.size = "<<max_result.size()<<std::endl;
+	// tmp_outfile.close();
 	
     return max_result;
 }
@@ -433,24 +434,27 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
     // std::cout<<"all strong "<< (float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
 	
 	if(flag == 0){
-		std::fstream tmp_outfile("whole_time_info_rm.txt",std::ios::app);
+		std::fstream tmp_outfile("whole_time_info_only_rm.txt",std::ios::app);
 		tmp_outfile<<"strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
 		tmp_outfile<<"strong sim......dual_simulation time = "<<(float)(tmpe-tmps)/CLOCKS_PER_SEC<<"s"<<std::endl;
-		tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl<<"strongr.size = "<<max_result.size()<<std::endl;
+		tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+		tmp_outfile<<"strongr.size = "<<max_result.size()<<std::endl;
 		tmp_outfile.close();
 	}
 	else if(flag == 1){
-		std::fstream tmp_outfile("whole_time_info_add.txt",std::ios::app);
+		std::fstream tmp_outfile("whole_time_info_only_add.txt",std::ios::app);
 		tmp_outfile<<"strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
 		tmp_outfile<<"strong sim......dual_simulation time = "<<(float)(tmpe-tmps)/CLOCKS_PER_SEC<<"s"<<std::endl;
-		tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl<<"strongr.size = "<<max_result.size()<<std::endl;
+		tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+		tmp_outfile<<"strongr.size = "<<max_result.size()<<std::endl;
 		tmp_outfile.close();
 	}
 	else if(flag == 2){
 		std::fstream tmp_outfile("whole_time_info_rm_and_and.txt",std::ios::app);
 		tmp_outfile<<"strong sim...calculate d_Q = "<<(float)(e1-s1)/CLOCKS_PER_SEC<<"s"<<std::endl;
 		tmp_outfile<<"strong sim......dual_simulation time = "<<(float)(tmpe-tmps)/CLOCKS_PER_SEC<<"s"<<std::endl;
-		tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl<<"strongr.size = "<<max_result.size()<<std::endl;
+		tmp_outfile<<"strong sim.........calculate all ball = "<<(float)(etime-stime)/CLOCKS_PER_SEC<<std::endl;
+		tmp_outfile<<"strongr.size = "<<max_result.size()<<std::endl;
 		tmp_outfile.close();
 	}
     return max_result;

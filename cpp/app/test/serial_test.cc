@@ -104,8 +104,15 @@ public:
     void test_add_edges(){
         int index = 1;
         GraphLoader dgraph_loader,qgraph_loader;
-        Graph qgraph;
-        qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
+        // Graph qgraph;
+        // qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
+		Graph dgraph1;
+		dgraph_loader.LoadGraph(dgraph1,"../data/dbpedia/dbpedia.v","../data/dbpedia/dbpedia.e");
+		cout<<dgraph1.GetNumVertices()<<' '<<dgraph1.GetNumEdges()<<endl;
+		dgraph1.AddEdge(Edge(0,6,33));
+		cout<<dgraph1.GetNumVertices()<<' '<<dgraph1.GetNumEdges()<<endl;
+		dgraph1.AddEdge(Edge(5,6,33));
+		cout<<dgraph1.GetNumVertices()<<' '<<dgraph1.GetNumEdges()<<endl;
 //        cout<<qgraph.GetNumEdges()<<endl;
 //        for(auto e:qgraph.GetAllEdges()){
 //            std::cout<<e.src()<<' '<<e.dst()<<endl;
@@ -125,28 +132,28 @@ public:
 //        for(auto e:qgraph.GetAllEdges()){
 //            std::cout<<e.src()<<' '<<e.dst()<<endl;
 //        }
-        std::unordered_set<Edge> edge_set;
-        for(auto e:qgraph.GetAllEdges()){
-            edge_set.insert(e);
-        }
-        std::cout<<edge_set.size()<<endl;
-        edge_set.insert(Edge(0,1,44));
-        std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
-        for(auto e:edge_set){
-            std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
-        }
+        // std::unordered_set<Edge> edge_set;
+        // for(auto e:qgraph.GetAllEdges()){
+            // edge_set.insert(e);
+        // }
+        // std::cout<<edge_set.size()<<endl;
+        // edge_set.insert(Edge(0,1,44));
+        // std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
+        // for(auto e:edge_set){
+            // std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
+        // }
 
-        edge_set.insert(Edge(0,2,55));
-        std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
-        for(auto e:edge_set){
-            std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
-        }
+        // edge_set.insert(Edge(0,2,55));
+        // std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
+        // for(auto e:edge_set){
+            // std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
+        // }
 
-        edge_set.insert(Edge(1,2,88));
-        std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
-        for(auto e:edge_set){
-            std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
-        }
+        // edge_set.insert(Edge(1,2,88));
+        // std::cout<<edge_set.size()<<' '<<(edge_set.find(Edge(0,1,55))!=edge_set.end())<<std::endl;
+        // for(auto e:edge_set){
+            // std::cout<<e.src()<<' '<<e.dst()<<' '<<e.attr()<<std::endl;
+        // }
     }
 
     void test_dualsimulation(){
@@ -402,9 +409,10 @@ int main(int argc, char *argv[]) {
 //  serial.test_dual_incremental();
 //  serial.test_strongsimulation();
 //  serial.test_add_edges();
-    serial.generate_query_view(3);
-    serial.test_view_query();
+    // serial.generate_query_view(3);
+    // serial.test_view_query();
 //  worker_finalize();
+  serial.test_add_edges();
   return 0;
 }
 

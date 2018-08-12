@@ -37,6 +37,11 @@ public:
 		return ret;
 	}
 
+	void find_affected_center_area(Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,
+                                                 std::set<std::pair<VertexID,VertexID>> &rm_edges,
+                                                 int d_hop,
+                                                 std::unordered_set<VertexID> &result);
+
     void find_affected_center_area(Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,
                                                  std::set<std::pair<VertexID,VertexID>> &rm_edges,
                                                  int d_hop,
@@ -94,9 +99,16 @@ public:
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges);
 
     void strong_simulation_inc(Graph &dgraph, Graph &qgraph,
-                                      std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
-                                      std::vector<StrongR> &strong_r,
-                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                      std::set<std::pair<VertexID,VertexID>> &rm_edges);
+                               std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
+                               std::vector<StrongR> &strong_r,
+                               std::set<std::pair<VertexID,VertexID>> &add_edges,
+                               std::set<std::pair<VertexID,VertexID>> &rm_edges);
+									  
+	void strong_simulation_inc(Graph &dgraph, Graph &qgraph,
+                               std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
+                               std::vector<StrongR> &strong_r,
+                               std::set<std::pair<VertexID,VertexID>> &add_edges,
+                               std::set<std::pair<VertexID,VertexID>> &rm_edges,
+							   int flag);
 };
 #endif //CPP_STRONGSIMULATION_INC_H_
