@@ -98,6 +98,18 @@ public:
                                       std::set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges);
 
+									  
+	void cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q, std::unordered_set<VertexID> &ball_node,
+									  std::vector<int> &dis, std::set<std::pair<VertexID,VertexID>> &add_edges);
+	
+	void strong_simulation_inc_only_add(Graph &dgraph, Graph &qgraph,
+                               std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
+                               std::vector<StrongR> &strong_r,
+                               std::set<std::pair<VertexID,VertexID>> &add_edges,
+							   int flag,
+							   std::unordered_map<VertexID,std::unordered_set<VertexID>> &whole_ball_nodes,
+							   std::unordered_map<VertexID,std::vector<int>> &whole_dist);
+	
     void strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                                std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
                                std::vector<StrongR> &strong_r,

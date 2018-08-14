@@ -277,7 +277,7 @@ Graph::ParentsIDIterator &Graph::ParentsIDIterator::operator++() {
   ++iter_;
   return *this;
 }
-
+/*
 void Graph::shortest_distance(VertexID vid,std::unordered_map<VertexID,int> &dis){
     VertexDescriptor u = vertex(vid, *graph_);
     std::vector<int> color(num_vertices_,0);
@@ -461,6 +461,238 @@ void  Graph::find_connectivity_nodes(VertexID vid, std::unordered_set<VertexID> 
 void Graph::find_hop_nodes(std::unordered_set<VertexID> &node_set,int d_hop,std::unordered_set<VertexID> &result){
     std::vector<int> color(num_vertices_,0);
     std::unordered_map<VertexID,int> dis;
+    std::queue<VertexDescriptor> q;
+  //  std::unordered_set<int> result;
+    for(auto vid :node_set){
+        VertexDescriptor u = vertex(vid, *graph_);
+        q.push(u);
+        color[vid] = 1;
+        dis[vid] = 0;
+        result.insert(vid);
+    }
+    while(!q.empty()){
+        VertexDescriptor root = q.front();
+        VertexID root_id = vertex_index_map_[root];
+        if(dis[root_id]==d_hop){
+            return ;
+         //   return result;
+        }
+        q.pop();
+        InEdgeDescripterIter in_iter_begin, in_iter_end;
+        boost::tie(in_iter_begin, in_iter_end) = in_edges(root, *graph_);
+        for (;in_iter_begin != in_iter_end;++in_iter_begin){
+            VertexDescriptor in_node =  source(*in_iter_begin,*graph_);
+            VertexID in_node_id = vertex_index_map_[in_node];
+            if (color[in_node_id] == 0){
+                q.push(in_node);
+                color[in_node_id] = 1;
+                dis[in_node_id] = dis[root_id]+1;
+                result.insert(in_node_id);
+            }
+        }
+
+        OutEdgeDescripterIter out_iter_begin, out_iter_end;
+        boost::tie(out_iter_begin, out_iter_end) = out_edges(root, *graph_);
+        for(; out_iter_begin != out_iter_end; ++out_iter_begin){
+            VertexDescriptor out_node =  target(*out_iter_begin,*graph_);
+            VertexID out_node_id = vertex_index_map_[out_node];
+            if (color[out_node_id] == 0){
+                q.push(out_node_id);
+                color[out_node_id] = 1;
+                dis[out_node_id] = dis[root_id] + 1;
+                result.insert(out_node_id);
+            }
+        }
+    }
+
+   // return result;
+}
+*/
+
+void Graph::shortest_distance(VertexID vid,std::vector<int> &dis){
+    VertexDescriptor u = vertex(vid, *graph_);
+    std::vector<int> color(num_vertices_,0);
+    //std::unordered_map<VertexID,int> dis;
+    std::queue<VertexDescriptor> q;
+    //vertex_index_map_
+	dis.resize(num_vertices_, INT_MAX);
+    q.push(u);
+    color[vid] = 1;
+    dis[vid] = 0;
+    while(!q.empty()){
+        VertexDescriptor root = q.front();
+        VertexID root_id = vertex_index_map_[root];
+        q.pop();
+        InEdgeDescripterIter in_iter_begin, in_iter_end;
+        boost::tie(in_iter_begin, in_iter_end) = in_edges(root, *graph_);
+        for (;in_iter_begin != in_iter_end;++in_iter_begin){
+            VertexDescriptor in_node =  source(*in_iter_begin,*graph_);
+            VertexID in_node_id = vertex_index_map_[in_node];
+            if (color[in_node_id] == 0){
+                q.push(in_node);
+                color[in_node_id] = 1;
+                dis[in_node_id] = dis[root_id]+1;
+            }
+        }
+
+        OutEdgeDescripterIter out_iter_begin, out_iter_end;
+        boost::tie(out_iter_begin, out_iter_end) = out_edges(root, *graph_);
+        for(; out_iter_begin != out_iter_end; ++out_iter_begin){
+            VertexDescriptor out_node =  target(*out_iter_begin,*graph_);
+            VertexID out_node_id = vertex_index_map_[out_node];
+            if (color[out_node_id] == 0){
+                q.push(out_node_id);
+                color[out_node_id] = 1;
+                dis[out_node_id] = dis[root_id] + 1;
+            }
+        }
+    }
+    // for (VertexID i = 0;i < num_vertices_; ++i){
+        // if (dis.find(i) == dis.end()){
+            // dis[i] = INT_MAX;
+        // }
+    // }
+
+   // return dis;
+}
+
+const int Graph::shortest_distance(VertexID source_id,VertexID target_id)const{
+    VertexDescriptor source_node = vertex(source_id, *graph_);
+    VertexDescriptor target_node = vertex(target_id, *graph_);
+    std::vector<int> color(num_vertices_,0);
+    std::vector<VertexID> dis(num_vertices_,INT_MAX);
+    std::queue<VertexDescriptor> q;
+    //vertex_index_map_
+    q.push(source_node);
+    color[source_id] = 1;
+    dis[source_id] = 0;
+    while(!q.empty()){
+        VertexDescriptor root = q.front();
+        VertexID root_id = vertex_index_map_[root];
+        q.pop();
+        InEdgeDescripterIter in_iter_begin, in_iter_end;
+        boost::tie(in_iter_begin, in_iter_end) = in_edges(root, *graph_);
+        for (;in_iter_begin != in_iter_end;++in_iter_begin){
+            VertexDescriptor in_node =  source(*in_iter_begin,*graph_);
+            if(in_node == target_node){
+                return dis[root_id]+1;
+            }
+            VertexID in_node_id = vertex_index_map_[in_node];
+            if (color[in_node_id] == 0){
+                q.push(in_node);
+                color[in_node_id] = 1;
+                dis[in_node_id] = dis[root_id]+1;
+            }
+        }
+
+        OutEdgeDescripterIter out_iter_begin, out_iter_end;
+        boost::tie(out_iter_begin, out_iter_end) = out_edges(root, *graph_);
+        for(; out_iter_begin != out_iter_end; ++out_iter_begin){
+            VertexDescriptor out_node =  target(*out_iter_begin,*graph_);
+            if(target_node == out_node){
+                return dis[root_id]+1;
+            }
+            VertexID out_node_id = vertex_index_map_[out_node];
+            if (color[out_node_id] == 0){
+                q.push(out_node_id);
+                color[out_node_id] = 1;
+                dis[out_node_id] = dis[root_id] + 1;
+            }
+        }
+    }
+    return INT_MAX;
+}
+
+void Graph::find_hop_nodes(VertexID vid, int d_hop,std::unordered_set<VertexID> &result){
+    VertexDescriptor u = vertex(vid, *graph_);
+    std::vector<int> color(num_vertices_,0);
+    std::vector<VertexID> dis(num_vertices_,INT_MAX);
+    std::queue<VertexDescriptor> q;
+   // std::unordered_set<int> result;
+    //vertex_index_map_
+    q.push(u);
+    color[vid] = 1;
+    dis[vid] = 0;
+    result.insert(vid);
+    while(!q.empty()){
+        VertexDescriptor root = q.front();
+        VertexID root_id = vertex_index_map_[root];
+        if(dis[root_id]==d_hop){
+            return ;
+        }
+        q.pop();
+        InEdgeDescripterIter in_iter_begin, in_iter_end;
+        boost::tie(in_iter_begin, in_iter_end) = in_edges(root, *graph_);
+        for (;in_iter_begin != in_iter_end;++in_iter_begin){
+            VertexDescriptor in_node =  source(*in_iter_begin,*graph_);
+            VertexID in_node_id = vertex_index_map_[in_node];
+            if (color[in_node_id] == 0){
+                q.push(in_node);
+                color[in_node_id] = 1;
+                dis[in_node_id] = dis[root_id]+1;
+                result.insert(in_node_id);
+            }
+        }
+
+        OutEdgeDescripterIter out_iter_begin, out_iter_end;
+        boost::tie(out_iter_begin, out_iter_end) = out_edges(root, *graph_);
+        for(; out_iter_begin != out_iter_end; ++out_iter_begin){
+            VertexDescriptor out_node =  target(*out_iter_begin,*graph_);
+            VertexID out_node_id = vertex_index_map_[out_node];
+            if (color[out_node_id] == 0){
+                q.push(out_node_id);
+                color[out_node_id] = 1;
+                dis[out_node_id] = dis[root_id] + 1;
+                result.insert(out_node_id);
+            }
+        }
+    }
+   // return result;
+}
+
+void  Graph::find_connectivity_nodes(VertexID vid, std::unordered_set<VertexID> &result) {
+    VertexDescriptor u = vertex(vid, *graph_);
+    std::vector<int> color(num_vertices_,0);
+   // std::unordered_set<VertexID> result;
+    std::queue<VertexDescriptor> q;
+    //vertex_index_map_
+    q.push(u);
+    result.insert(vid);
+    color[vid] = 1;
+    while(!q.empty()){
+        VertexDescriptor root = q.front();
+        VertexID root_id = vertex_index_map_[root];
+        q.pop();
+        InEdgeDescripterIter in_iter_begin, in_iter_end;
+        boost::tie(in_iter_begin, in_iter_end) = in_edges(root, *graph_);
+        for (;in_iter_begin != in_iter_end;++in_iter_begin){
+            VertexDescriptor in_node =  source(*in_iter_begin,*graph_);
+            VertexID in_node_id = vertex_index_map_[in_node];
+            if (color[in_node_id] == 0){
+                q.push(in_node);
+                color[in_node_id] = 1;
+                result.insert(in_node_id);
+            }
+        }
+
+        OutEdgeDescripterIter out_iter_begin, out_iter_end;
+        boost::tie(out_iter_begin, out_iter_end) = out_edges(root, *graph_);
+        for(; out_iter_begin != out_iter_end; ++out_iter_begin){
+            VertexDescriptor out_node =  target(*out_iter_begin,*graph_);
+            VertexID out_node_id = vertex_index_map_[out_node];
+            if (color[out_node_id] == 0){
+                q.push(out_node_id);
+                color[out_node_id] = 1;
+                result.insert(out_node_id);
+            }
+        }
+    }
+  //  return result;
+}
+
+void Graph::find_hop_nodes(std::unordered_set<VertexID> &node_set,int d_hop,std::unordered_set<VertexID> &result){
+    std::vector<int> color(num_vertices_,0);
+    std::vector<VertexID> dis(num_vertices_,INT_MAX);
     std::queue<VertexDescriptor> q;
   //  std::unordered_set<int> result;
     for(auto vid :node_set){
