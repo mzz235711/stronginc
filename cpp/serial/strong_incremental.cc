@@ -344,6 +344,7 @@ void StrongInc::cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q, std::un
 									  std::vector<int> &dis, std::set<std::pair<VertexID,VertexID>> &add_edges){
  //add_edges id <dgraph_num_vertices
     int dgraph_num_vertices = dgraph.GetNumVertices();
+    //std::cout<<"update dgraph_num_vertices="<<dgraph_num_vertices<<std::endl;
     dis.resize(dgraph_num_vertices,INT_MAX);
     VertexID base_id = 0;
     VertexID inc_id = 0;

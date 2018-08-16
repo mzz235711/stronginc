@@ -29,7 +29,7 @@ public:
         this->graph_vfile ="../data/"+test_data_name+"/"+test_data_name+".v";
         this->graph_efile ="../data/"+test_data_name+"/"+test_data_name+".e";
         this->r_file = "../data/"+test_data_name+"/"+test_data_name+".r";
-        this->base_qfile = "../data/"+test_data_name+"/query/q";
+        this->base_qfile = "../data/"+test_data_name+"/query5/q";
         this->base_add_file = "../data/"+test_data_name+"/inc/add_e";
         this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
         this->base_add_affected_center_file ="../data/"+test_data_name+"/inc/affectedcenter_adde.txt";
@@ -229,14 +229,14 @@ void generate_all_random_edges(int num_edges,int circle_num,int new_vertices_rat
         }
         save_edges(remove_e_set,base_remove_file+std::to_string(i));
 	    cout<<"after remove "<<remove_e_set.size()<<" egdes, dgraph_num_vertices: "<<dgraph_num_vertices<<"  exist_edges: "<<exist_edges.size()<<endl;
-		
+
 	    generate_all_random_add_edge_include_new_vertices(add_e_set,exist_edges,dgraph_num_vertices,num_edges,new_vertices_rate);
         for(auto e : add_e_set){
             exist_edges.insert(e);
         }
         save_edges(add_e_set,base_add_file+std::to_string(i));
 	    cout<<"after add "<<add_e_set.size()<<" egdes, dgraph_num_vertices: "<<dgraph_num_vertices<<"  exist_edges: "<<exist_edges.size()<<endl;
-        
+
         std::cout<<i<<' '<<add_e_set.size()<<' '<<remove_e_set.size()<<std::endl;
         add_e_set.clear();
         remove_e_set.clear();
@@ -256,27 +256,30 @@ void generate_all_random_edges(int num_edges,int circle_num,int new_vertices_rat
     cout<<"Base Graph vertices: "<<dgraph_num_vertices<<"  Base Graph edges: "<<dgraph.GetNumEdges()<<endl;
     int i=1;
     while(i<=circle_num){
-		std::set<pair<VertexID,VertexID>> tmp_exist_edges = exist_edges;
-        std::set<std::pair<VertexID,VertexID>> add_e_set,remove_e_set;
+	    std::set<pair<VertexID,VertexID>> tmp_exist_edges = exist_edges;
+        std::set<std::pair<VertexID,VertexID>> add_e_set;
+        // std::set<std::pair<VertexID,VertexID>> remove_e_set;
 
-	    generate_all_random_add_edge_include_new_vertices(add_e_set,tmp_exist_edges,dgraph_num_vertices,num_edges*i,new_vertices_rate);
-        for(auto e : add_e_set){
+        generate_all_random_add_edge_include_new_vertices(add_e_set,tmp_exist_edges,dgraph_num_vertices,num_edges*i,new_vertices_rate);
+        save_edges(add_e_set,base_add_file+std::to_string(i));
+        /*
+		for(auto e : add_e_set){
             tmp_exist_edges.insert(e);
         }
-        save_edges(add_e_set,base_add_file+std::to_string(i));
-        
-		int overlap_edge_num = add_e_set.size() * overlap_rate / 100;
-		// std::cout<<"overlap_edge_num = "<<overlap_edge_num<<", num_edges*i-overlap_edge_num = "<<num_edges*i-overlap_edge_num<<std::endl;
-		generate_all_random_remove_edges(remove_e_set, add_e_set, overlap_edge_num);
-		generate_all_random_remove_edges(remove_e_set, tmp_exist_edges, num_edges*i-overlap_edge_num);
+
+	    int overlap_edge_num = add_e_set.size() * overlap_rate / 100;
+    	// std::cout<<"overlap_edge_num = "<<overlap_edge_num<<", num_edges*i-overlap_edge_num = "<<num_edges*i-overlap_edge_num<<std::endl;
+	    generate_all_random_remove_edges(remove_e_set, add_e_set, overlap_edge_num);
+	    generate_all_random_remove_edges(remove_e_set, tmp_exist_edges, num_edges*i-overlap_edge_num);
         for(auto e:remove_e_set){
             tmp_exist_edges.erase(e);
         }
         save_edges(remove_e_set,base_remove_file+std::to_string(i));
-		
+
         std::cout<<i<<' '<<add_e_set.size()<<' '<<remove_e_set.size()<<std::endl;
-        add_e_set.clear();
         remove_e_set.clear();
+		*/
+        add_e_set.clear();
         i++;
     }
 	// std::cout<<"after add edges , the new added vertices num = "<< dgraph_num_vertices - dgraph.GetNumVertices()<<std::endl;
@@ -301,7 +304,7 @@ std::set<std::pair<VertexID,VertexID>> generate_all_random_add_edges(std::set<st
 }
 
 //------------------------------------------------------------
-void generate_all_random_add_edge_include_new_vertices(std::set<std::pair<VertexID,VertexID>> &add_edges, 
+void generate_all_random_add_edge_include_new_vertices(std::set<std::pair<VertexID,VertexID>> &add_edges,
 											std::set<std::pair<VertexID,VertexID>> &exist_edges, int dgraph_num_vertices,
 											int add_size, int new_vertices_rate){ // add_size includes vertices and edges.
 	srand((unsigned)time(0));
@@ -312,7 +315,7 @@ void generate_all_random_add_edge_include_new_vertices(std::set<std::pair<Vertex
 	new_whole_vnum += dgraph_num_vertices;
 	std::random_device rd;
     std::mt19937 gen(rd());
-	std::discrete_distribution<int> chance_old_or_new({50, 12, 13, 25}); // the chance of [0,1,2,3] are [50%,12%,13%,25%] respectively.
+	std::discrete_distribution<int> chance_old_or_new({30, 15, 15, 40}); // the chance of [0,1,2,3] are [30%,15%,15%,40%] respectively.
     while(j<add_size){
 		tmp = chance_old_or_new(gen);
 		if(tmp == 0){        // both old
@@ -375,9 +378,9 @@ void calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
                                       std::set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::set<std::pair<VertexID,VertexID>> &rm_edges,
 									  std::vector<StrongR> &result,
-									  int flag,
-									  std::unordered_map<VertexID,std::unordered_set<VertexID>> &whole_ball_nodes,
-									  std::unordered_map<VertexID,std::vector<int>> &whole_dist){
+									  int flag){
+									  // std::unordered_map<VertexID,std::unordered_set<VertexID>> &whole_ball_nodes,
+									  // std::unordered_map<VertexID,std::vector<int>> &whole_dist){
     if(flag == 2){ //first remove, then add.
 		StrongSim strongsim;
 		clock_t stime1 = clock();
@@ -386,7 +389,7 @@ void calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
-		
+
 		int max = dgraph.GetNumVertices() - 1;
 		for(auto e : add_edges){
 			if(e.first > max){
@@ -403,9 +406,9 @@ void calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
 		for(auto e : add_edges){
 			dgraph.AddEdge(Edge(e.first,e.second,1));
 		}
-		dgraph.RebuildGraphProperties();		
+		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
-		clock_t etime1 = clock();	
+		clock_t etime1 = clock();
 
 		result = strongsim.strong_simulation_sim(dgraph,qgraph,2);
 
@@ -422,11 +425,11 @@ void calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
-		clock_t etime1 = clock();	
+		clock_t etime1 = clock();
 		result = strongsim.strong_simulation_sim(dgraph,qgraph,0);
 		std::fstream outfile3("time_info_only_rm.txt",std::ios::app);
 		outfile3<<(float)(etime1-stime1)/CLOCKS_PER_SEC<<" ";
-		outfile3.close();	
+		outfile3.close();
 	}
 	else if(flag == 1){ // only add.
 		StrongSim strongsim;
@@ -447,12 +450,15 @@ void calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
 		for(auto e : add_edges){
 			dgraph.AddEdge(Edge(e.first,e.second,1));
 		}
-		dgraph.RebuildGraphProperties();		
+		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
-		clock_t etime1 = clock();	
+		clock_t etime1 = clock();
 
 //		result = strongsim.strong_simulation_sim(dgraph,qgraph,1); // replaced by the next line.
-		result = strongsim.strong_simulation_sim_only_add(dgraph, qgraph, 1, whole_ball_nodes, whole_dist);
+		// std::unordered_map<VertexID,std::unordered_set<VertexID>> whole_ball_nodes_tmp; //no use.
+		// std::unordered_map<VertexID,std::vector<int>> whole_dist_tmp; //no use.
+		// result = strongsim.strong_simulation_sim_only_add(dgraph, qgraph, 1, whole_ball_nodes_tmp, whole_dist_tmp);
+		result = strongsim.strong_simulation_sim(dgraph, qgraph, 1);
 
 		std::fstream outfile3("time_info_only_add.txt",std::ios::app);
 		outfile3<<(float)(etime1-stime1)/CLOCKS_PER_SEC<<" ";
@@ -485,7 +491,7 @@ void calculate_direct_strong_inc(Graph &dgraph,Graph &qgraph,
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
 		clock_t etime1 = clock();
-		
+
 		result = strongsim.strong_simulation_sim(dgraph,qgraph,3);
 
 		std::fstream outfile3("time_info_add_and_rm.txt",std::ios::app);
@@ -507,18 +513,54 @@ void first_strong_strongInc(int circle_num, int flag){
     Graph qgraph;
     qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
     std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
+	std::unordered_map<VertexID,std::unordered_set<VertexID>> whole_ball_nodes;
+	std::unordered_map<VertexID,std::vector<int>> whole_dist;
     clock_t s0 = clock();
-    std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim(dgraph,qgraph);
+    // std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim(dgraph,qgraph);
+	std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim_only_add(dgraph, qgraph, 1, whole_ball_nodes, whole_dist);
     clock_t e0 = clock();
     std::cout<<"calculate original strong"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<std::endl;
-    
+    /*
+	std::cout<<"whole_ball_nodes.size="<<whole_ball_nodes.size()<<", whole_dist.size="<<whole_dist.size()<<std::endl;
+	std::unordered_map<VertexID,std::unordered_set<VertexID>> tmp_whole_ball_nodes;
+	std::unordered_map<VertexID,std::vector<int>> tmp_whole_dist;
+	for(auto t1 : whole_ball_nodes){
+		for(auto t2 : (t1.second)){
+			tmp_whole_ball_nodes[t1.first].insert(t2);
+		}
+	}
+	for(auto t1 : whole_dist){
+		for(auto t2 : (t1.second)){
+			tmp_whole_dist[t1.first].push_back(t2);
+		}
+	}
+	std::cout<<"whole_ball_nodes.size="<<whole_ball_nodes.size()<<", whole_dist.size="<<whole_dist.size()<<std::endl;
+	std::cout<<"tmp_whole_ball_nodes.size="<<tmp_whole_ball_nodes.size()<<", tmp_whole_dist.size="<<tmp_whole_dist.size()<<std::endl;
+
+	for(auto t : tmp_whole_ball_nodes){
+		std::cout<<t.first<<" \n";
+		for(auto m : t.second){
+			std::cout<<m<<" ";
+		}
+		std::cout<<"-----------\n";
+	}
+	std::cout<<"----------------------------------\n";
+	for(auto t : tmp_whole_dist){
+		std::cout<<t.first<<" \n";
+		for(auto m : t.second){
+			std::cout<<m<<" ";
+		}
+		std::cout<<"-----------\n";
+	}
+	*/
+
 	bool initialized_sim = false;
     dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
     std::unordered_set<VertexID> max_dual_set = generate.get_dual_node_result(dgraph,qgraph);
-    std::cout<<"max dual size "<<max_dual_set.size()<<std::endl;
+    std::cout<<"dgraph_vertices="<<dgraph.GetNumVertices()<<", dgraph_edges="<<dgraph.GetNumEdges()<<", max dual size "<<max_dual_set.size()<<std::endl;
 
     int j = 1;
-	
+
 	if(flag == 2){
 		std::fstream outfile("runtime_rm_and_add.txt",std::ios::out);
 		outfile.close();
@@ -563,13 +605,30 @@ void first_strong_strongInc(int circle_num, int flag){
 		o_tmp1<<"Add And Remove: \n";
 		o_tmp1.close();
 	}
-	
-    while (j<=circle_num){
+
+   while (j<=circle_num){
+	    clock_t tmps1 = clock();
+		std::unordered_map<VertexID,std::unordered_set<VertexID>> tmp_whole_ball_nodes;
+		std::unordered_map<VertexID,std::vector<int>> tmp_whole_dist;
+          for(auto it:whole_ball_nodes){
+              std::unordered_set<VertexID> tmp_set=it.second;
+              tmp_whole_ball_nodes[it.first]=tmp_set;
+          }
+          for(auto it:whole_dist){
+              std::vector<int> tmp_vec(it.second.begin(),it.second.end());
+              tmp_whole_dist[it.first]=tmp_vec;
+          }
+
+		clock_t tmpe1 = clock();
+		std::cout<<"whole_ball_nodes.size="<<whole_ball_nodes.size()<<", whole_dist.szie="<<whole_dist.size()<<std::endl;
+		std::cout<<"tmp_whole_ball_nodes.size="<<tmp_whole_ball_nodes.size()<<", tmp_whole_dist.szie="<<tmp_whole_dist.size()<<std::endl;
+		std::cout<<"copy tmp_whole_ball_nodes and tmp_whole_dist : "<<(float)(tmpe1-tmps1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+
         GraphLoader dgraph_loaddir,dgraph_loadinc;
         Graph dgraphdir,dgraphinc;
 	    dgraph_loaddir.LoadGraph(dgraphdir,graph_vfile,graph_efile);
 	    dgraph_loadinc.LoadGraph(dgraphinc,graph_vfile,graph_efile);
-		  
+
         std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
         // dgraphdir.printGraphInfo();
         // dgraphinc.printGraphInfo();
@@ -581,8 +640,8 @@ void first_strong_strongInc(int circle_num, int flag){
 			LoadEdges(rm_edges, base_remove_file+std::to_string(j));
 		}
 		else if(flag == 1){
-			// LoadEdges(add_edges, base_add_file+std::to_string(j)); //dbpedia
-			Load_bunch_edges(add_edges,base_add_file,j); //yago
+			LoadEdges(add_edges, base_add_file+std::to_string(j)); //dbpedia
+			// Load_bunch_edges(add_edges,base_add_file,j); //yago
 		}
 		if(flag == 3){
 			LoadEdges(add_edges, base_add_file+std::to_string(j));
@@ -599,26 +658,24 @@ void first_strong_strongInc(int circle_num, int flag){
                 tmp_sim[u].insert(v);
             }
         }
-		  
+
         std::vector<StrongR> direct_strong;
-		std::unordered_map<VertexID,std::unordered_set<VertexID>> whole_ball_nodes;
-		std::unordered_map<VertexID,std::vector<int>> whole_dist;
 		clock_t start1 = clock();
-	    calculate_direct_strong_inc(dgraphdir,qgraph,add_edges,rm_edges,direct_strong,flag,whole_ball_nodes,whole_dist);		
+	    calculate_direct_strong_inc(dgraphdir,qgraph,add_edges,rm_edges,direct_strong,flag);
         clock_t end1 = clock();
-        // std::cout<<"calculate direct strong"<<(float)(end1-start1)/CLOCKS_PER_SEC<<"s"<<std::endl;
-		
+        std::cout<<"calculate direct strong"<<(float)(end1-start1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+
         clock_t start2 = clock();
         // stronginc.strong_simulation_inc(dgraphinc,qgraph,tmp_sim,tmp_r,add_edges,rm_edges,flag); // replaced by the next line.
 		if(flag == 1){
-			stronginc.strong_simulation_inc_only_add(dgraphinc,qgraph,tmp_sim,tmp_r,add_edges,1,whole_ball_nodes,whole_dist);
+			stronginc.strong_simulation_inc_only_add(dgraphinc,qgraph,tmp_sim,tmp_r,add_edges,1,tmp_whole_ball_nodes,tmp_whole_dist);
         }
 		clock_t end2 = clock();
-        //std::cout<<"calculate inc strong"<<(float)(end2-start2)/CLOCKS_PER_SEC<<"s"<<std::endl;
- 	      
+        std::cout<<"calculate inc strong"<<(float)(end2-start2)/CLOCKS_PER_SEC<<"s"<<std::endl;
+
     	std::fstream out_tmp("check_strongr_results.txt",std::ios::app);
         out_tmp<<j<<" direct strong results: "<<direct_strong.size()<<" ;"<<" inc strong results: "<<tmp_r.size()<<"\n";
-        out_tmp.close();		
+        out_tmp.close();
 		std::cout<<j<<" direct strong results: "<<direct_strong.size()<<" ;"<<" inc strong results: "<<tmp_r.size()<<"\n";
 		/*
 		std::cout<<"direct strong results:\n";
@@ -645,9 +702,9 @@ void first_strong_strongInc(int circle_num, int flag){
 			}
 			std::cout<<"-------------------"<<std::endl;
 		}
-		*/	
+		*/
         cout<<(float)(end1-start1)/CLOCKS_PER_SEC<<' '<<(float)(end2-start2)/CLOCKS_PER_SEC<<endl;
-		
+
 		if(flag == 2){
 			std::fstream outfile("runtime_rm_and_add.txt",std::ios::app);
 			outfile<<j<<' '<<(float)(end1-start1)/CLOCKS_PER_SEC<<' '<<(float)(end2-start2)/CLOCKS_PER_SEC<<endl;
@@ -668,10 +725,10 @@ void first_strong_strongInc(int circle_num, int flag){
 			outfile<<j<<' '<<(float)(end1-start1)/CLOCKS_PER_SEC<<' '<<(float)(end2-start2)/CLOCKS_PER_SEC<<endl;
 			outfile.close();
 		}
-		
+
         j += 1;
     }
-	
+
 	std::fstream o_tmp("check_strongr_results.txt",std::ios::app);
 	o_tmp<<"------------------------------------------------------\n";
 	o_tmp.close();
@@ -686,11 +743,11 @@ void calculate_ball_changed_num(int circle_num, int flag){
     dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
 	qgraph_loader.LoadGraph(qgraph,get_query_vfile(index),get_query_efile(index));
 
-    std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;	
+    std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
 	bool initialized_sim = false;
 	DualSim dualsim;
     dualsim.dual_simulation(dgraph,qgraph,sim,initialized_sim);
-	
+
 	std::unordered_set<VertexID> max_dual_set_tmp;
     for(auto u : qgraph.GetAllVerticesID()){
 		for(auto v : sim[u]){
@@ -698,7 +755,7 @@ void calculate_ball_changed_num(int circle_num, int flag){
         }
     }
 	std::cout<<"初始的dual sim结果中,ball的个数为："<<max_dual_set_tmp.size()<<"............"<<std::endl;
-	
+
 	std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
     for(auto u :qgraph.GetAllVerticesID()){
         tmp_sim[u] = std::unordered_set<VertexID>();
@@ -725,7 +782,7 @@ void calculate_ball_changed_num(int circle_num, int flag){
 			}
 			dgraphinc.RebuildGraphProperties();
 			dualinc.incremental_removeedgs(dgraphinc,qgraph,tmp_sim,rm_edges);
-			
+
 			int max = dgraphinc.GetNumVertices() - 1;
 			for(auto e : add_edges){
 				if(e.first > max){
@@ -744,7 +801,7 @@ void calculate_ball_changed_num(int circle_num, int flag){
 			}
 			dgraphinc.RebuildGraphProperties();
 			dualinc.incremental_addedges(dgraphinc,qgraph,tmp_sim,add_edges);
-			
+
 			std::unordered_set<VertexID> max_dual_set_tmp1;
 			for(auto u : qgraph.GetAllVerticesID()){
 				for(auto v : tmp_sim[u]){
@@ -769,13 +826,13 @@ void calculate_ball_changed_num(int circle_num, int flag){
 			std::set<std::pair<VertexID,VertexID>> rm_edges;
 			dgraph_loaddir.LoadGraph(dgraphinc,graph_vfile,graph_efile);
 			LoadEdges(rm_edges,base_remove_file+std::to_string(j));
-			
+
 			for(auto e : rm_edges){
 				dgraphinc.RemoveEdge(Edge(e.first,e.second,1));
 			}
 			dgraphinc.RebuildGraphProperties();
 			dualinc.incremental_removeedgs(dgraphinc,qgraph,tmp_sim,rm_edges);
-			
+
 			std::unordered_set<VertexID> max_dual_set_tmp1;
 			for(auto u : qgraph.GetAllVerticesID()){
 				for(auto v : tmp_sim[u]){
@@ -800,7 +857,7 @@ void calculate_ball_changed_num(int circle_num, int flag){
 			std::set<std::pair<VertexID,VertexID>> add_edges;
 			dgraph_loaddir.LoadGraph(dgraphinc,graph_vfile,graph_efile);
 			LoadEdges(add_edges,base_add_file+std::to_string(j));
-			
+
 			int max = dgraphinc.GetNumVertices() - 1;
 			for(auto e : add_edges){
 				if(e.first > max){
@@ -819,7 +876,7 @@ void calculate_ball_changed_num(int circle_num, int flag){
 			}
 			dgraphinc.RebuildGraphProperties();
 			dualinc.incremental_addedges(dgraphinc,qgraph,tmp_sim,add_edges);
-			
+
 			std::unordered_set<VertexID> max_dual_set_tmp1;
 			for(auto u : qgraph.GetAllVerticesID()){
 				for(auto v : tmp_sim[u]){
@@ -865,18 +922,18 @@ void calculate_ball_changed_num(int circle_num, int flag){
 			}
 			dgraphinc.RebuildGraphProperties();
 			dualinc.incremental_addedges(dgraphinc,qgraph,tmp_sim,add_edges);
-			
+
 			int d_Q = stronginc.cal_diameter_qgraph(qgraph);
 			std::unordered_set<VertexID> affected_center_nodes_add;
 			stronginc.find_affected_center_area(dgraphinc,add_edges,rm_edges,d_Q,affected_center_nodes_add,2); //在更新之后的图上，找增边的影响区域
-			
+
 
 			for(auto e : rm_edges){
 				dgraphinc.RemoveEdge(Edge(e.first,e.second,1));
 			}
 			dgraphinc.RebuildGraphProperties();
 			dualinc.incremental_removeedgs(dgraphinc,qgraph,tmp_sim,rm_edges);
-			
+
 			std::unordered_set<VertexID> max_dual_set_tmp1;
 			for(auto u : qgraph.GetAllVerticesID()){
 				for(auto v : tmp_sim[u]){
@@ -1020,7 +1077,7 @@ void test_bfs_incremental(int circle_num){
              etime0=clock();
              sum_direct_time+=(float)(etime0-stime0)/CLOCKS_PER_SEC;
 			 // std::cout<<"sum_dirct_time: "<<sum_direct_time;
-			 
+
              stime1=clock();
 			 // dgraph.find_hop_nodes(w,d_Q,ball_node2);
              cal_culculate_inc_dhop_nodes_add(dgraphinc,d_Q,ball_node1,dis,add_edges);
@@ -1142,43 +1199,43 @@ int main(int argc, char *argv[]) {
   init_workers();
 
   // std::fstream outfile1("calculate_ball_info.txt",std::ios::out);//记录direct strong sim时计算每个ball的时间
-  // outfile1.close();  
+  // outfile1.close();
   // std::fstream outfile2("calculate_ball_info_inc.txt",std::ios::out);//记录inc strong sim时计算每个ball的时间
   // outfile2.close();
   // std::fstream outfile3("check_strongr_results.txt",std::ios::out); //比较direct和inc得到的结果数量，看结果是否正确
   // outfile3.close();
-  
+
   // string base_name="dbpedia";
   // string base_name="dbpedia_test";
   string base_name="yago";
   // ExperExr experExr(base_name,31);
-  ExperExr experExr(base_name,3);
-  
+  ExperExr experExr(base_name,11);
+
 //  experExr.generate_query_base_dgraph(6,7000,500);  // 生成查询图Q。   (点数，生成最大ball数，生成Q的数量)
-//  experExr.generate_all_random_edges(447944,18,40,50); // 完全随机生成增减边。（每次增加或者减少的量，增加和减少的次数，新增的点占delta(G)的比例，增删边的重叠比例） 
+//  experExr.generate_all_random_edges(895889,18,50,20); // 完全随机生成增减边。（每次增加或者减少的量，增加和减少的次数，新增的点占delta(G)的比例，增删边的重叠比例）
 //  experExr.generate_all_random_edges(3,3,50,50);    // test.
 						  // dbpedia: 4639253+13278535=17917788, 17917788*2.5%=447944.7, 相当于每次增加2.5%  再减少2.5%，共5%
 //  experExr.generate_query_random(5,10,2,10000,0,5);
 
-// The first parameter is the number of iterations, 
+// The first parameter is the number of iterations,
 // The second parameter is [0,1,2,3], represents "only add", "only remove", "first remove, then add", "first add, then remove" respectively.
   // experExr.first_strong_strongInc(18,0);  // only remove.
   // experExr.first_strong_strongInc(18,2);  // first remove, then add.
   // experExr.first_strong_strongInc(18,3);  // first add, then remove.
-  experExr.first_strong_strongInc(20,1);  // only add.
+  experExr.first_strong_strongInc(18,1);  // only add.
 
   // test.
   // experExr.first_strong_strongInc(3,0);  // only remove.
   // experExr.first_strong_strongInc(3,1);  // only add.
   // experExr.first_strong_strongInc(3,2);  // first remove, then add.
   // experExr.first_strong_strongInc(3,3);  // first remove, then add.
-  
+
   // experExr.calculate_ball_changed_num(18,0);
   // experExr.calculate_ball_changed_num(18,1);
   // experExr.calculate_ball_changed_num(18,2);
-  
+
   // experExr.test_bfs_incremental(10);
-  
+
   worker_finalize();
   return 0;
 }
