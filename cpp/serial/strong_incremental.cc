@@ -363,9 +363,6 @@ void StrongInc::cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q, std::un
         }
         std::queue<VertexID> q;
         dis[inc_id] = dis[base_id] + 1;
-		if(dis[inc_id] >= d_Q){
-			continue;
-		}
         ball_node.insert(inc_id);
         q.push(inc_id);
         while(!q.empty()){
@@ -482,7 +479,7 @@ void StrongInc::strong_simulation_inc_only_add(Graph &dgraph, Graph &qgraph,
 		
 		std::unordered_set<VertexID> ball_node;
 		int tmp_flag = 0;
-		if(whole_ball_nodes[w].find(w) == whole_ball_nodes[w].end()){
+		if(whole_ball_nodes.find(w) == whole_ball_nodes.end()){
 			dgraph.find_hop_nodes(w,d_Q,ball_node);
 			tmp_flag = 1;
 		}
