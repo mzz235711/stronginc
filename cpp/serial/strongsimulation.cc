@@ -347,7 +347,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
     return max_result;
 }
 
-void StrongSim::cal_culculate_directed_dhop_nodes(Graph &dgraph, VertexID vid, int d_hop, std::unordered_set<VertexID> &result, std::vector<int> &dis){
+void StrongSim::cal_culculate_directed_dhop_nodes(Graph &dgraph, VertexID vid, int d_hop, std::unordered_set<VertexID> &result,std::vector<int> &dis){
     int dgraph_num_vertices = dgraph.GetNumVertices();
     std::vector<int> color(dgraph_num_vertices,0);
     dis.resize(dgraph_num_vertices,INT_MAX);

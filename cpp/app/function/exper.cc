@@ -29,9 +29,9 @@ public:
         this->graph_vfile ="../data/"+test_data_name+"/"+test_data_name+".v";
         this->graph_efile ="../data/"+test_data_name+"/"+test_data_name+".e";
         this->r_file = "../data/"+test_data_name+"/"+test_data_name+".r";
-        this->base_qfile = "../data/"+test_data_name+"/query5/q";
-        this->base_add_file = "../data/"+test_data_name+"/inc/add_e";
-        this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
+        this->base_qfile = "../data/"+test_data_name+"/query6/q";
+        this->base_add_file = "../data/"+test_data_name+"/inc2/add_e";
+        this->base_remove_file="../data/"+test_data_name+"/inc2/rm_e";
         this->base_add_affected_center_file ="../data/"+test_data_name+"/inc/affectedcenter_adde.txt";
         this->base_remove_affected_center_file ="../data/"+test_data_name+"/inc/affectedcenter_rme.txt";
         this->query_index = query_index;
@@ -61,24 +61,32 @@ public:
       dgraph_loader.LoadGraph(dgraph,graph_vfile,graph_efile);
       std::cout<<dgraph.GetNumVertices()<<' '<<dgraph.GetNumEdges()<<std::endl;
       int i=1;
-      std::fstream tmp_outfile("../data/dbpedia/query6_8_3/query_info.txt",std::ios::out);
+      //std::fstream tmp_outfile("../data/dbpedia/query6_8_3/query_info.txt",std::ios::out);
+      std::fstream tmp_outfile("../data/yago/query7/query_info.txt",std::ios::out);
+      //std::fstream tmp_outfile("../data/pokec/query4/query_info.txt",std::ios::out);
       tmp_outfile.close();
       while(i<=generate_query_nums){
           Graph qgraph;
           generate.generate_connect_graphs_by_Dgraph(dgraph,qgraph,generate_query_nodes);
           int d_Q=cal_diameter_qgraph(qgraph);
-          if((d_Q!=3) || (qgraph.GetNumEdges()!=8) || !query_labl_all_notsame(qgraph)){
-              continue;
-          }
+          //if((d_Q!=3) || (qgraph.GetNumEdges()!=8) || !query_labl_all_notsame(qgraph)){
+          //if(!query_labl_all_notsame(qgraph)){
+              //continue;
+          //}
           clock_t s0,e0;
           s0 =clock();
           std::unordered_set<VertexID> max_dual_set = generate.get_dual_node_result(dgraph,qgraph);
           e0 =clock();
+          if(max_dual_set.size()<100){
+	      continue;
+          }
           if(max_dual_set.size()<=max_calculate_center_nodes){
               generate.save_grape_file(qgraph,get_query_vfile(i),get_query_efile(i));
               std::cout<<i<<' '<<"calculate dual time"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<' '<<max_dual_set.size()<<std::endl;
-              std::fstream tmp_outfile("../data/dbpedia/query6_8_3/query_info.txt",std::ios::app);
-              tmp_outfile<<i<<' '<<"calculate dual time"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<' '<<max_dual_set.size()<<std::endl;
+              //std::fstream tmp_outfile("../data/dbpedia/query6_8_3/query_info.txt",std::ios::app);
+              std::fstream tmp_outfile("../data/yago/query7/query_info.txt",std::ios::app);
+              //std::fstream tmp_outfile("../data/pokec/query4/query_info.txt",std::ios::app);
+              tmp_outfile<<i<<' '<<"calculate dual time"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<' '<<max_dual_set.size()<<", dQ="<<d_Q<<std::endl;
               tmp_outfile.close();
               i++;
           }
@@ -315,7 +323,7 @@ void generate_all_random_add_edge_include_new_vertices(std::set<std::pair<Vertex
 	new_whole_vnum += dgraph_num_vertices;
 	std::random_device rd;
     std::mt19937 gen(rd());
-	std::discrete_distribution<int> chance_old_or_new({30, 15, 15, 40}); // the chance of [0,1,2,3] are [30%,15%,15%,40%] respectively.
+	std::discrete_distribution<int> chance_old_or_new({40, 12, 13, 35}); // the chance of [0,1,2,3] are [30%,15%,15%,40%] respectively.
     while(j<add_size){
 		tmp = chance_old_or_new(gen);
 		if(tmp == 0){        // both old
@@ -517,7 +525,7 @@ void first_strong_strongInc(int circle_num, int flag){
 	std::unordered_map<VertexID,std::vector<int>> whole_dist;
     clock_t s0 = clock();
     // std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim(dgraph,qgraph);
-	std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim_only_add(dgraph, qgraph, 1, whole_ball_nodes, whole_dist);
+	std::vector<StrongR> strongsimr = strongsim.strong_simulation_sim_only_add(dgraph, qgraph, 1, whole_ball_nodes,whole_dist);
     clock_t e0 = clock();
     std::cout<<"calculate original strong"<<(float)(e0-s0)/CLOCKS_PER_SEC<<"s"<<std::endl;
     /*
@@ -609,20 +617,21 @@ void first_strong_strongInc(int circle_num, int flag){
    while (j<=circle_num){
 	    clock_t tmps1 = clock();
 		std::unordered_map<VertexID,std::unordered_set<VertexID>> tmp_whole_ball_nodes;
-		std::unordered_map<VertexID,std::vector<int>> tmp_whole_dist;
-          for(auto it:whole_ball_nodes){
-              std::unordered_set<VertexID> tmp_set=it.second;
-              tmp_whole_ball_nodes[it.first]=tmp_set;
-          }
-          for(auto it:whole_dist){
-              std::vector<int> tmp_vec(it.second.begin(),it.second.end());
-              tmp_whole_dist[it.first]=tmp_vec;
-          }
-
+        std::unordered_map<VertexID,std::vector<int>> tmp_whole_dist;
+		for(auto it:whole_ball_nodes){
+            std::unordered_set<VertexID> tmp_set=it.second;
+            tmp_whole_ball_nodes[it.first]=tmp_set;
+        }
+        for(auto it:whole_dist){
+            std::vector<int> tmp_vec(it.second.begin(),it.second.end());
+            tmp_whole_dist[it.first]=tmp_vec;
+        }
+		
 		clock_t tmpe1 = clock();
-		std::cout<<"whole_ball_nodes.size="<<whole_ball_nodes.size()<<", whole_dist.szie="<<whole_dist.size()<<std::endl;
+		std::cout<<"whole_dist.size="<<whole_dist.size()<<", tmp_whole_dist.size="<<tmp_whole_dist.size()<<std::endl;
 		std::cout<<"tmp_whole_ball_nodes.size="<<tmp_whole_ball_nodes.size()<<", tmp_whole_dist.szie="<<tmp_whole_dist.size()<<std::endl;
-		std::cout<<"copy tmp_whole_ball_nodes and tmp_whole_dist : "<<(float)(tmpe1-tmps1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+        std::cout<<"copy tmp_whole_ball_nodes and tmp_whole_dist : "<<(float)(tmpe1-tmps1)/CLOCKS_PER_SEC<<"s"<<std::endl;
+
 
         GraphLoader dgraph_loaddir,dgraph_loadinc;
         Graph dgraphdir,dgraphinc;
@@ -1206,13 +1215,13 @@ int main(int argc, char *argv[]) {
   // outfile3.close();
 
   // string base_name="dbpedia";
-  // string base_name="dbpedia_test";
+  // string base_name="pokec";
   string base_name="yago";
-  // ExperExr experExr(base_name,31);
-  ExperExr experExr(base_name,11);
+//  ExperExr experExr(base_name,8);
+  ExperExr experExr(base_name,22);
 
-//  experExr.generate_query_base_dgraph(6,7000,500);  // 生成查询图Q。   (点数，生成最大ball数，生成Q的数量)
-//  experExr.generate_all_random_edges(895889,18,50,20); // 完全随机生成增减边。（每次增加或者减少的量，增加和减少的次数，新增的点占delta(G)的比例，增删边的重叠比例）
+//  experExr.generate_query_base_dgraph(7,7000,500);  // 生成查询图Q。   (点数，生成最大ball数，生成Q的数量)
+//  experExr.generate_all_random_edges(542021,18,40,20); // 完全随机生成增减边。（每次增加或者减少的量，增加和减少的次数，新增的点占delta(G)的比例，增删边的重叠比例）
 //  experExr.generate_all_random_edges(3,3,50,50);    // test.
 						  // dbpedia: 4639253+13278535=17917788, 17917788*2.5%=447944.7, 相当于每次增加2.5%  再减少2.5%，共5%
 //  experExr.generate_query_random(5,10,2,10000,0,5);

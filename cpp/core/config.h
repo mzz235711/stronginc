@@ -17,7 +17,8 @@ typedef int EdgeLabel;
 #endif
 
 #ifndef MAX_LABEL
-#define MAX_LABEL 420
+//#define MAX_LABEL 420  // dbpedia 420
+#define MAX_LABEL 20   //yago 15
 #endif
 
 #define random(a,b) (rand()%(b-a+1)+a)
