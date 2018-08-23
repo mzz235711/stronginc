@@ -31,11 +31,11 @@
 class Parallel{
 public:
 std::string get_query_vfile(int index){
-        return "../data/synmticquery/q"+std::to_string(index)+".v";
+        return this->base_qfile + std::to_string(index)+".v";
 }
 
 std::string get_query_efile(int index){
-        return "../data/synmticquery/q"+std::to_string(index)+".e";
+        return this->base_qfile + std::to_string(index)+".e";
 }
 public:
 
@@ -648,11 +648,12 @@ void test_dual_parallelinc(int fid){
 }
 
 private:
-    std::string graph_vfile ="../data/synmtic.v";
-    std::string graph_efile ="../data/synmtic.e";
-    std::string r_file = "../data/synmtic.r";
-    std::string base_add_file = "../data/incsynmtic/add_e";
-    std::string base_remove_file="../data/incsynmtic/rm_e";
+    std::string graph_vfile = FLAGS_vfile;
+    std::string graph_efile = FLAGS_efile;
+    std::string r_file = FLAGS_rfile;
+    std::string base_add_file = FLAGS_base_add_file;
+    std::string base_remove_file = FLAGS_base_remove_file;
+    std::string base_qfile = FLAGS_base_qfile;
 };
 
 int main(int argc, char *argv[]) {
@@ -674,8 +675,8 @@ int main(int argc, char *argv[]) {
 //  parallel.test_fragment_loader(rank);
 //  parallel.test_bfs_connectivity(rank);
 //  parallel.test_strong_parallel(rank);
-//  parallel.test_dual_parallelinc(rank);
-  parallel.test_strong_parallel_inc(rank);
+  parallel.test_dual_parallelinc(rank);
+//  parallel.test_strong_parallel_inc(rank);
   worker_finalize();
   return 0;
 }
