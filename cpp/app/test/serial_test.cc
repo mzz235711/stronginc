@@ -28,13 +28,20 @@ public:
     Serial(std::string test_data_name,int query_index){
         this->query_index = query_index;
         this->test_data_name=test_data_name;
-        this->graph_vfile ="../data/"+test_data_name+"/"+test_data_name+".v";
-        this->graph_efile ="../data/"+test_data_name+"/"+test_data_name+".e";
-        this->view_file = "../data/"+test_data_name+"/views/view";
-        this->r_file = "../data/"+test_data_name+"/"+test_data_name+".r";
-        this->base_qfile = "../data/"+test_data_name+"/query/q";
-        this->base_add_file = "../data/"+test_data_name+"/inc/add_e";
-        this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
+//        this->graph_vfile ="../data/"+test_data_name+"/"+test_data_name+".v";
+//        this->graph_efile ="../data/"+test_data_name+"/"+test_data_name+".e";
+//        this->view_file = "../data/"+test_data_name+"/views/view";
+//        this->r_file = "../data/"+test_data_name+"/"+test_data_name+".r";
+//        this->base_qfile = "../data/"+test_data_name+"/query/q";
+//        this->base_add_file = "../data/"+test_data_name+"/inc/add_e";
+//        this->base_remove_file="../data/"+test_data_name+"/inc/rm_e";
+        this->graph_vfile = FLAGS_vfile;
+        this->graph_efile = FLAGS_efile;
+        this->view_file = FLAGS_viewfile;
+        this->r_file = FLAGS_rfile;
+        this->base_qfile = FLAGS_base_qfile;
+        this->base_add_file = FLAGS_base_add_file;
+        this->base_remove_file = FLAGS_base_remove_file;
     }
 
     std::string get_query_vfile(int index){
@@ -401,12 +408,13 @@ int main(int argc, char *argv[]) {
   google::ShutDownCommandLineFlags();
   google::InitGoogleLogging("test for working");
   google::ShutdownGoogleLogging();
+  string tmp = FLAGS_vfile;
 //  init_workers();
   Serial serial("paint",1);
   //serial.generate_random_dgraph(100,1.20,5);
   //serial.generate_query(200,5,40);
 //  serial.test_dualsimulation();
-//  serial.test_dual_incremental();
+  serial.test_dual_incremental();
 //  serial.test_strongsimulation();
 //  serial.test_add_edges();
     // serial.generate_query_view(3);
