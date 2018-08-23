@@ -154,6 +154,18 @@ void Dual_parallelInc::incremental_add_edges(Fragment &fragment, Graph &dgraph, 
             worker_barrier();
         }
         worker_barrier();
+        if (get_worker_id() == 0) {
+          std::vector<std::unordered_map<VertexID, std::unordered_set<VertexID>>> all_aff_node;
+          masterGather(all_aff_node);
+          for (auto &item : all_aff_node) {
+              for (auto &it : item) {
+                  VertexID = it.first;
+                  all_aff.isnert(it.second.begin(), it.second.end());
+              }
+          }
+        } else {
+          slaveGather(aff_node);
+        }
         std::unordered_set<VertexID> view_nodes;
         for(auto u : qgraph.GetAllVerticesID()){
             for(auto v :aff_node[u]){
@@ -399,6 +411,11 @@ void Dual_parallelInc::update_by_add_edges(Fragment &fragment,Graph &dgraph,std:
         vertexBuffers.reset_in_messages();
         fragment.update_fragment_add_edges(dgraph,edges_,vertices_,communication_next);
     }
+
+void Dual_parallelInc::update_by_add_vertices(Fragment &fragment, Graph &dgraph,
+                std::vector<std::pair<VertexID, VertexLabel>> &add_vertices) {
+  fragment.update_fragment_add_vertices(dgraph, add_vertices);
+}
 
 void Dual_parallelInc::update_by_remove_edges(Fragment &fragment,Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &rm_edges,bool communication_next){
         std::vector<Edge> rm_edges_;

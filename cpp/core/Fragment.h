@@ -27,6 +27,8 @@ public :
 
     ~Fragment();
 
+    int getFID();
+
     int getVertexFragmentID(VertexID u) const;
 
     int getLocalID(VertexID gvid);
@@ -98,6 +100,20 @@ public :
 //            }
 
        graph.RebuildGraphProperties();
+    }
+
+    void update_fragment_add_vertices(Graph &graph, std::vector<std::pair<VertexID, VertexLabel>> &vertices) {
+      int worker_num = get_num_workers();
+      for (auto &v : vertices) {
+        VertexID gid = v.id();
+        if (gid % worker_num == FID) {  
+          VertexID lid = graph.AddVertex(Vertex(v.first, v.second));
+          local2global[lid] = gid;
+          global2local[gid] = lid;
+          innervertices.insert(gvid);  
+        }  
+      }
+      graph.RebuildGraphProperties();  
     }
 
     template<class T1>

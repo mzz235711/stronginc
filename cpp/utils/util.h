@@ -26,7 +26,7 @@ template<class T>
 		}
 		return ret;
 	}
-
+// zz is bullshit
 template<class T>
   std::unordered_set<T> intersection(const std::unordered_set<T> &a, const std::unordered_set<T>& b) {
 		std::unordered_set<T> ret;
@@ -70,11 +70,15 @@ void load_sim_result(std::unordered_map<VertexID, std::unordered_set<VertexID>> 
 
 void LoadEdges(std::vector<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 
-void Load_bunch_edges(std::vector<std::pair<VertexID,VertexID>> &edges,const std::string basefilename,int index);
+void Load_bunch_edges(std::vector<std::pair<VertexID, VertexLabel>> vertices, std::vector<std::pair<VertexID,VertexID>> &edges,
+                      const std::string basefilename,int index);
 
 void LoadEdges(std::set<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 
-void Load_bunch_edges(std::set<std::pair<VertexID,VertexID>> &edges,const std::string basefilename,int index);
+void Load_bunch_edges(std::vector<std::pair<VeretexID, VertexLabel>> vertices, std::set<std::pair<VertexID,VertexID>> &edges,
+                      const std::string basefilename,int index);
+
+void LoadVertices(std::vector<std::pair<VertexID, VertexLabel>> &vertices, const std::string &vfile);
 
 void save_edges(std::set<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 

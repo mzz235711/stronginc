@@ -223,11 +223,16 @@ public:
             int j=1;
             while (j<20){
             std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
-            Load_bunch_edges(add_edges,base_add_file,j);
+            std::vector<std::pair<VertexID, VertexLabel>> add_vertices;
+            Load_bunch_edges(add_vertices, add_edges,base_add_file,j);
             Load_bunch_edges(rm_edges,base_remove_file,j);
+            for (auto &v : add_vertices) {
+                dgraph.AddVertex(Vertex(v.first, v.second));
+            }
             for (auto e:add_edges){
                dgraph.AddEdge(Edge(e.first,e.second,1));
             }
+            dgraph.RebuildGraphProperties();
             std::unordered_map<VertexID, std::unordered_set<VertexID>> incdsim,direct_sim;
             for(auto u :qgraph.GetAllVerticesID()){
                 incdsim[u]=std::unordered_set<VertexID>();
@@ -236,9 +241,9 @@ public:
                 }
             }
             dualsim.dual_simulation(dgraph,qgraph,direct_sim,initialized_sim);
-            for (auto e:add_edges){
-               dgraph.AddEdge(Edge(e.first,e.second,1));
-            }
+            // for (auto e:add_edges){
+            //    dgraph.AddEdge(Edge(e.first,e.second,1));
+            // }
             dualinc.incremental_addedges(dgraph,qgraph,incdsim,add_edges);
             std::cout<<index<<' '<<j<<' '<<dual_the_same(qgraph,direct_sim,incdsim)<<std::endl;
             for(auto e :rm_edges){

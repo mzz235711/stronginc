@@ -124,6 +124,10 @@ Fragment::Fragment(Graph &graph,const std::vector<Vertex> &_vertices, const std:
   LOG(INFO) << "loading graph finished." << std::endl;
  }
 
+int Fragment::getFID() {
+    return FID;
+}
+
 int Fragment::getVertexFragmentID(VertexID u)const{
     if (fragTable.find(u) != fragTable.end()){
         return fragTable.at(u);

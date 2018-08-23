@@ -530,7 +530,8 @@ void test_strong_parallel_inc(int fid){
             dgraph_loader.LoadGraph(inc_dgraph,graph_vfile,graph_efile);
             Fragment inc_fragment(inc_fragmentgraph,graph_vfile,graph_efile,r_file);
             std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
-            Load_bunch_edges(add_edges,base_add_file,j);
+            std::vector<std::pair<VertexID, VertexLabel>> add_vertices;
+            Load_bunch_edges(add_vertices, add_edges,base_add_file,j);
            // int d_Q=cal_diameter_qgraph(qgraph);
             //std::unordered_set<VertexID> aa=find_affected_area(inc_dgraph,add_edges,rm_edges,2*d_Q);
            // cout<<(aa.find(8762)!=aa.end())<<' '<<(aa.find(3585)!=aa.end())<<' '<<inc_dgraph.shortest_distance(3585,8762)<<endl;
@@ -547,6 +548,7 @@ void test_strong_parallel_inc(int fid){
                 inc_parallel_strong.push_back(ball);
             }
             StrongparallelInc strongparallelinc;
+            inc_fragment.update_fragment_add_vertices(inc_fragmentgraph, add_vertices);
             std::vector<StrongR> partial_result=strongparallelinc.strong_parallel_inc(inc_fragment,inc_fragmentgraph,qgraph,inc_parallel_dual,inc_parallel_strong,add_edges,rm_edges);
       if (fid==0){
           std::vector<std::vector<StrongR>>  tmp_vec(get_num_workers());
@@ -601,7 +603,8 @@ void test_dual_parallelinc(int fid){
             dgraph_loader.LoadGraph(inc_graph,graph_vfile,graph_efile);
             Fragment fragment1(inc_fragmentgraph,graph_vfile,graph_efile,r_file);
             std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
-            Load_bunch_edges(add_edges,base_add_file,j);
+            std::vector<std::pair<VertexID, VertexLabel>> add_vertices;
+            Load_bunch_edges(add_vertices, add_edges,base_add_file,j);
 //            Load_bunch_edges(rm_edges,base_remove_file,j);
             std::unordered_map<VertexID, std::unordered_set<VertexID>> inc_serial,inc_parallel;
             for(auto u :qgraph.GetAllVerticesID()){
@@ -610,11 +613,16 @@ void test_dual_parallelinc(int fid){
                     inc_parallel[u].insert(v);
                 }
             }
+            for (auto &v : add_vertices) {
+              inc_graph.AddVertex(Vertex(v.first, v.second));
+            }
+            fragment1.update_fragment_add_vertices(inc_fragmentgraph, add_vertices);
             for (auto e:add_edges){
                inc_graph.AddEdge(Edge(e.first,e.second,1));
             }
-
+            inc_graph.RebuildGraphProperties();
             Dual_parallelInc dual_parallel_inc;
+            dual_incremental_inc.update_by_add_vertices(fragment1, inc_fragmentgraph, add_vertices);
             dual_parallel_inc.update_by_add_edges(fragment1,inc_fragmentgraph,add_edges,true);
             dual_parallel_inc.incremental_add_edges(fragment1, inc_fragmentgraph, qgraph,inc_parallel,add_edges);
             if (fid==0){
