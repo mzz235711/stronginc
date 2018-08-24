@@ -51,6 +51,7 @@ DECLARE_string(rfile);
 DECLARE_string(base_qfile);
 DECLARE_string(base_add_file);
 DECLARE_string(base_remove_file);
+DECLARE_int32(query_num);
 
 
 

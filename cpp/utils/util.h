@@ -79,5 +79,6 @@ void Load_bunch_edges(std::set<std::pair<VertexID,VertexID>> &edges,const std::s
 void save_edges(std::set<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 
 void genertate_random_edges(std::set<std::pair<VertexID,VertexID>> &exist_edges,const std::string basefilename,int dgraph_num_vertices,int generate_edge_num,int ci);
+
 #endif //CPP_UTIL_H_
 using namespace std;

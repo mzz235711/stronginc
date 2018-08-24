@@ -17,4 +17,4 @@ DEFINE_string(rfile, "../data/test.r", "Location of partition file");
 DEFINE_string(base_qfile, "../data/query/query", "Location of query file");
 DEFINE_string(base_add_file, "../data/inc/add_e", "Location of add edge file");
 DEFINE_string(base_remove_file, "../data/inc/rm_e", "Location of remove edge file");
-
+DEFINE_int32(query_num, "1", "Query number");
