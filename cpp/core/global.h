@@ -48,10 +48,11 @@ DECLARE_string(vfile);
 DECLARE_string(efile);
 DECLARE_string(viewfile);
 DECLARE_string(rfile);
-DECLARE_string(base_qfile);
+DECLARE_string(query_file);
 DECLARE_string(base_add_file);
 DECLARE_string(base_remove_file);
 DECLARE_int32(query_num);
+DECLARE_int32(extend_num);
 
 
 

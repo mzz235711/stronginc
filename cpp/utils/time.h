@@ -15,7 +15,8 @@ enum TIMERS {
 	COMMUNICATION_TIMER = 3,
 	EVALUATION_TIMER = 4,
 	INCREMENTAL_TIMER  = 5,
-	INDEX_TIMER  = 6
+	INDEX_TIMER  = 6,
+        SERIALIZATION_TIMER = 7
 };
 
 double get_current_time();

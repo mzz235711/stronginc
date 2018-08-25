@@ -653,7 +653,7 @@ private:
     std::string r_file = FLAGS_rfile;
     std::string base_add_file = FLAGS_base_add_file;
     std::string base_remove_file = FLAGS_base_remove_file;
-    std::string base_qfile = FLAGS_base_qfile;
+    std::string base_qfile = FLAGS_query_file;
 };
 
 int main(int argc, char *argv[]) {

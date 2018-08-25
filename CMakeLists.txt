@@ -26,7 +26,7 @@ endif()
 
 
 find_package(MPI)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -O3")
 include_directories(${MPI_CXX_INCLUDE_PATH})
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
 include("cmake/FindGlog.cmake")
@@ -53,7 +53,7 @@ target_link_libraries(graph_api ${MPI_CXX_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_
 # -----------------------------------------------------------------------------
 # generete applications
 # -----------------------------------------------------------------------------
-set(APP_FILES function test)
+set(APP_FILES function test exp)
 
 foreach (f ${APP_FILES})
   file(GLOB APP_VARIANTS RELATIVE "${CMAKE_SOURCE_DIR}/cpp/app/${f}" "${CMAKE_SOURCE_DIR}/cpp/app/${f}/*.cc")

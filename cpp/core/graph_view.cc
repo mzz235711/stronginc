@@ -29,7 +29,6 @@ GraphView::GraphView(Graph &graph, std::unordered_set<VertexID>* vSet) {
   VertexPredicate vertexP(vSet, graph_);
   graphview_ = std::unique_ptr<SubGraphT>(
       new SubGraphT(*graph_, edgeP, vertexP));
-
   vertex_index_map_ = boost::get(boost::vertex_index, *graphview_);
   edge_data_map_ = std::unique_ptr<EdgeDataMap>(
           new EdgeDataMap(boost::get(boost::edge_weight, *graphview_)));
@@ -120,7 +119,9 @@ IterContainer<GraphView::ViewEdgeIterator> GraphView::GetAllEdges() {
   typedef typename boost::graph_traits<SubGraphT>::edge_iterator
       ViewEdgeDescripterIter;
   ViewEdgeDescripterIter iter_begin, iter_end;
+  LOG(INFO) << "vvvvvvvvvv";
   boost::tie(iter_begin, iter_end) = edges(*graphview_);
+  LOG(INFO) << "pppppppppp";
   return IterContainer<ViewEdgeIterator>(ViewEdgeIterator(*this, iter_begin),
                                      ViewEdgeIterator(*this, iter_end));
 }

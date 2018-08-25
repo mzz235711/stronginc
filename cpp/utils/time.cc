@@ -7,7 +7,7 @@ double get_current_time() {
 	return (double) t.tv_sec + (double) t.tv_usec / 1000000;//"sec" - 自 Unix 纪元起的秒数"usec" - 微秒数
 }
 
-const int N_Timers = 7; //currently, 6 timers are available  time.h  enum TIMERS 只有0-6
+const int N_Timers = 8; //currently, 6 timers are available  time.h  enum TIMERS 只有0-6
 static double _timers[N_Timers]; // timers  current time
 static double _acc_time[N_Timers]; // accumulated time累计时间
 

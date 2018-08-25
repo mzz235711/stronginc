@@ -39,7 +39,7 @@ public:
         this->graph_efile = FLAGS_efile;
         this->view_file = FLAGS_viewfile;
         this->r_file = FLAGS_rfile;
-        this->base_qfile = FLAGS_base_qfile;
+        this->base_qfile = FLAGS_query_file;
         this->base_add_file = FLAGS_base_add_file;
         this->base_remove_file = FLAGS_base_remove_file;
     }

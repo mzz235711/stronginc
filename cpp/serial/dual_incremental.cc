@@ -148,9 +148,11 @@
         propagate_add(dgraph,qgraph,candidate_node,aff_node,dsim,already_matched);
        // std::cout<<"propagate_add finish"<<std::endl;
         std::unordered_set<VertexID> view_nodes;
+        int max = 0;
         for(auto u : qgraph.GetAllVerticesID()){
             for(auto v :aff_node[u]){
                 view_nodes.insert(v);
+                if (max < v) max = v;
             }
         }
 		std::unordered_set<Edge> view_edges;
@@ -273,9 +275,11 @@
                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
                            std::set<std::pair<VertexID,VertexID>> &rm_edges){
         std::unordered_set<VertexID> view_nodes;
+        int max = 0;
         for (auto u :qgraph.GetAllVerticesID()){
             for(auto v :dsim[u]){
                 view_nodes.insert(v);
+                if (v > max) max = v;
             }
         }
 		std::unordered_set<Edge> view_edges;
