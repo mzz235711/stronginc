@@ -70,11 +70,6 @@ class Dual_Inc_Exp {
       bool initialization = false;
       qgraph_loader.LoadGraph(qgraph, query_vfile, query_efile);
       dualsim.dual_simulation(dgraph, qgraph, origin_sim, initialization);
-      std::unordered_set<VertexID> view;
-      view.insert(10);
-      LOG(INFO) << "aaaaaaa";
-      GraphView(dgraph, &view);
-      LOG(INFO) << "xxxxxxxxxx";
       for (int extend = 0; extend < extend_num; extend++) {
         std::set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
         Load_bunch_edges(add_edges, this->add_name, extend);
