@@ -34,13 +34,17 @@ class Dual_Inc_Exp {
 
   void PrintInfo(std::string &query_vfile, std::string &query_efile, int extend) {
     std::string add_efile = this->add_name + std::to_string(extend) + ".e";
+    std::string add_vfile = this->add_name + std::to_string(extend) + ".v";
     std::string rm_efile = this->rm_name + std::to_string(extend) + ".e";
     LOG(INFO) << "Finish computation.";
     LOG(INFO) << "===============================================";
     LOG(INFO) << "vfile: " + this->vfile;
     LOG(INFO) << "efile: " + this->efile;
-    LOG(INFO) << "query_vfile" + query_vfile;
-    LOG(INFO) << "query_efile" + query_efile;
+    LOG(INFO) << "query_vfilei: " + query_vfile;
+    LOG(INFO) << "query_efile: " + query_efile;
+    LOG(INFO) << "add_efile: " + add_efile;
+    LOG(INFO) << "add_vfile: " + add_vfile;
+    LOG(INFO) << "remove_efile: " + rm_efile;
     LOG(INFO) << "total time: " + std::to_string(get_timer(WORKER_TIMER));
     LOG(INFO) << "load graph timer: " + std::to_string(get_timer(LOAD_TIMER));
     LOG(INFO) << "dual simulation time: " + std::to_string(get_timer(EVALUATION_TIMER));
@@ -71,9 +75,13 @@ class Dual_Inc_Exp {
       qgraph_loader.LoadGraph(qgraph, query_vfile, query_efile);
       dualsim.dual_simulation(dgraph, qgraph, origin_sim, initialization);
       for (int extend = 0; extend < extend_num; extend++) {
-        std::set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
-        Load_bunch_edges(add_edges, this->add_name, extend);
+        std::unordered_set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
+        std::unordered_set<std::pair<VertexID, VertexLabel>> add_vertices;
+        Load_bunch_edges(add_vertices, add_edges, this->add_name, extend);
         Load_bunch_edges(rm_edges, this->rm_name, extend);
+        for (auto &v : add_vertices) {
+          dgraph.AddVertex(Vertex(v.first, v.second));
+        }
         for (auto &e : add_edges) {
           dgraph.AddEdge(Edge(e.first, e.second, 1));
         }
@@ -96,6 +104,11 @@ class Dual_Inc_Exp {
         dualinc.incremental_addedges(dgraph, qgraph, inc_sim, add_edges);
         dualinc.incremental_removeedgs(dgraph, qgraph, inc_sim, rm_edges);
         stop_timer(INCREMENTAL_TIMER);
+        if (dual_the_same(qgraph, direct_sim, inc_sim)) {
+          LOG(INFO) << "Have same result.";
+        } else {
+          LOG(INFO) << "incremental dual simulation is wrong.";
+        }
         PrintInfo(query_vfile, query_efile, extend);
         reset_timer(EVALUATION_TIMER);
         reset_timer(INCREMENTAL_TIMER);

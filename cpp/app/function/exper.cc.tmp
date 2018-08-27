@@ -125,7 +125,7 @@ public:
      }
 }
 
-  std::unordered_set<VertexID> find_affected_area(Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,int d_Q){
+  std::unordered_set<VertexID> find_affected_area(Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,int d_Q){
      std::unordered_set<VertexID> affected_nodes,changenode;
      for(auto e:add_edges){
         changenode.insert(e.first);
@@ -156,7 +156,7 @@ public:
         std::cout<<"original need calculate center node "<<max_dual_set.size()<<endl;
         int j=1;
         while(j<circle_num){
-            std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
+            std::unordered_set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
             std::unordered_map<VertexID, std::unordered_set<VertexID>> incdsim;
             for(auto u :qgraph.GetAllVerticesID()){
                 incdsim[u]=std::unordered_set<VertexID>();

@@ -44,7 +44,7 @@ namespace std
   template<>
     struct hash<Vertex>
     {
-      size_t
+    inline  size_t
       operator()(const Vertex & v) const
       {
         size_t seed = 0;
@@ -52,7 +52,12 @@ namespace std
           seed ^= h(v.id()) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
           return seed;
       }
+    inline size_t operator()(const std::pair<VertexID, VertexID> &v) const {
+        std::hash<VertexID> int_hasher;
+        return int_hasher(v.first) ^ int_hasher(v.second);
+    }
     };
+
 }
 
 #endif //CPP_EDGE_H_

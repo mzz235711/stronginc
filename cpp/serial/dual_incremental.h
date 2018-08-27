@@ -46,7 +46,7 @@ class DualInc {
 
   void incremental_addedges(Graph &dgraph,Graph &qgraph,
                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                           std::set<std::pair<VertexID,VertexID>> &add_edges);
+                           std::unordered_set<std::pair<VertexID,VertexID>> &add_edges);
 
   void update_counter(Graph &dgraph,Graph &qgraph,VertexID u,VertexID v,
                           std::unordered_map<VertexID, std::vector<int>> &sim_counter_pre,
@@ -60,11 +60,12 @@ class DualInc {
 
   void incremental_removeedgs(Graph &dgraph,Graph &qgraph,
                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                           std::set<std::pair<VertexID,VertexID>> &rm_edges);
+                           std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
 
   void dual_incremental(Graph &dgraph,Graph &qgraph,
                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                          std::set<std::pair<VertexID,VertexID>> &add_edges,std::set<std::pair<VertexID,VertexID>> &rm_edges);
+                          std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                          std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
  private:
    int n;
   //Graph qgraph;

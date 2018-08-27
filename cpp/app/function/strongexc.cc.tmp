@@ -283,7 +283,8 @@ void print_affected_center_info_one_by_one(int circle_num){
         std::cout<<"original need calculate center node "<<max_dual_set.size()<<endl;
         int j=1;
         while(j<circle_num){
-            std::set<std::pair<VertexID,VertexID>> add_edges,rm_edges;
+            std::vector<std::pair<VertexID,VertexID>> add_edges,rm_edges;
+            std::vector<std::pair<VertexID, VertexLabel>> add_vertices;
             std::unordered_map<VertexID, std::unordered_set<VertexID>> incdsim;
             for(auto u :qgraph.GetAllVerticesID()){
                 incdsim[u]=std::unordered_set<VertexID>();
@@ -306,6 +307,9 @@ void print_affected_center_info_one_by_one(int circle_num){
             e_affected_nodes = intersection(e_affected_nodes,max_dual_set);
 //            LoadEdges(edges,base_add_file+std::to_string(j));
 //            LoadEdges(edges,base_remove_file+std::to_string(j));
+            for (auto &v : add_vertices) {
+              dgraph.AddVertex(Vertex(v.first, v.second));
+            }
             for (auto e:add_edges){
                dgraph.AddEdge(Edge(e.first,e.second,1));
             }

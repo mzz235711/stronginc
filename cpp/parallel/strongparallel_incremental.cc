@@ -73,9 +73,11 @@ void StrongparallelInc::Load_bunch_edges(std::set<std::pair<VertexID,VertexID>> 
      }
 }
 
-std::unordered_set<VertexID> StrongparallelInc::find_affected_area(Fragment& fragment, Graph& dgraph, std::set<std::pair<VertexID,VertexID>> &add_edges,std::set<std::pair<VertexID,VertexID>> &rm_edges,int d_Q){
+std::unordered_set<VertexID> StrongparallelInc::find_affected_area(Fragment& fragment,
+                 Graph& dgraph, std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,int d_Q){
         std::unordered_set<VertexID> incedges_node;
-        for(auto e:add_edges){
+        for(auto &e:add_edges){
             if(rm_edges.find(e) == rm_edges.end()){
                 incedges_node.insert(e.first);
                 incedges_node.insert(e.second);
@@ -95,8 +97,8 @@ std::unordered_set<VertexID> StrongparallelInc::find_affected_area(Fragment& fra
 
 void StrongparallelInc::update_fragment_inc(Fragment &fragment,Graph& dgraph,
                                              std::unordered_set<VertexID> &affected_nodes,
-                                             std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                             std::set<std::pair<VertexID,VertexID>> &rm_edges,
+                                             std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                             std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,
                                              int d_Q){
          std::unordered_set<Vertex> new_add_nodes;
          std::unordered_set<Edge> new_add_edges;
@@ -497,8 +499,8 @@ void StrongparallelInc::out_global_result(Fragment &fragment,  Graph &qgraph, st
 
 void  StrongparallelInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
-                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                      std::set<std::pair<VertexID,VertexID>> &rm_edges){
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
           DualInc dualinc;
           for (auto e:add_edges){
              dgraph.AddEdge(Edge(e.first,e.second,1));
@@ -586,8 +588,8 @@ std::vector<StrongR>  StrongparallelInc::strong_parallel(Fragment &fragment,Grap
 std::vector<StrongR>  StrongparallelInc::strong_parallel_inc(Fragment &fragment,Graph &dgraph, Graph &qgraph,
                                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &fragment_sim,
                                                       std::vector<StrongR> &global_strong_r,
-                                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                                      std::set<std::pair<VertexID,VertexID>> &rm_edges){
+                                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                                      std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
     std::vector<StrongR> max_result;
     int d_Q = cal_diameter_qgraph(qgraph);
 //    std::unordered_map<VertexID, std::unordered_set<VertexID>> fragment_sim;

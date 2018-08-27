@@ -36,6 +36,14 @@ inline void worker_barrier() {
 	MPI_Barrier(MPI_COMM_WORLD);//该函数用于进程的同步。调用该函数后进程将等待直到通信器comm中的所有进程都调用了该函数才返回
 }
 
+namespace std {
+template <> struct hash<std::pair<int, int>> {
+    inline size_t operator()(const std::pair<int, int> &v) const {
+        std::hash<int> int_hasher;
+        return int_hasher(v.first) ^ int_hasher(v.second);
+    }
+};
+}
 //------------------------
 
 

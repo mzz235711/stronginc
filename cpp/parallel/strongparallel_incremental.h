@@ -59,12 +59,12 @@ template<class T>
 
     std::unordered_set<VertexID> find_dhop_nodes(Fragment& fragment, Graph& dgraph,int d_Q);
 
-    std::unordered_set<VertexID> find_affected_area(Fragment& fragment, Graph& dgraph, std::set<std::pair<VertexID,VertexID>> &add_edges,std::set<std::pair<VertexID,VertexID>> &rm_edges,int d_Q);
+    std::unordered_set<VertexID> find_affected_area(Fragment& fragment, Graph& dgraph, std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,int d_Q);
 
     void update_fragment_inc(Fragment &fragment,Graph& dgraph,
                                              std::unordered_set<VertexID> &affected_nodes,
-                                             std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                             std::set<std::pair<VertexID,VertexID>> &rm_edges,
+                                             std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                             std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,
                                              int d_Q);
 
     void update_fragment_parallel(Fragment &fragment,Graph& dgraph,int d_Q);
@@ -122,16 +122,16 @@ template<class T>
 
     void  recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
-                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                      std::set<std::pair<VertexID,VertexID>> &rm_edges);
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
 
     std::vector<StrongR>  strong_parallel(Fragment &fragment,Graph &dgraph, Graph &qgraph);
 
     std::vector<StrongR>  strong_parallel_inc(Fragment &fragment,Graph &dgraph, Graph &qgraph,
                                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &global_dsim,
                                                       std::vector<StrongR> &global_strong_r,
-                                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                                      std::set<std::pair<VertexID,VertexID>> &rm_edges);
+                                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                                      std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
 private:
      MessageBuffer<Vertex> Vertex_MessageBuffers;
      MessageBuffer<Edge> Edge_MessageBuffers;

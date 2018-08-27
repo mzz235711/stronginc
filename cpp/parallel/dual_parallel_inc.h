@@ -46,11 +46,11 @@ public:
 
     void incremental_add_edges(Fragment &fragment, Graph &dgraph, Graph &qgraph,
                                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                                                    std::set<std::pair<VertexID,VertexID>> &add_edges);
+                                                    std::unordered_set<std::pair<VertexID,VertexID>> &add_edges);
 
     void incremental_remove_edgs(Fragment &fragment, Graph &dgraph,Graph &qgraph,
                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                           std::set<std::pair<VertexID,VertexID>> &rm_edges);
+                           std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
 
     void propagate_remove_PEval(Fragment &fragment,GraphView &graph_view,Graph &qgraph,
                           std::unordered_map<VertexID, std::unordered_set<VertexID>> &aff_node,
@@ -68,12 +68,12 @@ public:
 
     void dual_parallel_incremental(Fragment &fragment, Graph &dgraph, Graph &qgraph,
                                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                                           std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                           std::set<std::pair<VertexID,VertexID>> &rm_edges);
+                                           std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                           std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
 
-    void update_by_add_edges(Fragment &fragment,Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,bool communication_next);
+    void update_by_add_edges(Fragment &fragment,Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,bool communication_next);
 
-    void update_by_remove_edges(Fragment &fragment,Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &rm_edges,bool communication_next);
+    void update_by_remove_edges(Fragment &fragment,Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,bool communication_next);
 
     void out_global_result(Fragment &fragment,  Graph &qgraph, std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim);
 

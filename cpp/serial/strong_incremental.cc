@@ -3,8 +3,8 @@ StrongInc::StrongInc(){}
 
 StrongInc::~StrongInc(){}
 
-void StrongInc::find_affected_center_area(Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                                 std::set<std::pair<VertexID,VertexID>> &rm_edges,
+void StrongInc::find_affected_center_area(Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                                 std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,
                                                  int d_hop,
                                                  std::unordered_set<VertexID> &result){
     std::unordered_set<VertexID> incedges_node;
@@ -23,8 +23,8 @@ void StrongInc::find_affected_center_area(Graph &dgraph,std::set<std::pair<Verte
     dgraph.find_hop_nodes(incedges_node,d_hop,result);
 }
 
-void StrongInc::find_affected_center_area(Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                                 std::set<std::pair<VertexID,VertexID>> &rm_edges,
+void StrongInc::find_affected_center_area(Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                                 std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,
                                                  int d_hop,
                                                  std::unordered_set<VertexID> &result,
 												 int flag){
@@ -305,8 +305,8 @@ void StrongInc::print_ball_info(Graph &qgraph,std::unordered_map<VertexID, std::
 
 void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
-                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                      std::set<std::pair<VertexID,VertexID>> &rm_edges){
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
           DualInc dualinc;
           clock_t start1 = clock();
           for (auto e:add_edges){
@@ -341,7 +341,7 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
    }
 
 void StrongInc::cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q, std::unordered_set<VertexID> &ball_node,
-									  std::vector<int> &dis, std::set<std::pair<VertexID,VertexID>> &add_edges){
+									  std::vector<int> &dis, std::unordered_set<std::pair<VertexID,VertexID>> &add_edges){
  //add_edges id <dgraph_num_vertices
     int dgraph_num_vertices = dgraph.GetNumVertices();
     //std::cout<<"update dgraph_num_vertices="<<dgraph_num_vertices<<std::endl;
@@ -392,7 +392,7 @@ void StrongInc::cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q, std::un
 void StrongInc::strong_simulation_inc_only_add(Graph &dgraph, Graph &qgraph,
                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
                                       std::vector<StrongR> &strong_r,
-                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
 									  int flag,
 									  std::unordered_map<VertexID,std::unordered_set<VertexID>> &whole_ball_nodes,
 									  std::unordered_map<VertexID,std::vector<int>> &whole_dist){
@@ -441,7 +441,7 @@ void StrongInc::strong_simulation_inc_only_add(Graph &dgraph, Graph &qgraph,
 		e4 = clock();
 		
 		s5 = clock();
-		std::set<std::pair<VertexID,VertexID>> rm_edges;
+		std::unordered_set<std::pair<VertexID,VertexID>> rm_edges;
 		find_affected_center_area(dgraph,add_edges,rm_edges,d_Q,affected_center_nodes,2); //在更新后的图上，找增边的影响区域
 		e5 = clock();
 	}
@@ -614,8 +614,8 @@ void StrongInc::strong_simulation_inc_only_add(Graph &dgraph, Graph &qgraph,
 void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
                                       std::vector<StrongR> &strong_r,
-                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                      std::set<std::pair<VertexID,VertexID>> &rm_edges){
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
           /**
            *calculate qgaraph diameter
           */
@@ -717,8 +717,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
 void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                                       std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
                                       std::vector<StrongR> &strong_r,
-                                      std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                      std::set<std::pair<VertexID,VertexID>> &rm_edges,
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                      std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,
 									  int flag){
     /**
 	*calculate qgaraph diameter

@@ -68,13 +68,26 @@ void save_sim_result(Graph &qgraph,std::unordered_map<VertexID, std::unordered_s
 
 void load_sim_result(std::unordered_map<VertexID, std::unordered_set<VertexID>> &sim,std::string filename);
 
-void LoadEdges(std::vector<std::pair<VertexID,VertexID>> &edges, const std::string efile);
+void LoadEdges(std::unordered_set<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 
-void Load_bunch_edges(std::vector<std::pair<VertexID,VertexID>> &edges,const std::string basefilename,int index);
+void LoadVertices(std::unordered_set<std::pair<VertexID, VertexLabel>> &vertices,
+                  const std::string vfile);
+
+void Load_bunch_edges(std::unordered_set<std::pair<VertexID, VertexLabel>> &vertices,
+                      std::unordered_set<std::pair<VertexID,VertexID>> &edges, 
+                      const std::string basefilename,int index);
+
+void Load_bunch_edges(std::unordered_set<std::pair<VertexID, VertexID>> &edges,
+                      const std::string basefilename, int index);
 
 void LoadEdges(std::set<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 
 void Load_bunch_edges(std::set<std::pair<VertexID,VertexID>> &edges,const std::string basefilename,int index);
+
+void LoadEdges(std::vector<std::pair<VertexID,VertexID>> &edges, const std::string efile);
+
+void Load_bunch_edges(std::vector<std::pair<VertexID,VertexID>> &edges,const std::string basefilename,int index);
+
 
 void save_edges(std::set<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 

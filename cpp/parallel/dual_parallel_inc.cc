@@ -127,7 +127,7 @@ void Dual_parallelInc::propagate_add_IncEval(Fragment &fragment, Graph &dgraph,G
 
 void Dual_parallelInc::incremental_add_edges(Fragment &fragment, Graph &dgraph, Graph &qgraph,
                                                     std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                                                    std::set<std::pair<VertexID,VertexID>> &add_edges){
+                                                    std::unordered_set<std::pair<VertexID,VertexID>> &add_edges){
         const std::unordered_set<VertexID> *OuterVertices = fragment.getOuterVertices();
         std::set<std::pair<VertexID,VertexID>> candidate_node;
         std::unordered_map<VertexID, std::unordered_set<VertexID>> aff_node;
@@ -217,7 +217,7 @@ void Dual_parallelInc::incremental_add_edges(Fragment &fragment, Graph &dgraph, 
 
 void Dual_parallelInc::incremental_remove_edgs(Fragment &fragment, Graph &dgraph,Graph &qgraph,
                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                           std::set<std::pair<VertexID,VertexID>> &rm_edges){
+                           std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
         const std::unordered_set<VertexID> *OuterVertices = fragment.getOuterVertices();
         std::unordered_set<VertexID> view_nodes;
         for (auto u :qgraph.GetAllVerticesID()){
@@ -369,12 +369,12 @@ void Dual_parallelInc::propagate_remove_IncEval(Fragment &fragment,GraphView &gr
 
 void Dual_parallelInc::dual_parallel_incremental(Fragment &fragment, Graph &dgraph, Graph &qgraph,
                                            std::unordered_map<VertexID, std::unordered_set<VertexID>> &dsim,
-                                           std::set<std::pair<VertexID,VertexID>> &add_edges,
-                                           std::set<std::pair<VertexID,VertexID>> &rm_edges){
+                                           std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                                           std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
 
    }
 
-void Dual_parallelInc::update_by_add_edges(Fragment &fragment,Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &add_edges,bool communication_next){
+void Dual_parallelInc::update_by_add_edges(Fragment &fragment,Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,bool communication_next){
       //  int tmp_num_vertices = graph.GetNumVertices();
         std::unordered_set<Vertex> vertices_;
         int fid = get_worker_id();
@@ -400,7 +400,7 @@ void Dual_parallelInc::update_by_add_edges(Fragment &fragment,Graph &dgraph,std:
         fragment.update_fragment_add_edges(dgraph,edges_,vertices_,communication_next);
     }
 
-void Dual_parallelInc::update_by_remove_edges(Fragment &fragment,Graph &dgraph,std::set<std::pair<VertexID,VertexID>> &rm_edges,bool communication_next){
+void Dual_parallelInc::update_by_remove_edges(Fragment &fragment,Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,bool communication_next){
         std::vector<Edge> rm_edges_;
         for(auto e :rm_edges){
             rm_edges_.emplace_back(e.first,e.second,1);

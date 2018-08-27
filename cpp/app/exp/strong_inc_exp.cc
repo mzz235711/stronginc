@@ -34,13 +34,17 @@ class Strong_Inc_Exp {
 
   void PrintInfo(std::string &query_vfile, std::string &query_efile, int extend) {
     std::string add_efile = this->add_name + std::to_string(extend) + ".e";
+    std::string add_vfile = this->add_name + std::to_string(extend) + ".v";
     std::string rm_efile = this->rm_name + std::to_string(extend) + ".e";
     LOG(INFO) << "Finish computation.";
     LOG(INFO) << "===============================================";
     LOG(INFO) << "vfile: " + this->vfile;
     LOG(INFO) << "efile: " + this->efile;
-    LOG(INFO) << "query_vfile" + query_vfile;
-    LOG(INFO) << "query_efile" + query_efile;
+    LOG(INFO) << "query_vfile: " + query_vfile;
+    LOG(INFO) << "query_efile: " + query_efile;
+    LOG(INFO) << "add_efile: " + add_efile;
+    LOG(INFO) << "add_vfile: " + add_vfile;
+    LOG(INFO) << "remove_efile: " + rm_efile;
     LOG(INFO) << "total time: " + std::to_string(get_timer(WORKER_TIMER));
     LOG(INFO) << "load graph timer: " + std::to_string(get_timer(LOAD_TIMER));
     LOG(INFO) << "dual simulation time: " + std::to_string(get_timer(EVALUATION_TIMER));
@@ -72,8 +76,9 @@ class Strong_Inc_Exp {
       bool initialization = false;
       dual_sim.dual_simulation(dgraph, qgraph, sim, initialization);
       for (int extend = 0; extend < this->extend_num; extend++) {
-        std::set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
-        Load_bunch_edges(add_edges, add_name, extend);
+        std::unordered_set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
+        std::unordered_set<std::pair<VertexID, VertexID>> add_vertices;
+        Load_bunch_edges(add_vertices, add_edges, add_name, extend);
         Load_bunch_edges(rm_edges, rm_name, extend);
         std::vector<StrongR> tmp_r ;
         std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
