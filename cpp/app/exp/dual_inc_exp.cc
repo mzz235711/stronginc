@@ -76,7 +76,7 @@ class Dual_Inc_Exp {
       dualsim.dual_simulation(dgraph, qgraph, origin_sim, initialization);
       for (int extend = 0; extend < extend_num; extend++) {
         std::unordered_set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
-        std::unordered_set<std::pair<VertexID, VertexLabel>> add_vertices;
+        std::vector<std::pair<VertexID, VertexLabel>> add_vertices;
         Load_bunch_edges(add_vertices, add_edges, this->add_name, extend);
         Load_bunch_edges(rm_edges, this->rm_name, extend);
         for (auto &v : add_vertices) {

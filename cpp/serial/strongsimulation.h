@@ -71,7 +71,9 @@ class StrongSim{
 									std::unordered_map<VertexID,std::unordered_set<VertexID>> &whole_ball_nodes,
 									std::unordered_map<VertexID,std::vector<int>> &whole_dist);
 	 
-	 std::vector<StrongR> strong_simulation_sim(Graph &dgraph, Graph &qgraph);
+	 std::vector<StrongR> strong_simulation_sim(Graph &dgraph, Graph &qgraph,
+                std::unordered_map<VertexID, std::unordered_set<VertexID>> &whole_ball_nodes,
+                std::unordered_map<VertexID, std::vector<int>> &whole_dist);
 	 
      std::vector<StrongR> strong_simulation_sim(Graph &dgraph, Graph &qgraph, int flag);
 

@@ -164,7 +164,10 @@ std::vector<StrongR>  View::queryByViews(Graph &dgraph,Graph &qgraph){
     }
     StrongSim strongs;
     for(auto num:min_contain_vec){
-        vector<StrongR> res= strongs.strong_simulation_sim(dgraph,*ViewGraph_list[num]);
+        std::unordered_map<VertexID, std::unordered_set<VertexID>> whole_ball_nodes;
+        std::unordered_map<VertexID, std::vector<int>> whole_dist;
+        vector<StrongR> res= strongs.strong_simulation_sim(dgraph,*ViewGraph_list[num],
+                                   whole_ball_nodes, whole_dist);
         DualSim dualsim;
         std::unordered_map<VertexID, std::unordered_set<VertexID>>  sim;
         bool initialized_sim = false;

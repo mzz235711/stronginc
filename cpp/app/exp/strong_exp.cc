@@ -62,8 +62,10 @@ class Strong_Exp {
       std::string query_efile;
       get_query_efile(index, query_efile);
       qgraph_loader.LoadGraph(qgraph, query_vfile, query_efile);
+      std::unordered_map<VertexID, std::unordered_set<VertexID>> whole_ball_nodes;
+      std::unordered_map<VertexID, std::vector<int>>  whole_dist;
       start_timer(EVALUATION_TIMER);
-      strongs.strong_simulation_sim(dgraph, qgraph);  
+      strongs.strong_simulation_sim(dgraph, qgraph, whole_ball_nodes, whole_dist);  
       stop_timer(EVALUATION_TIMER);
       PrintInfo(query_vfile, query_efile);
       reset_timer(EVALUATION_TIMER);

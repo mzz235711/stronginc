@@ -209,7 +209,7 @@ void LoadEdges(std::unordered_set<std::pair<VertexID,VertexID>> &edges, const st
     }
 }
 
-void LoadVertices(std::unordered_set<std::pair<VertexID, VertexLabel>> &vertices,
+void LoadVertices(std::vector<std::pair<VertexID, VertexLabel>> &vertices,
                   const std::string vfile) {
   std::string line;
   std::ifstream v_infile(vfile, std::ios::in);
@@ -218,22 +218,23 @@ void LoadVertices(std::unordered_set<std::pair<VertexID, VertexLabel>> &vertices
   while (getline(v_infile, line, '\n')) {
     std::stringstream ss(line);
     ss >> u >> label;
-    vertices.insert(std::make_pair(u, label));
+    vertices.push_back(std::make_pair(u, label));
   }
 }
 
-void Load_bunch_edges(std::unordered_set<std::pair<VertexID, VertexLabel>> &vertices,
+void Load_bunch_edges(std::vector<std::pair<VertexID, VertexLabel>> &vertices,
                       std::unordered_set<std::pair<VertexID,VertexID>> &edges,
                       const std::string basefilename,int index){
-    int i=1;
-    while (i <= index) {
-      LoadVertices(vertices, basefilename + std::to_string(i) + ".v");
-      i++;
-    }
-    while (i<=index){
-         LoadEdges(edges, basefilename + std::to_string(i) + ".e");
-         i+=1;
-    }
+//    int i=1;
+//    while (i <= index) {
+      LoadVertices(vertices, basefilename + std::to_string(index) + ".v");
+//      i++;
+//    }
+//    i = 1;
+//    while (i<=index){
+         LoadEdges(edges, basefilename + std::to_string(index) + ".e");
+//         i+=1;
+//    }
 }
 
 void Load_bunch_edges(std::unordered_set<std::pair<VertexID, VertexID>> &edges,

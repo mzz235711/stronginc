@@ -70,10 +70,10 @@ void load_sim_result(std::unordered_map<VertexID, std::unordered_set<VertexID>> 
 
 void LoadEdges(std::unordered_set<std::pair<VertexID,VertexID>> &edges, const std::string efile);
 
-void LoadVertices(std::unordered_set<std::pair<VertexID, VertexLabel>> &vertices,
+void LoadVertices(std::vector<std::pair<VertexID, VertexLabel>> &vertices,
                   const std::string vfile);
 
-void Load_bunch_edges(std::unordered_set<std::pair<VertexID, VertexLabel>> &vertices,
+void Load_bunch_edges(std::vector<std::pair<VertexID, VertexLabel>> &vertices,
                       std::unordered_set<std::pair<VertexID,VertexID>> &edges, 
                       const std::string basefilename,int index);
 

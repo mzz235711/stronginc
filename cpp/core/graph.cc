@@ -744,6 +744,7 @@ void Graph::find_hop_nodes(std::unordered_set<VertexID> &node_set,int d_hop,std:
 // Mutable graph: adding vertices and edges
 int Graph::AddVertex(const Vertex &v) {
   // std::cout<<"v:"<<v.id()<<", v.label=" << v.label()<<", vertices_label_.size = "<<vertices_label_.size()<<std::endl;
+  if (v.id() < GetNumVertices()) return -1;
   vertices_label_.push_back(v.label());
   // std::cout<<"after v:"<<v.id()<<", v.label=" << v.label()<<", vertices_label_.size = "<<vertices_label_.size()<<std::endl;
   return add_vertex(*graph_);

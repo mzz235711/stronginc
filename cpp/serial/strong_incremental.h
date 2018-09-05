@@ -111,10 +111,12 @@ public:
 							   std::unordered_map<VertexID,std::vector<int>> &whole_dist);
 	
     void strong_simulation_inc(Graph &dgraph, Graph &qgraph,
-                               std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
-                               std::vector<StrongR> &strong_r,
-                               std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
-                               std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
+                std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,
+                std::vector<StrongR> &strong_r,
+                std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
+                std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,
+                std::unordered_map<VertexID, std::unordered_set<VertexID>> &whole_ball_nodes,
+                std::unordered_map<VertexID, std::vector<int>> &whole_dist);
 									  
 	void strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                                std::unordered_map<VertexID,std::unordered_set<VertexID>> &dsim,

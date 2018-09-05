@@ -1,6 +1,7 @@
 #ifndef UTILS_GLOBAL_H_
 #define UTILS_GLOBAL_H_
-#include <bsd/stdio.h>
+//#include <bsd/stdio.h>
+#include <stdio.h>
 #include <mpi.h>
 #include <stddef.h>
 #include <limits.h>

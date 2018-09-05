@@ -47,8 +47,8 @@ class Strong_Inc_Exp {
     LOG(INFO) << "remove_efile: " + rm_efile;
     LOG(INFO) << "total time: " + std::to_string(get_timer(WORKER_TIMER));
     LOG(INFO) << "load graph timer: " + std::to_string(get_timer(LOAD_TIMER));
-    LOG(INFO) << "dual simulation time: " + std::to_string(get_timer(EVALUATION_TIMER));
-    LOG(INFO) << "incremental dual simulation time: "
+    LOG(INFO) << "strong simulation time: " + std::to_string(get_timer(EVALUATION_TIMER));
+    LOG(INFO) << "incremental strong simulation time: "
                     + std::to_string(get_timer(INCREMENTAL_TIMER));
     LOG(INFO) << "===============================================";
   }
@@ -63,7 +63,7 @@ class Strong_Inc_Exp {
     start_timer(LOAD_TIMER);  
     dgraph_loader.LoadGraph(dgraph, this->vfile, this->efile);
     stop_timer(LOAD_TIMER);
-    for (int index = 0; index < this->query_num; index++) {
+    for (int index = 1; index <= this->query_num; index++) {
       std::string query_vfile;
       std::string query_efile;
       get_query_vfile(index, query_vfile);
@@ -72,14 +72,20 @@ class Strong_Inc_Exp {
       GraphLoader qgraph_loader;
       qgraph_loader.LoadGraph(qgraph, query_vfile, query_efile);
       std::unordered_map<VertexID, std::unordered_set<VertexID>> sim;
-      std::vector<StrongR> strongsimr = strong_sim.strong_simulation_sim(dgraph, qgraph);
+      std::unordered_map<VertexID, std::unordered_set<VertexID>> whole_ball_nodes;
+      std::unordered_map<VertexID, std::vector<int>> whole_dist;
+      std::vector<StrongR> strongsimr = strong_sim.strong_simulation_sim(dgraph, qgraph, whole_ball_nodes, whole_dist);
       bool initialization = false;
       dual_sim.dual_simulation(dgraph, qgraph, sim, initialization);
-      for (int extend = 0; extend < this->extend_num; extend++) {
+      for (int extend = 1; extend <= this->extend_num; extend++) {
+        auto whole_ball_nodes_inc = whole_ball_nodes;
+        auto whole_dist_inc = whole_dist;
+        std::unordered_map<VertexID, std::unordered_set<VertexID>> whole_ball_nodes_dir;
+        std::unordered_map<VertexID, std::vector<int>> whole_dist_dir;
         std::unordered_set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
-        std::unordered_set<std::pair<VertexID, VertexID>> add_vertices;
+        std::vector<std::pair<VertexID, VertexID>> add_vertices;
         Load_bunch_edges(add_vertices, add_edges, add_name, extend);
-        Load_bunch_edges(rm_edges, rm_name, extend);
+//        Load_bunch_edges(rm_edges, rm_name, extend);
         std::vector<StrongR> tmp_r ;
         std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
         for (auto &ball : strongsimr) {
@@ -95,21 +101,21 @@ class Strong_Inc_Exp {
         for (auto &e : add_edges) {
           dgraph.AddEdge(Edge(e.first, e.second, 1));
         }
-        for (auto &e : rm_edges) {
-          dgraph.RemoveEdge(Edge(e.first, e.second, 1));
-        }
+//        for (auto &e : rm_edges) {
+//          dgraph.RemoveEdge(Edge(e.first, e.second, 1));
+//        }
         start_timer(EVALUATION_TIMER);
-        std::vector<StrongR> simr_dir = strong_sim_dir.strong_simulation_sim(dgraph, qgraph);
+        std::vector<StrongR> simr_dir = strong_sim_dir.strong_simulation_sim(dgraph, qgraph, whole_ball_nodes_dir, whole_dist_dir);
         stop_timer(EVALUATION_TIMER);
         start_timer(INCREMENTAL_TIMER);
-        strong_inc.strong_simulation_inc(dgraph, qgraph, tmp_sim, tmp_r, add_edges, rm_edges);
+        strong_inc.strong_simulation_inc(dgraph, qgraph, tmp_sim, tmp_r, add_edges, rm_edges, whole_ball_nodes_inc, whole_dist_inc);
         stop_timer(INCREMENTAL_TIMER);
         PrintInfo(query_vfile, query_efile, extend);
         reset_timer(EVALUATION_TIMER);
         reset_timer(INCREMENTAL_TIMER);
-        for (auto &e : rm_edges) {
-          dgraph.AddEdge(Edge(e.first, e.second, 1));
-        }
+//        for (auto &e : rm_edges) {
+//          dgraph.AddEdge(Edge(e.first, e.second, 1));
+//        }
         for (auto &e : add_edges) {
           dgraph.RemoveEdge(Edge(e.first, e.second, 1));
         }
