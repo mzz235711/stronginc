@@ -348,23 +348,27 @@
                           std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
                           std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
           for(auto e :rm_edges){
-              dgraph.RemoveEdge(Edge(e.first,e.second,1));
+//              dgraph.RemoveEdge(Edge(e.first,e.second,1));
+            dgraph.RemoveEdge(Edge(e,first, e,second));
           }
           incremental_removeedgs(dgraph,qgraph,dsim,rm_edges);
 
 
           for (auto e:add_edges){
-             dgraph.AddEdge(Edge(e.first,e.second,1));
+//             dgraph.AddEdge(Edge(e.first,e.second,1));
+            dgraph.AddEdge(Edge(e.first, e.second));
           }
 
           incremental_addedges(dgraph,qgraph,dsim,add_edges);
 
           for (auto e:add_edges){
-             dgraph.RemoveEdge(Edge(e.first,e.second,1));
+//             dgraph.RemoveEdge(Edge(e.first,e.second,1));
+            dgraph.RemoveEdge(Edge(e.first, e.second));
           }
 
           for(auto e:rm_edges){
-              dgraph.AddEdge(Edge(e.first,e.second,1));
+//              dgraph.AddEdge(Edge(e.first,e.second,1));
+            dgraph.AddEdge(Edge(e.first, e.second));
           }
     }
 

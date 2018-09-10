@@ -264,7 +264,8 @@ void StrongInc::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph &qgraph,
         for (auto sim_v1 : S_w[sourceid]){
             for(auto sim_v2 : S_w[targetid]){
                  if (ball_view.ExistEdge(sim_v1,sim_v2)){
-                     edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+//                     edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+                   edge_match_set.insert(Edge(sim_v1, sim_v2));
                  }
 
              }
@@ -438,7 +439,8 @@ void StrongInc::strong_simulation_inc_only_add(Graph &dgraph, Graph &qgraph,
 			dgraph.AddVertex(Vertex(i, (i+123456789)%MAX_LABEL)); // save it.
 		}
 		for(auto e : add_edges){
-			dgraph.AddEdge(Edge(e.first,e.second,1));
+//			dgraph.AddEdge(Edge(e.first,e.second,1));
+          dgraph.AddEdge(Edge(e.first, e.second));
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
@@ -528,7 +530,8 @@ void StrongInc::strong_simulation_inc_only_add(Graph &dgraph, Graph &qgraph,
             for (auto sim_v1 : S_w[sourceid]){
                 for(auto sim_v2 : S_w[targetid]){
                     if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                        ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+//                        ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                      ball_filter_edge.insert(Edge(sim_v1, sim_v2));
                     }
                 }
             }
@@ -745,7 +748,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                   for (auto sim_v1 : S_w[sourceid]){
                       for(auto sim_v2 : S_w[targetid]){
                           if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                              ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+//                              ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                            ball_filter_edge.insert(Edge(sim_v1, sim_v2));
                           }
                       }
                   }
@@ -858,7 +862,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
 		
 //		start1 = clock();
 		for(auto e : rm_edges){
-			dgraph.RemoveEdge(Edge(e.first,e.second,1));
+//			dgraph.RemoveEdge(Edge(e.first,e.second,1));
+          dgraph.RemoveEdge(Edge(e.first, e.second));
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
@@ -884,7 +889,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
 			dgraph.AddVertex(Vertex(i, (i+123456789)%MAX_LABEL)); // save it.
 		}
 		for(auto e : add_edges){
-			dgraph.AddEdge(Edge(e.first,e.second,1));
+//			dgraph.AddEdge(Edge(e.first,e.second,1));
+          dgraph.AddEdge(Edge(e.first, e.second));
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
@@ -912,7 +918,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
 		
 		start1 = clock();
 		for(auto e : rm_edges){
-			dgraph.RemoveEdge(Edge(e.first,e.second,1));
+//			dgraph.RemoveEdge(Edge(e.first,e.second,1));
+          dgraph.RemoveEdge(Edge(e.first, e.second));
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
@@ -941,7 +948,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
 			dgraph.AddVertex(Vertex(i, (i+123456789)%MAX_LABEL)); // save it.
 		}
 		for(auto e : add_edges){
-			dgraph.AddEdge(Edge(e.first,e.second,1));
+//			dgraph.AddEdge(Edge(e.first,e.second,1));
+          dgraph.AddEdge(Edge(e.first, e.second));
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
@@ -975,7 +983,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
 			dgraph.AddVertex(Vertex(i, (i+123456789)%MAX_LABEL)); // save it.
 		}
 		for(auto e : add_edges){
-			dgraph.AddEdge(Edge(e.first,e.second,1));
+//			dgraph.AddEdge(Edge(e.first,e.second,1));
+          dgraph.AddEdge(Edge(e.first, e.second));
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
@@ -995,7 +1004,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
 		
 		start1 = clock();
 		for(auto e : rm_edges){
-			dgraph.RemoveEdge(Edge(e.first,e.second,1));
+//			dgraph.RemoveEdge(Edge(e.first,e.second,1));
+          dgraph.RemoveEdge(Edge(e.first, e.second));
 		}
 		dgraph.RebuildGraphProperties();
 		// dgraph.printGraphInfo();
@@ -1064,7 +1074,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
             for (auto sim_v1 : S_w[sourceid]){
                 for(auto sim_v2 : S_w[targetid]){
                     if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                        ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+//                        ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                      ball_filter_edge.insert(Edge(sim_v1, sim_v2));
                     }
                 }
             }

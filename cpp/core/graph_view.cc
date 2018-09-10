@@ -15,8 +15,8 @@ GraphView::GraphView(Graph &graph, std::unordered_set<Edge>* eSet,
       new SubGraphT(*graph_, edgeP, vertexP));
 
   vertex_index_map_ = boost::get(boost::vertex_index, *graphview_);
-  edge_data_map_ = std::unique_ptr<EdgeDataMap>(
-          new EdgeDataMap(boost::get(boost::edge_weight, *graphview_)));
+//  edge_data_map_ = std::unique_ptr<EdgeDataMap>(
+//          new EdgeDataMap(boost::get(boost::edge_weight, *graphview_)));
   LOG(INFO) << "Build GraphView finished." << std::endl;
 }
 
@@ -30,8 +30,8 @@ GraphView::GraphView(Graph &graph, std::unordered_set<VertexID>* vSet) {
   graphview_ = std::unique_ptr<SubGraphT>(
       new SubGraphT(*graph_, edgeP, vertexP));
   vertex_index_map_ = boost::get(boost::vertex_index, *graphview_);
-  edge_data_map_ = std::unique_ptr<EdgeDataMap>(
-          new EdgeDataMap(boost::get(boost::edge_weight, *graphview_)));
+//  edge_data_map_ = std::unique_ptr<EdgeDataMap>(
+//          new EdgeDataMap(boost::get(boost::edge_weight, *graphview_)));
   // if you don't want to cal the number of edges right now,
   // just make the under codes unworking.
   num_edges_ = 0;
@@ -150,9 +150,10 @@ GraphView::ViewOutgoingEdgeIterator::ViewOutgoingEdgeIterator
     graph_(graph), iter_(iter), uid_(uid) {}
 
 const Edge GraphView::ViewOutgoingEdgeIterator::operator*() const {
-  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
+//  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID vid = graph_.vertex_index_map_[target(*iter_, *(graph_.graphview_))];
-  return Edge(uid_, vid, attr);
+//  return Edge(uid_, vid, attr);
+  return Edge(uid_, vid);
 }
 
 const bool GraphView::ViewOutgoingEdgeIterator::operator!=
@@ -174,9 +175,10 @@ GraphView::ViewIncomingEdgeIterator::ViewIncomingEdgeIterator
     graph_(graph), iter_(iter), vid_(vid) {}
 
 const Edge GraphView::ViewIncomingEdgeIterator::operator*() const {
-  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
+//  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID uid = graph_.vertex_index_map_[source(*iter_, *(graph_.graphview_))];
-  return Edge(uid, vid_, attr);
+//  return Edge(uid, vid_, attr);
+  return Edge(uid, vid_);
 }
 
 const bool GraphView::ViewIncomingEdgeIterator::operator!=
@@ -198,10 +200,11 @@ GraphView::ViewEdgeIterator::ViewEdgeIterator(const GraphView &graph,
 }
 
 const Edge GraphView::ViewEdgeIterator::operator*() const {
-  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
+//  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID uid = graph_.vertex_index_map_[source(*iter_, *(graph_.graphview_))];
   VertexID vid = graph_.vertex_index_map_[target(*iter_, *(graph_.graphview_))];
-  return Edge(uid, vid, attr);
+//  return Edge(uid, vid, attr);
+  return Edge(uid, vid);
 }
 
 const bool GraphView::ViewEdgeIterator::operator!=(const ViewEdgeIterator

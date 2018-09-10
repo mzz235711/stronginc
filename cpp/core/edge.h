@@ -10,8 +10,10 @@ class Edge {
    */
   Edge() {}
 
-  Edge(const VertexID src, const VertexID dst, const EdgeLabel attr):
-              src_(src), dst_(dst), attr_(attr) {}
+  // Edge(const VertexID src, const VertexID dst, const EdgeLabel attr):
+  //             src_(src), dst_(dst), attr_(attr) {}
+
+  Edge(const VertexID scr, const VertexID dst) : src_(src), dist_(dist) {}
 
   /**
    * @return source vertex id
@@ -29,9 +31,9 @@ class Edge {
   /**
    * @return the weight of edge
    */
-  inline const EdgeLabel attr() const {
-    return attr_;
-  }
+  // inline const EdgeLabel attr() const {
+  //   return attr_;
+  // }
 
   bool operator== (const Edge & edge) const {
     return (this->src_ == edge.src_) && (this->dst_ == edge.dst_);
@@ -39,7 +41,7 @@ class Edge {
 
  public:
   VertexID src_, dst_;
-  EdgeLabel attr_;
+//  EdgeLabel attr_;
 };
 
 namespace std

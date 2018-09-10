@@ -51,8 +51,9 @@ void GraphLoader::LoadEdges(std::vector<Edge> &edges, const std::string efile) {
       std::stringstream ss(line);
       ss >> u >> v;
       getline(ss, elabel);
-      EdgeLabel attr = atoi(elabel.c_str());
-      edges.emplace_back(u, v, attr);
+//      EdgeLabel attr = atoi(elabel.c_str());
+//      edges.emplace_back(u, v, attr);
+      edges.emplace_back(u, v)
     }
     num_edges_ = cnt;
     LOG(INFO) << "loaded edges size = " << cnt << std::endl;
@@ -68,7 +69,7 @@ void GraphLoader::LoadGraph(Graph &graph, const std::string vfile, const std::st
   LoadEdges(edges, efile);
 
   std::vector<EdgePair> edges_form_to;
-  std::vector<EdgeLabel> edges_attr;
+  std::vector<EdgeLabel> edges_attr(edgess.size(), 1);
   graph.vertices_label_.resize(vertices.size());
   for (int i = 0; i < vertices.size(); ++i) {
     graph.vertices_label_[i] = vertices[i].label();
@@ -77,7 +78,7 @@ void GraphLoader::LoadGraph(Graph &graph, const std::string vfile, const std::st
   for (int i = 0; i < edges.size(); ++i) {
     const Edge &e = edges[i];
     edges_form_to.emplace_back(e.src(), e.dst());
-    edges_attr.emplace_back(e.attr());
+//    edges_attr.emplace_back(e.attr());
   }
 
 #ifndef MUTABLE_GRAPH
@@ -109,7 +110,7 @@ void GraphLoader::LoadGraph(Graph &graph, const std::vector<Vertex> &vertices, c
 //  LoadEdges(edges, efile);
 
   std::vector<EdgePair> edges_form_to;
-  std::vector<EdgeLabel> edges_attr;
+  std::vector<EdgeLabel> edges_attr(edges.size(), 1);
   graph.vertices_label_.resize(vertices.size());
   for (int i = 0; i < vertices.size(); ++i) {
     graph.vertices_label_[i] = vertices[i].label();
@@ -118,7 +119,7 @@ void GraphLoader::LoadGraph(Graph &graph, const std::vector<Vertex> &vertices, c
   for (int i = 0; i < edges.size(); ++i) {
     const Edge &e = edges[i];
     edges_form_to.emplace_back(e.src(), e.dst());
-    edges_attr.emplace_back(e.attr());
+//    edges_attr.emplace_back(e.attr());
   }
 
 #ifndef MUTABLE_GRAPH
@@ -146,7 +147,7 @@ void GraphLoader::LoadGraph(Graph &graph, const std::vector<Vertex> &vertices, c
 
 void GraphLoader::LoadGraph(Graph &graph,const std::vector<Vertex> &vertices, const std::set<Edge> &edges){
   std::vector<EdgePair> edges_form_to;
-  std::vector<EdgeLabel> edges_attr;
+  std::vector<EdgeLabel> edges_attr(edges.size(), 1);
   graph.vertices_label_.resize(vertices.size());
   for (int i = 0; i < vertices.size(); ++i) {
     graph.vertices_label_[i] = vertices[i].label();
@@ -155,7 +156,7 @@ void GraphLoader::LoadGraph(Graph &graph,const std::vector<Vertex> &vertices, co
   for(auto edge:edges){
       const Edge &e = edge;
       edges_form_to.emplace_back(e.src(), e.dst());
-      edges_attr.emplace_back(e.attr());
+//      edges_attr.emplace_back(e.attr());
   }
 
 #ifndef MUTABLE_GRAPH
@@ -173,8 +174,8 @@ void GraphLoader::LoadGraph(Graph &graph,const std::vector<Vertex> &vertices, co
                  vertices.size()));
 #endif
   graph.vertex_index_map_ = boost::get(boost::vertex_index, *graph.graph_);
-  graph.edge_data_map_ = std::unique_ptr<EdgeDataMap>(
-          new EdgeDataMap(boost::get(boost::edge_weight, *graph.graph_)));
+//  graph.edge_data_map_ = std::unique_ptr<EdgeDataMap>(
+//          new EdgeDataMap(boost::get(boost::edge_weight, *graph.graph_)));
   graph.num_vertices_ = vertices.size();
   graph.num_edges_ = edges.size();
   LOG(INFO) << "loading graph finished." << std::endl;

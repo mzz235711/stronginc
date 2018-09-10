@@ -32,13 +32,13 @@ Fragment::Fragment(Graph &graph, const std::string v_file, const std::string e_f
        }
     }
     std::vector<std::pair<VertexID,VertexID>> edges_from_to;
-    std::vector<EdgeLabel> edges_attr;
+    std::vector<EdgeLabel> edges_attr(numEdges, 1);
 
     for (int i = 0; i < numEdges; ++i){
         Edge e = global_edges[i];
         VertexID src = e.src(),dst = e.dst();
         edges_from_to.emplace_back(global2local.at(src), global2local.at(dst));
-        edges_attr.emplace_back(e.attr());
+//        edges_attr.emplace_back(e.attr());
         if(fragTable.at(src) != FID && fragTable.at(dst) ==FID){
             msgThroughDest[dst].set(fragTable.at(src));
         }else if(fragTable.at(src) == FID && fragTable.at(dst) != FID){
@@ -87,13 +87,13 @@ Fragment::Fragment(Graph &graph,const std::vector<Vertex> &_vertices, const std:
        }
     }
     std::vector<std::pair<VertexID,VertexID>> edges_from_to;
-    std::vector<EdgeLabel> edges_attr;
+    std::vector<EdgeLabel> edges_attr(numEdges, 1);
 
     for (int i = 0; i < numEdges; ++i){
         Edge e = _edges[i];
         VertexID src = e.src(),dst = e.dst();
         edges_from_to.emplace_back(global2local.at(src), global2local.at(dst));
-        edges_attr.emplace_back(e.attr());
+//        edges_attr.emplace_back(e.attr());
         if(fragTable.at(src) != FID && fragTable.at(dst) ==FID){
             msgThroughDest[dst].set(fragTable.at(src));
         }else if(fragTable.at(src) == FID && fragTable.at(dst) != FID){

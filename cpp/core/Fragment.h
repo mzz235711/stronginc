@@ -73,7 +73,8 @@ public :
             VertexID dst = edge.dst();
             if(communication_next){
                 if (fragTable.at(src) == FID || fragTable.at(dst) == FID){
-                    graph.AddEdge(Edge(global2local[src], global2local[dst], edge.attr()));
+//                    graph.AddEdge(Edge(global2local[src], global2local[dst], edge.attr()));
+                     graph.AddEdge(Edge(global2local[src], global2local[dst]));
                      if(fragTable.at(src) != FID && fragTable.at(dst) ==FID){
                         msgThroughDest[dst].set(fragTable.at(src));
                     }else if(fragTable.at(src) == FID && fragTable.at(dst) != FID){
@@ -82,7 +83,8 @@ public :
                 }
             }else{
                 if(global2local.find(src)!=global2local.end() && global2local.find(dst) != global2local.end()){
-                    graph.AddEdge(Edge(global2local[src], global2local[dst], edge.attr()));
+//                    graph.AddEdge(Edge(global2local[src], global2local[dst], edge.attr()));
+                  graph.AddEdge(Edge(global2local[src], global2local[dst]));
                 }
             }
         }
@@ -106,7 +108,8 @@ public :
             VertexID src = edge.src();
             VertexID dst = edge.dst();
             if(global2local.find(src)!=global2local.end() && global2local.find(dst) != global2local.end()){
-                graph.RemoveEdge(Edge(global2local[edge.src()], global2local[edge.dst()], edge.attr()));
+//                graph.RemoveEdge(Edge(global2local[edge.src()], global2local[edge.dst()], edge.attr()));
+              graph.RemoveEdge(Edge(global2local[src], global2local[dst]));
             }
         }
         if(communication_next){

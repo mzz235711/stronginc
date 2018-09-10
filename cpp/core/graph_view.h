@@ -21,8 +21,9 @@ struct EdgePredicate {
     if (eSet_ != NULL) {
       VertexID src = get(boost::vertex_index, *graph_)[source(e, *graph_)];
       VertexID dst = get(boost::vertex_index, *graph_)[target(e, *graph_)];
-      EdgeLabel attr = get(boost::edge_weight, *graph_)[e];
-      Edge edge(src, dst, attr);
+//      EdgeLabel attr = get(boost::edge_weight, *graph_)[e];
+//      Edge edge(src, dst, attr);
+      Edge edge(src, dst);
       return (*eSet_).find(edge) != (*eSet_).end();
     } else {
       VertexID src = get(boost::vertex_index, *graph_)[source(e, *graph_)];
@@ -289,7 +290,7 @@ class GraphView {
   std::unique_ptr<SubGraphT> graphview_;
   std::shared_ptr<GraphT> graph_;
   VertexIndexMap vertex_index_map_;
-  std::unique_ptr<EdgeDataMap> edge_data_map_;
+//  std::unique_ptr<EdgeDataMap> edge_data_map_;
 
   size_t num_vertices_;
   size_t num_edges_;

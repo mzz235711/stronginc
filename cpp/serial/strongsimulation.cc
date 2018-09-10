@@ -212,7 +212,8 @@ void StrongSim::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph &qgraph,
         for (auto sim_v1 : S_w[sourceid]){
             for(auto sim_v2 : S_w[targetid]){
                  if (ball_view.ExistEdge(sim_v1,sim_v2)){
-                     edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+//                     edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+                   edge_match_set.insert(Edge(sim_v1, sim_v2));
                  }
 
              }
@@ -320,7 +321,8 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
               for (auto sim_v1 : S_w[sourceid]){
 		for(auto sim_v2 : S_w[targetid]){
                   if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                    ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+//                    ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                    ball_filter_edge.insert(Edge(sim_V1, sim_v2));
                   }
                 }
               }
@@ -496,7 +498,8 @@ std::vector<StrongR> StrongSim::strong_simulation_sim_only_add(Graph &dgraph,
                 for (auto sim_v1 : S_w[sourceid]){
 					for(auto sim_v2 : S_w[targetid]){
                         if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                            ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+//                            ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                          ball_filter_edge.insert(Edge(sim_v1, sim_v2));
                         }
                     }
                 }
@@ -593,7 +596,8 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
                 for (auto sim_v1 : S_w[sourceid]){
 					for(auto sim_v2 : S_w[targetid]){
                         if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                            ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+//                            ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                          ball_filter_edge.insert(Edge(sim_v1, sim_v2));
                         }
                     }
                 }

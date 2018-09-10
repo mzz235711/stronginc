@@ -106,7 +106,8 @@ void generate_connect_graphs_by_Dgraph(Graph &dgraph, Graph &qgraph,const  int n
     for(int i = 0 ;i<num_nodes;i++){
         for(int j =0;j<num_nodes;j++){
             if (dgraph.ExistEdge(vertex_list[i],vertex_list[j])){
-                edges.emplace_back(i,j,1);
+//                edges.emplace_back(i,j,1);
+              edges.emplace_back(i, j);
             }
         }
     }

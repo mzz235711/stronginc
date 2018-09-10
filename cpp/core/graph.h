@@ -334,7 +334,7 @@ class Graph {
  private:
   std::shared_ptr<GraphT> graph_;
   VertexIndexMap vertex_index_map_;
-  std::unique_ptr<EdgeDataMap> edge_data_map_;
+//  std::unique_ptr<EdgeDataMap> edge_data_map_;
   std::vector<VertexLabel> vertices_label_;
   int num_vertices_;
   int num_edges_;

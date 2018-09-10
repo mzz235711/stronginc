@@ -198,7 +198,8 @@ std::vector<StrongR>  View::queryByViews(Graph &dgraph,Graph &qgraph){
         for(auto source_node : simsource){
             for(auto target_node : simtarget){
                 if(dgraph.ExistEdge(source_node,target_node)){
-                    view_edges.insert(Edge(source_node,target_node,1));
+//                    view_edges.insert(Edge(source_node,target_node,1));
+                  view_edges.insert(Edge(source_node, target_node));
                 }
             }
         }
@@ -236,7 +237,8 @@ std::vector<StrongR>  View::queryByViews(Graph &dgraph,Graph &qgraph){
           for (auto sim_v1 : S_w[sourceid]){
              for(auto sim_v2 : S_w[targetid]){
                 if (graph_view.ExistEdge(sim_v1,sim_v2)){
-                    ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+//                    ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
+                  ball_filter_edge.insert(sim_v1, sim_v2);
                 }
              }
           }
@@ -446,7 +448,8 @@ void View::extract_max_pg(Ball_View &ball_view,Graph &dgraph,Graph &qgraph,Verte
         for (auto sim_v1 : S_w[sourceid]){
             for(auto sim_v2 : S_w[targetid]){
                  if (ball_view.ExistEdge(sim_v1,sim_v2)){
-                     edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+//                     edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+                   edge_match_set.insert(Edge(sim_v1, sim_v2));
                  }
 
              }

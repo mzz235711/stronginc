@@ -33,7 +33,8 @@ bool FragmentLoader::LoadEdge(std::vector<Edge> &global_edges, const std::unorde
          EdgeLabel attr;
          while (fscanf(file,"%d %d %d",&u, &v, &attr) != EOF){
             if (fragTable.at(u) == fid || fragTable.at(v) == fid){
-                  global_edges.emplace_back(u, v, attr);
+//                  global_edges.emplace_back(u, v, attr);
+                  global_edges.emplace_back(u, v);
                   idx.insert(u);
                   idx.insert(v);
             }

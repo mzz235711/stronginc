@@ -42,19 +42,22 @@ void Generate::generate_random_connectivity_graph(Graph &graph,int num_nodes,int
         if(connectivity_nodes.size()==0){
             connectivity_nodes.insert(n1);
             connectivity_nodes.insert(n2);
-            edges.emplace_back(n1,n2,1);
+//            edges.emplace_back(n1,n2,1);
+            edges.emplace_back(n1, n2);
             exist_edges.insert(std::make_pair(n1,n2));
             ++i;
         }else if(connectivity_nodes.size()>0 && connectivity_nodes.size()<num_nodes){
             if((connectivity_nodes.find(n1)!=connectivity_nodes.end() && connectivity_nodes.find(n2)==connectivity_nodes.end()) || (connectivity_nodes.find(n2)!=connectivity_nodes.end() && connectivity_nodes.find(n1)==connectivity_nodes.end())){
                 connectivity_nodes.insert(n1);
                 connectivity_nodes.insert(n2);
-                edges.emplace_back(n1,n2,1);
+//                edges.emplace_back(n1,n2,1);
+                edges.emplace_back(n1, n2);
                 exist_edges.insert(std::make_pair(n1,n2));
                 ++i;
             }
         }else{
-            edges.emplace_back(n1,n2,1);
+//            edges.emplace_back(n1,n2,1);
+              edges.emplace_back(n1, n2);
             exist_edges.insert(std::make_pair(n1,n2));
             ++i;
         }
@@ -84,19 +87,22 @@ void Generate::generate_random_connectivity_graph(Graph &graph,int num_nodes,int
         if(connectivity_nodes.size()==0){
             connectivity_nodes.insert(n1);
             connectivity_nodes.insert(n2);
-            edges.emplace_back(n1,n2,1);
+//            edges.emplace_back(n1,n2,1);
+            edges.emplace_back(n1, n2);
             exist_edges.insert(std::make_pair(n1,n2));
             ++i;
         }else if(connectivity_nodes.size()>0 && connectivity_nodes.size()<num_nodes){
             if((connectivity_nodes.find(n1)!=connectivity_nodes.end() && connectivity_nodes.find(n2)==connectivity_nodes.end()) || (connectivity_nodes.find(n2)!=connectivity_nodes.end() && connectivity_nodes.find(n1)==connectivity_nodes.end())){
                 connectivity_nodes.insert(n1);
                 connectivity_nodes.insert(n2);
-                edges.emplace_back(n1,n2,1);
+//                edges.emplace_back(n1,n2,1);
+                edges.emplace_back(n1, n2);
                 exist_edges.insert(std::make_pair(n1,n2));
                 ++i;
             }
         }else{
-            edges.emplace_back(n1,n2,1);
+//            edges.emplace_back(n1,n2,1);
+            edges.emplace_back(n1, n2);
             exist_edges.insert(std::make_pair(n1,n2));
             ++i;
         }
@@ -120,7 +126,8 @@ void Generate::generate_random_dgraph(Graph &graph,int num_nodes,double a,int l)
         int n1 = random(0,num_nodes-1);
         int n2 = random(0,num_nodes-1);
         if(n1!=n2 && exist_edges.find(std::pair<VertexID,VertexID>(n1,n2)) == exist_edges.end()){
-            edges.emplace_back(n1,n2,1);
+//            edges.emplace_back(n1,n2,1);
+            edges.emplace_back(n1, n2);
             exist_edges.insert(std::make_pair(n1,n2));
             ++i;
         }
@@ -180,7 +187,8 @@ void Generate::generate_connect_graphs_by_Dgraph(Graph &dgraph, Graph &qgraph,co
     for(int i = 0 ;i<num_nodes;i++){
         for(int j =0;j<num_nodes;j++){
             if (dgraph.ExistEdge(vertex_list[i],vertex_list[j])){
-                edges.emplace_back(i,j,1);
+//                edges.emplace_back(i,j,1);
+              edges.emplace_back(i, j);
             }
         }
     }

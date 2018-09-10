@@ -352,7 +352,7 @@ obinstream &operator >>(obinstream &m, Vertex &v) {
 ibinstream &operator <<(ibinstream &m, const Edge &e) {
 	m << e.src_;
 	m << e.dst_;
-	m << e.attr_;
+//	m << e.attr_;
 	return m;
 }
 
@@ -360,7 +360,7 @@ ibinstream &operator <<(ibinstream &m, const Edge &e) {
 obinstream &operator >>(obinstream &m, Edge &e) {
 	m >> e.src_;
 	m >> e.dst_;
-	m >> e.attr_;
+//	m >> e.attr_;
 	return m;
 }
 

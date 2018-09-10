@@ -7,8 +7,8 @@ Graph::Graph(const Graph &other){
     if(this != &other){
         copy_graph(*graph_, *other.graph_);
         vertex_index_map_ = boost::get(boost::vertex_index, *graph_);
-        edge_data_map_ = std::unique_ptr<EdgeDataMap>(
-          new EdgeDataMap(boost::get(boost::edge_weight, *graph_)));
+//        edge_data_map_ = std::unique_ptr<EdgeDataMap>(
+//          new EdgeDataMap(boost::get(boost::edge_weight, *graph_)));
         vertices_label_.assign(other.vertices_label_.begin(),other.vertices_label_.end());
         num_vertices_ = other.num_vertices_;
         num_edges_ = other.num_edges_;
@@ -149,9 +149,10 @@ Graph::OutgoingEdgeIterator::OutgoingEdgeIterator
     graph_(graph), iter_(iter), uid_(uid) {}
 
 const Edge Graph::OutgoingEdgeIterator::operator*() const {
-  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
+//  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID vid = graph_.vertex_index_map_[target(*iter_, *(graph_.graph_))];
-  return Edge(uid_, vid, attr);
+//  return Edge(uid_, vid, attr);
+  return Edges(uid_, vid);
 }
 
 const bool Graph::OutgoingEdgeIterator::operator!=
@@ -173,9 +174,10 @@ Graph::IncomingEdgeIterator::IncomingEdgeIterator
     graph_(graph), iter_(iter), vid_(vid) {}
 
 const Edge Graph::IncomingEdgeIterator::operator*() const {
-  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
+//  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID uid = graph_.vertex_index_map_[source(*iter_, *(graph_.graph_))];
-  return Edge(uid, vid_, attr);
+//  return Edge(uid, vid_, attr);
+  return Edge(uid, vid_)
 }
 
 const bool Graph::IncomingEdgeIterator::operator!=
@@ -197,10 +199,11 @@ Graph::EdgeIterator::EdgeIterator(const Graph &graph,
 }
 
 const Edge Graph::EdgeIterator::operator*() const {
-  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
+//  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID uid = graph_.vertex_index_map_[source(*iter_, *(graph_.graph_))];
   VertexID vid = graph_.vertex_index_map_[target(*iter_, *(graph_.graph_))];
-  return Edge(uid, vid, attr);
+//  return Edge(uid, vid, attr);
+  return Edge(uid, vid);
 }
 
 const bool Graph::EdgeIterator::operator!=(const EdgeIterator
@@ -752,9 +755,10 @@ int Graph::AddVertex(const Vertex &v) {
 
 void Graph::AddEdge(const Edge &e) {
   auto u = e.src(), v = e.dst();
-  auto attr = e.attr();
+//  auto attr = e.attr();
   if (!edge(u, v, *graph_).second) {
-    add_edge(u, v, attr, *graph_);
+//    add_edge(u, v, attr, *graph_);
+    add_edge(u, v, 1, *graph_);
   }
 }
 
@@ -764,7 +768,8 @@ void Graph::printGraphInfo(){
 	for(auto v : GetAllVerticesID()){
 		std::cout<<v<<std::endl;
 		for(auto e : GetOutgoingEdges(v)){
-			std::cout <<v<<" "<<e.dst()<<" "<<e.attr()<<std::endl;
+//			std::cout <<v<<" "<<e.dst()<<" "<<e.attr()<<std::endl;
+          std::cout << v << " " << e.dst() << " " << std::endl; 
 		}
 	}
 	std::cout << "------------------------------------------"<<std::endl;
@@ -781,7 +786,7 @@ void Graph::RebuildGraphProperties() {
   num_vertices_ = num_vertices(*graph_);
   num_edges_ =  num_edges(*graph_);
   vertex_index_map_ = boost::get(boost::vertex_index, *graph_);
-  edge_data_map_ = std::unique_ptr<EdgeDataMap>(new EdgeDataMap(
-      boost::get(boost::edge_weight, *graph_)));
+//  edge_data_map_ = std::unique_ptr<EdgeDataMap>(new EdgeDataMap(
+//      boost::get(boost::edge_weight, *graph_)));
 }
 #endif
