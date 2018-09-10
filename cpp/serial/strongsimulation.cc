@@ -294,7 +294,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
             cal_culculate_directed_dhop_nodes(dgraph, w, d_Q, whole_ball_nodes[w],
                  whole_dist[w]);
             double partend = get_current_time();
-            parttime[0] = partend - partstart;
+            parttime[0] += partend - partstart;
 //	    std::unordered_set<VertexID> ball_node;
 //	    dgraph.find_hop_nodes(w,d_Q,ball_node);
 			
@@ -408,7 +408,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
 void StrongSim::cal_culculate_directed_dhop_nodes(Graph &dgraph, VertexID vid, int d_hop, std::unordered_set<VertexID> &result,std::vector<int> &dis){
     int dgraph_num_vertices = dgraph.GetNumVertices();
     std::vector<int> color(dgraph_num_vertices,0);
-    dis.resize(dgraph_num_vertices,INT_MAX);
+    dis.resize(dgraph_num_vertices,INT_MAX - 10);
     std::queue<VertexID> q;
     q.push(vid);
     dis[vid] = 0;

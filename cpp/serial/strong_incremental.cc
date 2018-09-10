@@ -8,6 +8,7 @@ void StrongInc::find_affected_center_area(Graph &dgraph,std::unordered_set<std::
                                                  std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,
                                                  int d_hop,
                                                  std::unordered_set<VertexID> &result){
+    LOG(INFO) << "cp1";
     std::unordered_set<VertexID> incedges_node;
     for(auto e:add_edges){
         if(rm_edges.find(e) == rm_edges.end()){
@@ -15,13 +16,16 @@ void StrongInc::find_affected_center_area(Graph &dgraph,std::unordered_set<std::
 			incedges_node.insert(e.second);
         }
     }
+    LOG(INFO) << "cp2";
     for(auto e:rm_edges){
         if(add_edges.find(e) == add_edges.end()){
 			incedges_node.insert(e.first);
 			incedges_node.insert(e.second);
         }
     }
+    LOG(INFO) << "cp3";
     dgraph.find_hop_nodes(incedges_node,d_hop,result);
+    LOG(INFO) << "cp4";
 }
 
 void StrongInc::find_affected_center_area(Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
@@ -346,6 +350,8 @@ void StrongInc::cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q,
                 std::vector<int> &dis,
                 std::unordered_set<std::pair<VertexID,VertexID>> &add_edges){
     std::priority_queue<std::pair<int, VertexID>> source;
+    int dgraph_num_vertices = dgraph.GetNumVertices();
+    dis.resize(dgraph_num_vertices, INT_MAX - 10);
     for (auto &e : add_edges) {
       if ((dis[e.first] > dis[e.second] + 1) && dis[e.second] < d_Q) {
         dis[e.first] = dis[e.second] + 1;
@@ -663,12 +669,14 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
           int i=0;
 
           start = get_current_time();
-          vector<double> parttime(11, 0.0);
+          LOG(INFO) << "max_dual_set size: " << max_dual_set.size();
+          vector<double> parttime(13, 0.0);
           for (auto w : max_dual_set) {
               /**
                * calculate ball for center w if w if a valid center
                */
 //              if (valid_sim_w(qgraph,dsim,w)){
+
               if (affected_center_nodes.find(w) == affected_center_nodes.end()){
                 double partstart = get_current_time();
                  for(auto strong_ball:strong_r){
@@ -677,9 +685,10 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                      }
                  }
                 double partend = get_current_time();
-                parttime[0] = partend - partstart;
+                parttime[0] += partend - partstart;
                   continue;
               }
+
               /**
                *find d_hop_nodes for w in dgraph
                */
@@ -696,6 +705,11 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
               }
               double partend = get_current_time();
               parttime[1] += (partend - partstart);
+              if (!already_ball_node) {
+                parttime[11] += (partend - partstart);
+              } else {
+                parttime[12] += (partend - partstart);
+              }
               
               std::unordered_set<VertexID> ball_filter_node;
               std::unordered_set<Edge> ball_filter_edge;
@@ -792,6 +806,8 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
           LOG(INFO) << "main calculate time: " << time; 
           LOG(INFO) << "    --max result time: " << parttime[0];
           LOG(INFO) << "    --dhop time: " << parttime[1];
+          LOG(INFO) << "        --dir time: " << parttime[11];
+          LOG(INFO) << "        --inc time: " << parttime[12];      
           LOG(INFO) << "    --ball filter node time: " << parttime[2];
           LOG(INFO) << "    --ball filter edge time: " << parttime[3];
           LOG(INFO) << "    --ball view time: " << parttime[4];

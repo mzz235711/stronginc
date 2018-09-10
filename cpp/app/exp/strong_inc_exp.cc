@@ -53,6 +53,13 @@ class Strong_Inc_Exp {
     LOG(INFO) << "===============================================";
   }
 
+  bool Verify(std::vector<StrongR> result1, std::vector<StrongR> result2) {
+    if (result1.size() != result2.size()) {
+      return false;
+    }
+    return true;
+  }
+
   void Run() {
     init_timers();
     StrongSim strong_sim;
@@ -75,6 +82,7 @@ class Strong_Inc_Exp {
       std::unordered_map<VertexID, std::unordered_set<VertexID>> whole_ball_nodes;
       std::unordered_map<VertexID, std::vector<int>> whole_dist;
       std::vector<StrongR> strongsimr = strong_sim.strong_simulation_sim(dgraph, qgraph, whole_ball_nodes, whole_dist);
+      LOG(INFO) << "size: " << strongsimr.size();
       bool initialization = false;
       dual_sim.dual_simulation(dgraph, qgraph, sim, initialization);
       for (int extend = 1; extend <= this->extend_num; extend++) {
@@ -86,6 +94,7 @@ class Strong_Inc_Exp {
         std::vector<std::pair<VertexID, VertexID>> add_vertices;
         Load_bunch_edges(add_vertices, add_edges, add_name, extend);
 //        Load_bunch_edges(rm_edges, rm_name, extend);
+        LOG(INFO) << "Load bunch edges finish";
         std::vector<StrongR> tmp_r ;
         std::unordered_map<VertexID, std::unordered_set<VertexID>> tmp_sim;
         for (auto &ball : strongsimr) {
@@ -98,18 +107,25 @@ class Strong_Inc_Exp {
         }
         StrongSim strong_sim_dir;
         StrongInc strong_inc;
+        for (auto &v : add_vertices) {
+          dgraph.AddVertex(Vertex(v.first, v.second));
+        }
         for (auto &e : add_edges) {
           dgraph.AddEdge(Edge(e.first, e.second, 1));
         }
 //        for (auto &e : rm_edges) {
 //          dgraph.RemoveEdge(Edge(e.first, e.second, 1));
 //        }
+        dgraph.RebuildGraphProperties(); 
         start_timer(EVALUATION_TIMER);
         std::vector<StrongR> simr_dir = strong_sim_dir.strong_simulation_sim(dgraph, qgraph, whole_ball_nodes_dir, whole_dist_dir);
         stop_timer(EVALUATION_TIMER);
         start_timer(INCREMENTAL_TIMER);
         strong_inc.strong_simulation_inc(dgraph, qgraph, tmp_sim, tmp_r, add_edges, rm_edges, whole_ball_nodes_inc, whole_dist_inc);
         stop_timer(INCREMENTAL_TIMER);
+        if (!Verify(simr_dir, tmp_r)) {
+          LOG(INFO) << "WARNING! WE ARE UNDER ATTACK!";
+        }
         PrintInfo(query_vfile, query_efile, extend);
         reset_timer(EVALUATION_TIMER);
         reset_timer(INCREMENTAL_TIMER);
@@ -120,6 +136,8 @@ class Strong_Inc_Exp {
           dgraph.RemoveEdge(Edge(e.first, e.second, 1));
         }
         
+        dgraph.RebuildGraphProperties(); 
+        LOG(INFO) << "xxxxxxx";
       }  
     }
 

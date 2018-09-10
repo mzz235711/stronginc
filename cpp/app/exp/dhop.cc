@@ -57,7 +57,7 @@ void dhop_add_origin(Graph& dgraph,int d_Q,
                     std::unordered_set<VertexID> &result, std::vector<int> &dis,
                     std::unordered_set<std::pair<VertexID,VertexID>> &add_edges){
     int dgraph_num_vertices = dgraph.GetNumVertices();
-    dis.resize(dgraph_num_vertices,INT_MAX);
+    dis.resize(dgraph_num_vertices,max);
     VertexID base_id = 0;
     VertexID inc_id = 0;
     for(auto e : add_edges){
@@ -142,7 +142,7 @@ void dhop_add_origin(Graph& dgraph,int d_Q,
                 std::unordered_set<std::pair<VertexID,VertexID>> &add_edges) {  
     std::priority_queue<std::pair<int, VertexID>> source;
     int dgraph_num_vertices = dgraph.GetNumVertices();
-    dis.resize(dgraph_num_vertices,INT_MAX);
+    dis.resize(dgraph_num_vertices,max);
     for (auto &e : add_edges) {
       if ((dis[e.first] > dis[e.second] + 1) && dis[e.second] < d_Q) {
         dis[e.first] = dis[e.second] + 1;
@@ -284,6 +284,7 @@ void dhop_add_origin(Graph& dgraph,int d_Q,
         for (auto &e : add_edges) {
           dgraph.RemoveEdge(Edge(e.first, e.second, 1));
         }
+        dgraph.RebuildGraphProperties();
       }
     }
   }
