@@ -13,7 +13,7 @@ class Edge {
   // Edge(const VertexID src, const VertexID dst, const EdgeLabel attr):
   //             src_(src), dst_(dst), attr_(attr) {}
 
-  Edge(const VertexID scr, const VertexID dst) : src_(src), dist_(dist) {}
+  Edge(const VertexID src, const VertexID dst) : src_(src), dst_(dst) {}
 
   /**
    * @return source vertex id

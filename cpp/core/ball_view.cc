@@ -33,7 +33,8 @@ std::unordered_set<VertexID>&  Ball_View::GetChildrenID(const VertexID w){
 }
 
 bool Ball_View::ExistEdge(const VertexID src, const VertexID dst){
-    return edges_.find(Edge(src,dst,1)) !=edges_.end();
+//    return edges_.find(Edge(src,dst,1)) !=edges_.end();
+      return edges_.find(Edge(src, dst)) != edges_.end();
 }
 
 void Ball_View::shortest_distance(VertexID vid,std::unordered_map<VertexID,int> &dis){

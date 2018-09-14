@@ -152,7 +152,7 @@ const Edge Graph::OutgoingEdgeIterator::operator*() const {
 //  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID vid = graph_.vertex_index_map_[target(*iter_, *(graph_.graph_))];
 //  return Edge(uid_, vid, attr);
-  return Edges(uid_, vid);
+  return Edge(uid_, vid);
 }
 
 const bool Graph::OutgoingEdgeIterator::operator!=
@@ -177,7 +177,7 @@ const Edge Graph::IncomingEdgeIterator::operator*() const {
 //  EdgeLabel attr = (*(graph_.edge_data_map_))[*iter_];
   VertexID uid = graph_.vertex_index_map_[source(*iter_, *(graph_.graph_))];
 //  return Edge(uid, vid_, attr);
-  return Edge(uid, vid_)
+  return Edge(uid, vid_);
 }
 
 const bool Graph::IncomingEdgeIterator::operator!=

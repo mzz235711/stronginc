@@ -240,11 +240,11 @@ void Load_bunch_edges(std::vector<std::pair<VertexID, VertexLabel>> &vertices,
 
 void Load_bunch_edges(std::unordered_set<std::pair<VertexID, VertexID>> &edges,
                       const std::string basefilename, int index) {
-  int i = 1;
-  while (i <= index) {
-    LoadEdges(edges, basefilename + std::to_string(i) + ".e");
-    i++;
-  }
+//  int i = 1;
+//  while (i <= index) {
+    LoadEdges(edges, basefilename + std::to_string(index) + ".e");
+//    i++;
+//  }
 }
 
 void LoadEdges(std::set<std::pair<VertexID,VertexID>> &edges, const std::string efile) {

@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(graph_api C CXX)
 # The version number.
 set(graph_api_VERSION_MAJOR 1)
-set(default_build_type "Release")
+#set(default_build_type "Release")
+set(default_build_type "Debug")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
   set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
@@ -26,7 +27,8 @@ endif()
 
 
 find_package(MPI)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS_RELEASE "-O1")
 include_directories(${MPI_CXX_INCLUDE_PATH})
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}")
 include("cmake/FindGlog.cmake")

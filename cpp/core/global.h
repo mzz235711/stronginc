@@ -19,7 +19,7 @@ extern int _num_workers;
 inline int get_worker_id() {
 	return _my_rank;
 }
-inline int get_num_workers() {
+inline const int get_num_workers() {
 	return _num_workers;
 }
 

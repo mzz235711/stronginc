@@ -380,7 +380,8 @@ void Dual_parallelInc::update_by_add_edges(Fragment &fragment,Graph &dgraph,std:
         int fid = get_worker_id();
         std::unordered_set<Edge> edges_;
         for(auto e:add_edges){
-            edges_.insert(Edge(e.first,e.second,1));
+//            edges_.insert(Edge(e.first,e.second,1));
+            edges_.insert(Edge(e.first,e.second));
             if(fragment.isInnerVertex(e.first) && !fragment.isInnerVertex(e.second)){
                 const int dst = fragment.getVertexFragmentID(e.second);
                 vertexBuffers.add_message(dst,Vertex(e.first,dgraph.GetVertexLabel(fragment.getLocalID(e.first))));
@@ -403,7 +404,8 @@ void Dual_parallelInc::update_by_add_edges(Fragment &fragment,Graph &dgraph,std:
 void Dual_parallelInc::update_by_remove_edges(Fragment &fragment,Graph &dgraph,std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges,bool communication_next){
         std::vector<Edge> rm_edges_;
         for(auto e :rm_edges){
-            rm_edges_.emplace_back(e.first,e.second,1);
+//            rm_edges_.emplace_back(e.first,e.second,1);
+            rm_edges_.emplace_back(e.first,e.second);
         }
         fragment.update_fragment_remove_edges(dgraph,rm_edges_,communication_next);
     }

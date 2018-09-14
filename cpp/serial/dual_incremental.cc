@@ -349,7 +349,7 @@
                           std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges){
           for(auto e :rm_edges){
 //              dgraph.RemoveEdge(Edge(e.first,e.second,1));
-            dgraph.RemoveEdge(Edge(e,first, e,second));
+            dgraph.RemoveEdge(Edge(e.first, e.second));
           }
           incremental_removeedgs(dgraph,qgraph,dsim,rm_edges);
 

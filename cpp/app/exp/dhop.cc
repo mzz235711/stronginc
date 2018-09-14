@@ -102,6 +102,288 @@ void dhop_add_origin(Graph& dgraph,int d_Q,
     }   
 }
 
+void dhop_add_remove(
+      Graph &dgraph, int d_Q, std::unordered_set<VertexID> &result,
+      std::vector<int> &dis,
+      std::unordered_set<std::pair<VertexID, VertexID>> &add_edges,
+      std::unordered_set<std::pair<VertexID, VertexID>> &rm_edges) {
+    // add_edges id <dgraph_num_vertices
+    int dgraph_num_vertices = dgraph.GetNumVertices();
+    dis.resize(dgraph_num_vertices, max);
+    std::vector<bool> mark(dgraph_num_vertices, false);
+    std::vector<bool> visited(dgraph_num_vertices, false);
+    std::queue<VertexID> affected_nodes;
+    std::queue<VertexID> q;
+    std::vector<bool> heap_visited(dgraph_num_vertices, false);
+    std::priority_queue<std::pair<int, VertexID>> heap;
+    for (auto e : rm_edges) {
+      if ((dis[e.first] <= d_Q) && (dis[e.first] - 1 == dis[e.second]) &&
+          !heap_visited[e.first]) {
+        //mark[e.first] = true;
+        heap_visited[e.first]=true;
+        heap.push(std::make_pair(-dis[e.first], e.first));
+        //q.push(e.first);
+      } else if ((dis[e.second] <= d_Q) &&
+                 (dis[e.second] - 1 == dis[e.first]) && !heap_visited[e.second]) {
+        //mark[e.second] = true;
+        //affected_nodes.push(e.second);
+        heap_visited[e.second]=true;
+        heap.push(std::make_pair(-dis[e.second], e.second));
+        //q.push(e.second);
+//      } else {
+//        continue;
+      }
+    }
+
+    while (!heap.empty()) {
+      VertexID root = heap.top().second;
+      heap.pop();
+      bool flag = true;
+      for (auto v:dgraph.GetChildrenID(root)) {
+        if (!mark[v]&&(dis[v] == dis[root]-1)) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag) {
+        for (auto v:dgraph.GetParentsID(root)) {
+          if (!mark[v] && (dis[v] == dis[root]-1)) {
+            flag = false;
+            break;
+          }
+        }
+      }
+      if (!flag) continue;
+      affected_nodes.push(root);
+      mark[root] = true;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if (!heap_visited[v] && (dis[v] == dis[root] + 1)) {
+          heap_visited[v]=true;
+          heap.push(std::make_pair(-dis[v],v));
+          //mark[v] = true;
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if (!heap_visited[v] && (dis[v] == dis[root] + 1)) {
+          heap_visited[v]=true;
+          heap.push(std::make_pair(-dis[v],v));
+          //mark[v] = true;
+        }
+      }
+    }
+//LOG(INFO) << "All result node: "<<result.size()<<"  affected_node size : " << affected_nodes.size();
+    while (!affected_nodes.empty()) {
+      VertexID root = affected_nodes.front();
+      affected_nodes.pop();
+      int min = max - 1;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if (!mark[v] && (dis[v] < min) && (dis[v] < d_Q)) {
+          min = dis[v];
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if (!mark[v] && (dis[v] < min) && (dis[v] < d_Q)) {
+          min = dis[v];
+        }
+      }
+      heap.push(std::make_pair(-(min + 1), root));
+      dis[root] = min + 1;
+      if (dis[root] == max)
+        result.erase(root);
+    }
+
+    for (auto &e : add_edges) {
+      if ((dis[e.first] > dis[e.second] + 1) && dis[e.second] < d_Q && !mark[e.first]) {
+        dis[e.first] = dis[e.second] + 1;
+      result.insert(e.first);
+        if (dis[e.first] < d_Q) {
+          heap.push(make_pair(-dis[e.first], e.first));
+        }
+      } else if ((dis[e.second] > dis[e.first] + 1) && dis[e.first] < d_Q && !mark[e.second]) {
+        dis[e.second] = dis[e.first] + 1;
+        result.insert(e.second);
+        if (dis[e.second] < d_Q) {
+          heap.push(make_pair(-dis[e.second], e.second));
+        }
+      }
+    } 
+
+
+  
+    while (!heap.empty()) {
+      VertexID root = heap.top().second;
+      heap.pop();
+      if (visited[root]) {
+        continue;
+      }
+      visited[root] = true;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if ((dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+          dis[v] = dis[root] + 1;
+          result.insert(v);
+          heap.push(std::make_pair(-dis[v], v));
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if ((dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+          dis[v] = dis[root] + 1;
+          result.insert(v);
+          heap.push(std::make_pair(-dis[v], v));
+        }
+      }
+    }
+  } 
+
+void dhop_remove(
+      Graph &dgraph, int d_Q, std::unordered_set<VertexID> &result,
+      std::vector<int> &dis,
+      std::unordered_set<std::pair<VertexID, VertexID>> &rm_edges) {
+    // add_edges id <dgraph_num_vertices
+    int dgraph_num_vertices = dgraph.GetNumVertices();
+    std::vector<bool> mark(dgraph_num_vertices, false);
+    std::vector<bool> visited(dgraph_num_vertices, false);
+    std::queue<VertexID> affected_nodes;
+    std::queue<VertexID> q;
+    std::vector<bool> heap_visited(dgraph_num_vertices, false);
+    std::priority_queue<std::pair<int, VertexID>> heap;
+    for (auto e : rm_edges) {
+      if ((dis[e.first] <= d_Q) && (dis[e.first] - 1 == dis[e.second]) &&
+          !heap_visited[e.first]) {
+        //mark[e.first] = true;
+        heap_visited[e.first]=true;
+        heap.push(std::make_pair(-dis[e.first], e.first));
+        //q.push(e.first);
+      } else if ((dis[e.second] <= d_Q) &&
+                 (dis[e.second] - 1 == dis[e.first]) && !heap_visited[e.second]) {
+        //mark[e.second] = true;
+        //affected_nodes.push(e.second);
+        heap_visited[e.second]=true;
+        heap.push(std::make_pair(-dis[e.second], e.second));
+        //q.push(e.second);
+//      } else {
+//        continue;
+      }
+    }
+
+    while (!heap.empty()) {
+      VertexID root = heap.top().second;
+      heap.pop();
+      bool flag = true;
+      for (auto v:dgraph.GetChildrenID(root)) {
+        if (!mark[v]&&(dis[v]==dis[root]-1)) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag) {
+        for (auto v:dgraph.GetParentsID(root)) {
+          if (!mark[v] && (dis[v]==dis[root]-1)) {
+            flag = false;
+            break;
+          }
+        }
+      }
+      if (!flag) continue;
+      affected_nodes.push(root);
+      mark[root] = true;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if (!heap_visited[v] && (dis[v] == dis[root] + 1)) {
+          heap_visited[v]=true;
+          heap.push(std::make_pair(-dis[v],v));
+          //mark[v] = true;
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if (!heap_visited[v] && (dis[v] == dis[root] + 1)) {
+          heap_visited[v]=true;
+          heap.push(std::make_pair(-dis[v],v));
+          //mark[v] = true;
+        }
+      }
+    }
+//LOG(INFO) << "All result node: "<<result.size()<<"  affected_node size : " << affected_nodes.size();
+    while (!affected_nodes.empty()) {
+      VertexID root = affected_nodes.front();
+      affected_nodes.pop();
+      int min = max - 1;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if (!mark[v] && (dis[v] < min) && (dis[v] < d_Q)) {
+          min = dis[v];
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if (!mark[v] && (dis[v] < min) && (dis[v] < d_Q)) {
+          min = dis[v];
+        }
+      }
+      heap.push(std::make_pair(-(min + 1), root));
+      dis[root] = min + 1;
+      if (dis[root] == max)
+        result.erase(root);
+    }
+  
+    while (!heap.empty()) {
+      VertexID root = heap.top().second;
+      heap.pop();
+      if (visited[root]) {
+        continue;
+      }
+      visited[root] = true;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if (mark[v] && (dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+//        if ((dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+          dis[v] = dis[root] + 1;
+          result.insert(v);
+          heap.push(std::make_pair(-dis[v], v));
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if (mark[v] && (dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+//        if ((dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+          dis[v] = dis[root] + 1;
+          result.insert(v);
+          heap.push(std::make_pair(-dis[v], v));
+        }
+      }
+    }
+  } 
+/*
+  void dhop_direct(Graph &dgraph, VertexID vid, int d_hop,
+                   std::unordered_set<VertexID> &result, std::unordered_map<VertexID, int> &dis) {
+    int tvnum = dgraph.GetNumVertices();
+//    dis.resize(tvnum, max);
+    std::queue<VertexID> source;
+    source.push(vid);
+    dis[vid] = 0;
+    std::vector<VertexID> visit(tvnum, false);
+    while (!source.empty()) {
+      VertexID u = source.front();
+      source.pop();
+      if (visit[u]) continue;
+      visit[u] = true;
+      for (auto v : dgraph.GetChildrenID(u)) {
+//        if (dis[v] == max) {
+        if ( !dis.count(v)) {
+          dis[v] = dis[u] + 1;
+          if (dis[v] < d_hop) {
+            source.push(v);
+          }
+         result.insert(v);
+        }
+      }
+      for (auto v : dgraph.GetParentsID(u)) {
+//        if (dis[v] == max) {
+        if (!dis.count(v)) {
+          dis[v] = dis[u] + 1;
+          if (dis[v] < d_hop) {
+            source.push(v);
+          }
+          result.insert(v);
+        }
+      }
+    }
+  }
+*/
   void dhop_direct(Graph &dgraph, VertexID vid, int d_hop,
                    std::unordered_set<VertexID> &result, std::vector<int> &dis) {
     int tvnum = dgraph.GetNumVertices();
@@ -234,55 +516,87 @@ void dhop_add_origin(Graph& dgraph,int d_Q,
       for (auto &w : match) {
         dhop_direct(dgraph, w, d_Q, ball[w], dis_origin[w]);
       }
+      double starttime, stoptime;
       for (int extend = 1; extend <= extend_num; extend++) {
         std::unordered_set<std::pair<VertexID, VertexID>> add_edges, rm_edges;
         std::vector<std::pair<VertexID, VertexLabel>> add_vertices;
         Load_bunch_edges(add_vertices, add_edges, this->add_name, extend);
-//        Load_bunch_edges(rm_edges, this->rm_name, extend);
+        Load_bunch_edges(rm_edges, this->rm_name, extend);
         for (auto &v : add_vertices) {
           dgraph.AddVertex(Vertex(v.first, v.second));
         }
         for (auto &e : add_edges) {
-          dgraph.AddEdge(Edge(e.first, e.second, 1));
+//          dgraph.AddEdge(Edge(e.first, e.second, 1));
+          dgraph.AddEdge(Edge(e.first, e.second));
         }
         dgraph.RebuildGraphProperties();
         double DIR_TIME = 0;
-        double INC_TIME = 0;
-        double INC_ORIGIN_TIME = 0;
+        double ADD_TIME = 0;
+        // double INC_ORIGIN_TIME = 0;
+        double RM_TIME = 0;
+        double ADD_RM_TIME = 0;
+        std::unordered_map<VertexID, std::vector<int>> dis2, dis3, dis5;
+        std::unordered_map<VertexID, std::unordered_set<VertexID>> ball_node2, ball_node3, ball_node5;
         for (auto &w : match) {
-          std::unordered_set<VertexID> ball_node1, ball_node2, ball_node3;
-          std::vector<int> dis1, dis2, dis3;
-          dis2.resize(dgraph.GetNumVertices(), max);
-          dis3.resize(dgraph.GetNumVertices(), max);
-          for (int i = 0; i < dis_origin[w].size(); i++) {
-            dis2[i] = dis_origin[w][i];
-            dis3[i] = dis_origin[w][i];
-          }
-          ball_node2 = ball[w];
-          ball_node3 = ball[w];
-          double starttime = get_current_time();
-          dhop_direct(dgraph, w, d_Q, ball_node1, dis1);
-          double stoptime = get_current_time();
-          DIR_TIME += (stoptime - starttime); 
+          dis2[w] = dis_origin[w];
+          ball_node2[w] = ball[w];
           starttime = get_current_time();
-          dhop_add(dgraph, d_Q, ball_node2, dis2, add_edges);
+          dhop_add(dgraph, d_Q, ball_node2[w], dis2[w], add_edges);
           stoptime = get_current_time();
-          INC_TIME += (stoptime - starttime);
-          starttime = get_current_time();
-          dhop_add_origin(dgraph, d_Q, ball_node3, dis3, add_edges);
+          ADD_TIME += (stoptime - starttime);
+        }
+
+        LOG(INFO) << rm_edges.size();
+        for (auto &e : rm_edges) {
+          dgraph.RemoveEdge(Edge(e.first, e.second));
+        }
+        dgraph.RebuildGraphProperties();
+        std::vector<int> dis4;
+        std::unordered_set<VertexID> ball_node4;
+        for (auto &w : match) {
+          dis5[w] = dis2[w];
+          ball_node5[w] = ball_node2[w];
+         starttime = get_current_time();
+         dhop_remove(dgraph, d_Q, ball_node5[w], dis5[w], rm_edges);
           stoptime = get_current_time();
-          INC_ORIGIN_TIME += (stoptime - starttime);
-          if (!Verify(dis1 ,dis2)) {
-            LOG(INFO) << "WARNING! We are under attack! Verify1";
+          double temp = stoptime - starttime;
+          RM_TIME += (stoptime - starttime);
+
+//          auto dis3 = dis_origin[w];
+//          std::vector<int> dis4;
+//          auto ball_node3 = ball[w];
+//          std::unordered_set<VertexID> ball_node4;
+          dis4.clear();
+          ball_node4.clear();
+          double starttime1 = get_current_time();
+          dhop_direct(dgraph, w, d_Q, ball_node4, dis4);
+          double stoptime1 = get_current_time();
+          DIR_TIME += (stoptime1 - starttime1);
+          
+          ball_node3[w] = ball[w];
+          dis3[w] = dis_origin[w];
+          double starttime2 = get_current_time();
+//          dhop_remove(dgraph, d_Q, ball_node3[w], dis3[w], rm_edges);
+          dhop_add_remove(dgraph, d_Q, ball_node3[w], dis3[w], add_edges, rm_edges);
+          double stoptime2 = get_current_time();
+          double temp_rm_add = stoptime2 - starttime2;
+//          LOG(INFO) << w<<"      qian bi hou man  " << temp - temp_rm_add;
+          ADD_RM_TIME += (stoptime2 - starttime2);
+          if (!Verify(dis4, dis3[w]) || ball_node4.size() != ball_node3[w].size()) {
+            LOG(INFO) << "WARNING! WE ARE UNDER ATTACK IN FIRST!";
           }
-          if (!Verify(dis1 ,dis3)) {
-            LOG(INFO) << "WARNING! We are under attack! Verify2";
+          if (!Verify(dis3[w], dis5[w]) || ball_node3[w].size() != ball_node5[w].size()) {
+            LOG(INFO) << "WARNING! WE ARE UNDER ATTACK IN SECOND!";
           }
         }
-        LOG(INFO) << "Direct Time: " << DIR_TIME << " Incremental Time: " << INC_TIME
-                  << " Incremental Origin Time: " << INC_ORIGIN_TIME;
+        LOG(INFO) << "Direct Time: " << DIR_TIME << " Add Time: " << ADD_TIME
+                  << " Remove Time: " << RM_TIME << " Add Remove Time: " << ADD_RM_TIME;
+        for (auto &e : rm_edges) {
+          dgraph.AddEdge(Edge(e.first, e.second));
+        }
         for (auto &e : add_edges) {
-          dgraph.RemoveEdge(Edge(e.first, e.second, 1));
+//          dgraph.RemoveEdge(Edge(e.first, e.second, 1));
+          dgraph.RemoveEdge(Edge(e.first, e.second));
         }
         dgraph.RebuildGraphProperties();
       }

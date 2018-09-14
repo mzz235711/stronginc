@@ -345,6 +345,138 @@ void  StrongInc::recalculate_incrementl_dual(Graph &dgraph, Graph &qgraph,
 //          outfile2.close();
 
    }
+void StrongInc::calculate_dhop_inc(
+      Graph &dgraph, int d_Q, std::unordered_set<VertexID> &result,
+      std::vector<int> &dis,
+      std::unordered_set<std::pair<VertexID, VertexID>> &add_edges,
+      std::unordered_set<std::pair<VertexID, VertexID>> &rm_edges) {
+    // add_edges id <dgraph_num_vertices
+    int dgraph_num_vertices = dgraph.GetNumVertices();
+    dis.resize(dgraph_num_vertices, INT_MAX - 10);
+    std::vector<bool> mark(dgraph_num_vertices, false);
+    std::vector<bool> visited(dgraph_num_vertices, false);
+    std::queue<VertexID> affected_nodes;
+    std::queue<VertexID> q;
+    std::vector<bool> heap_visited(dgraph_num_vertices, false);
+    std::priority_queue<std::pair<int, VertexID>> heap;
+    for (auto e : rm_edges) {
+      if ((dis[e.first] <= d_Q) && (dis[e.first] - 1 == dis[e.second]) &&
+          !heap_visited[e.first]) {
+        //mark[e.first] = true;
+        heap_visited[e.first]=true;
+        heap.push(std::make_pair(-dis[e.first], e.first));
+        //q.push(e.first);
+      } else if ((dis[e.second] <= d_Q) &&
+                 (dis[e.second] - 1 == dis[e.first]) && !heap_visited[e.second]) {
+        //mark[e.second] = true;
+        //affected_nodes.push(e.second);
+        heap_visited[e.second]=true;
+        heap.push(std::make_pair(-dis[e.second], e.second));
+        //q.push(e.second);
+//      } else {
+//        continue;
+      }
+    }
+
+    while (!heap.empty()) {
+      VertexID root = heap.top().second;
+      heap.pop();
+      bool flag = true;
+      for (auto v:dgraph.GetChildrenID(root)) {
+        if (!mark[v]&&(dis[v] == dis[root]-1)) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag) {
+        for (auto v:dgraph.GetParentsID(root)) {
+          if (!mark[v] && (dis[v] == dis[root]-1)) {
+            flag = false;
+            break;
+          }
+        }
+      }
+      if (!flag) continue;
+      affected_nodes.push(root);
+      mark[root] = true;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if (!heap_visited[v] && (dis[v] == dis[root] + 1)) {
+          heap_visited[v]=true;
+          heap.push(std::make_pair(-dis[v],v));
+          //mark[v] = true;
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if (!heap_visited[v] && (dis[v] == dis[root] + 1)) {
+          heap_visited[v]=true;
+          heap.push(std::make_pair(-dis[v],v));
+          //mark[v] = true;
+        }
+      }
+    }
+//LOG(INFO) << "All result node: "<<result.size()<<"  affected_node size : " << affected_nodes.size();
+    while (!affected_nodes.empty()) {
+      VertexID root = affected_nodes.front();
+      affected_nodes.pop();
+      int min = INT_MAX - 11;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if (!mark[v] && (dis[v] < min) && (dis[v] < d_Q)) {
+          min = dis[v];
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if (!mark[v] && (dis[v] < min) && (dis[v] < d_Q)) {
+          min = dis[v];
+        }
+      }
+      heap.push(std::make_pair(-(min + 1), root));
+      dis[root] = min + 1;
+      if (dis[root] == INT_MAX - 10)
+        result.erase(root);
+    }
+
+    for (auto &e : add_edges) {
+      if ((dis[e.first] > dis[e.second] + 1) && dis[e.second] < d_Q && !mark[e.first]) {
+        dis[e.first] = dis[e.second] + 1;
+      result.insert(e.first);
+        if (dis[e.first] < d_Q) {
+          heap.push(make_pair(-dis[e.first], e.first));
+        }
+      } else if ((dis[e.second] > dis[e.first] + 1) && dis[e.first] < d_Q && !mark[e.second]) {
+        dis[e.second] = dis[e.first] + 1;
+        result.insert(e.second);
+        if (dis[e.second] < d_Q) {
+          heap.push(make_pair(-dis[e.second], e.second));
+        }
+      }
+    } 
+
+
+  
+    while (!heap.empty()) {
+      VertexID root = heap.top().second;
+      heap.pop();
+      if (visited[root]) {
+        continue;
+      }
+      visited[root] = true;
+      for (auto v : dgraph.GetChildrenID(root)) {
+        if ((dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+          dis[v] = dis[root] + 1;
+          result.insert(v);
+          heap.push(std::make_pair(-dis[v], v));
+        }
+      }
+      for (auto v : dgraph.GetParentsID(root)) {
+        if ((dis[v] > dis[root] + 1) && (dis[root] < d_Q)) {
+          dis[v] = dis[root] + 1;
+          result.insert(v);
+          heap.push(std::make_pair(-dis[v], v));
+        }
+      }
+    }
+  } 
+
 
 void StrongInc::cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q,
                 std::unordered_set<VertexID> &ball_node,
@@ -702,8 +834,10 @@ void StrongInc::strong_simulation_inc(Graph &dgraph, Graph &qgraph,
                 dgraph.find_hop_nodes(w, d_Q, ball_node);
                 already_ball_node = false; 
               } else {
-                cal_culculate_inc_dhop_nodes_add(dgraph, d_Q, whole_ball_nodes[w],
-                       whole_dist[w], add_edges);    
+//                cal_culculate_inc_dhop_nodes_add(dgraph, d_Q, whole_ball_nodes[w],
+//                       whole_dist[w], add_edges);   
+                calculate_dhop_inc(dgraph, d_Q, whole_ball_nodes[w], whole_dist[w],
+                                   add_edges, rm_edges);
                 already_ball_node = true;
               }
               double partend = get_current_time();

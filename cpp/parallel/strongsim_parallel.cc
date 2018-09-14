@@ -81,7 +81,8 @@ void Strong_Parallel::connectivity_prune(Fragment fragment,Graph &dgraph,Graph &
             for (auto sim_v1 : S_w[sourceid]){
                 for(auto sim_v2 : S_w[targetid]){
                     if (dgraph.ExistEdge(sim_v1,sim_v2)){
-                        edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+//                        edge_match_set.insert(Edge(sim_v1,sim_v2,1));
+                      edge_match_set.insert(Edge(sim_v1,sim_v2));
                     }
                 }
             }

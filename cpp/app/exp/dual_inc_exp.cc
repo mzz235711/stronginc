@@ -83,10 +83,12 @@ class Dual_Inc_Exp {
           dgraph.AddVertex(Vertex(v.first, v.second));
         }
         for (auto &e : add_edges) {
-          dgraph.AddEdge(Edge(e.first, e.second, 1));
+//          dgraph.AddEdge(Edge(e.first, e.second, 1));
+          dgraph.AddEdge(Edge(e.first, e.second));
         }
         for (auto &e : rm_edges) {
-          dgraph.RemoveEdge(Edge(e.first, e.second, 1));  
+//          dgraph.RemoveEdge(Edge(e.first, e.second, 1));  
+          dgraph.RemoveEdge(Edge(e.first, e.second));  
         }
         dgraph.RebuildGraphProperties();
         std::unordered_map<VertexID, std::unordered_set<VertexID>> inc_sim, direct_sim;
@@ -113,10 +115,12 @@ class Dual_Inc_Exp {
         reset_timer(EVALUATION_TIMER);
         reset_timer(INCREMENTAL_TIMER);
         for (auto &e : rm_edges) {
-          dgraph.AddEdge(Edge(e.first, e.second, 1));
+//          dgraph.AddEdge(Edge(e.first, e.second, 1));
+          dgraph.AddEdge(Edge(e.first, e.second));
         }
         for (auto &e : add_edges) {
-          dgraph.RemoveEdge(Edge(e.first, e.second, 1));
+//          dgraph.RemoveEdge(Edge(e.first, e.second, 1));
+          dgraph.RemoveEdge(Edge(e.first, e.second));
         }
       }
     }

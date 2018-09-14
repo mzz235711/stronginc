@@ -268,7 +268,9 @@ void Dual_Parallel::dual_paraller(Fragment &fragment, Graph &dgraph, Graph &qgra
     std::unordered_map<VertexID, std::vector<int>> sim_counter_post,sim_counter_pre;
     pEval(fragment, dgraph, qgraph, sim, remove_pred, remove_succ, sim_counter_post, sim_counter_pre);
     worker_barrier();
+    int step = 0;
     while(is_continue()){
+        step++;
         incEval(fragment, dgraph, qgraph, sim, remove_pred, remove_succ, sim_counter_post, sim_counter_pre);
         worker_barrier();
     }

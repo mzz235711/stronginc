@@ -12,9 +12,9 @@ typedef int VertexLabel;
 typedef int EdgeLabel;
 
 // fragmets size
-#ifndef NUM_FRAGMENTS
-#define NUM_FRAGMENTS 5
-#endif
+//#ifndef NUM_FRAGMENTS
+#define NUM_FRAGMENTS 16
+//#endif
 
 #ifndef MAX_LABEL
 //#define MAX_LABEL 420  // dbpedia 420

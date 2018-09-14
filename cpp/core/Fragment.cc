@@ -15,7 +15,6 @@ Fragment::Fragment(Graph &graph, const std::string v_file, const std::string e_f
   //std::cout<<"edges "<<global_edges.size()<<' '<<fid<<std::endl;
   fragmentloader.LoadVertex(global_vertices, fragTable,idx, FID, v_file);
  // std::cout<<"vertex "<<global_vertices.size()<<" "<<fid<<std::endl;
-
   numVertices = global_vertices.size();
   numEdges = global_edges.size();
 
@@ -33,7 +32,6 @@ Fragment::Fragment(Graph &graph, const std::string v_file, const std::string e_f
     }
     std::vector<std::pair<VertexID,VertexID>> edges_from_to;
     std::vector<EdgeLabel> edges_attr(numEdges, 1);
-
     for (int i = 0; i < numEdges; ++i){
         Edge e = global_edges[i];
         VertexID src = e.src(),dst = e.dst();
@@ -62,8 +60,8 @@ Fragment::Fragment(Graph &graph, const std::string v_file, const std::string e_f
                  global_vertices.size()));
 #endif
   graph.vertex_index_map_ = boost::get(boost::vertex_index, *graph.graph_);
-  graph.edge_data_map_ = std::unique_ptr<EdgeDataMap>(
-          new EdgeDataMap(boost::get(boost::edge_weight, *graph.graph_)));
+//  graph.edge_data_map_ = std::unique_ptr<EdgeDataMap>(
+//          new EdgeDataMap(boost::get(boost::edge_weight, *graph.graph_)));
   graph.num_vertices_ = numVertices;
   graph.num_edges_ = numEdges;
   LOG(INFO) << "loading graph finished." << std::endl;
@@ -117,8 +115,8 @@ Fragment::Fragment(Graph &graph,const std::vector<Vertex> &_vertices, const std:
                  _vertices.size()));
 #endif
   graph.vertex_index_map_ = boost::get(boost::vertex_index, *graph.graph_);
-  graph.edge_data_map_ = std::unique_ptr<EdgeDataMap>(
-          new EdgeDataMap(boost::get(boost::edge_weight, *graph.graph_)));
+//  graph.edge_data_map_ = std::unique_ptr<EdgeDataMap>(
+//          new EdgeDataMap(boost::get(boost::edge_weight, *graph.graph_)));
   graph.num_vertices_ = numVertices;
   graph.num_edges_ = numEdges;
   LOG(INFO) << "loading graph finished." << std::endl;

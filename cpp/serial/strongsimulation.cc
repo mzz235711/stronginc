@@ -280,6 +280,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
         LOG(INFO) << "dual simulation time: " << time;
 	
 	int i=0;
+        int count = 0;
         start = get_current_time();
         vector<double> parttime(10, 0.0);
 	for (auto w : dgraph.GetAllVerticesID()) {
@@ -291,6 +292,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
 	    /**
 	    *find d_hop_nodes for w in dgraph
 	    */
+            count++;
             double partstart = get_current_time();
             cal_culculate_directed_dhop_nodes(dgraph, w, d_Q, whole_ball_nodes[w],
                  whole_dist[w]);
@@ -322,7 +324,7 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
 		for(auto sim_v2 : S_w[targetid]){
                   if (dgraph.ExistEdge(sim_v1,sim_v2)){
 //                    ball_filter_edge.insert(Edge(sim_v1,sim_v2,1));
-                    ball_filter_edge.insert(Edge(sim_V1, sim_v2));
+                    ball_filter_edge.insert(Edge(sim_v1, sim_v2));
                   }
                 }
               }
@@ -378,10 +380,12 @@ std::vector<StrongR> StrongSim::strong_simulation_sim(Graph &dgraph, Graph &qgra
 	        // out3<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
             // out3.close();
             // std::cout<<"calculate one ball time "<<(float)(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;
+         
         }
     }
     end = get_current_time();
     time = end - start;
+    LOG(INFO) << count;
     LOG(INFO) << "main calculation time: " << time;
     LOG(INFO) << "    --dhop time: " << parttime[0];
     LOG(INFO) << "    --ball filter node time: " << parttime[1];

@@ -98,7 +98,10 @@ public:
                                       std::unordered_set<std::pair<VertexID,VertexID>> &add_edges,
                                       std::unordered_set<std::pair<VertexID,VertexID>> &rm_edges);
 
-									  
+  void calculate_dhop_inc(Graph &dgraph, int d_Q, std::unordered_set<VertexID> &result,
+                          std::vector<int> &dis,
+                          std::unordered_set<std::pair<VertexID, VertexID>> &add_edges,
+                          std::unordered_set<std::pair<VertexID, VertexID>> &rm_edges);								  
 	void cal_culculate_inc_dhop_nodes_add(Graph &dgraph, int d_Q, std::unordered_set<VertexID> &ball_node,
 									  std::vector<int> &dis, std::unordered_set<std::pair<VertexID,VertexID>> &add_edges);
 	
